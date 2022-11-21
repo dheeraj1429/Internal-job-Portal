@@ -1,0 +1,16 @@
+{
+   "name": "internal-job-portal",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "server": "npm run dev --prefix server",
+      "client": "npm start --prefix client",
+      "server-dep": "sudo npm install --prefix server",
+      "client-dep": "sudo npm install --prefix client",
+      "client-build": "npm run build --prefix client"
+   },
+   "author": "Dheeraj singh",
+   "license": "ISC"
+}
