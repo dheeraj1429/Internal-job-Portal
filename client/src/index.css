@@ -1,13 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+   position: relative;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+:root {
+   --main-cl: #ffffff;
+   --shadow: #e1e1e1;
+   --button-cl: #e50914;
+   --dark-cl: #202020;
+   --extra-dark-cl: #121212;
+   --light-gray: #313131;
+   --smooht-gray-cl: #f1f1f1;
+   --google-button-cl: #4c8cf1;
+   --dark-blue-cl: #0a37c0;
+   --spec-base-background: #0f0f0f;
+   --spec-elevated-background: #212121;
+   --spec-menu-background: #2f2f2f;
+   --spec-elevated-background-inverse: #f1f1f1;
+   --spec-filled-container: rgba(255, 255, 255, 0.1);
+   --spec-outlined-container: rgb(85, 84, 84);
+   --spec-brand-background-solid: #212121;
+   --spec-brand-background-primary: rgba(33, 33, 33, 0.98);
+   --spec-brand-background-secondary: rgba(33, 33, 33, 0.95);
+   --spec-general-background-a: #181818;
+   --spec-general-background-b: #0f0f0f;
+   --spec-general-background-c: #030303;
+   --spec-error-background: #f4f4f4;
+   --spec-text-primary: #fff;
+   --spec-text-secondary: rgb(192, 192, 192);
+   --spec-text-disabled: #b7b7b7;
+   --spec-text-primary-inverse: #030303;
+   --spec-call-to-action: #3ea6ff;
+   --spec-call-to-action-inverse: #065fd4;
+   --spec-suggested-action: #263850;
+   --spec-icon-active-other: #fff;
+   --spec-icon-inactive: #909090;
+   --spec-icon-disabled: #606060;
+   --spec-badge-chip-background: rgba(255, 255, 255, 0.1);
+   --spec-verified-badge-background: rgba(255, 255, 255, 0.25);
+   --spec-button-chip-background-hover: rgba(255, 255, 255, 0.2);
+   --spec-touch-response: #fff;
+   --spec-touch-response-inverse: #000;
+   --spec-brand-icon-active: #fff;
+   --spec-brand-icon-inactive: #909090;
+   --spec-brand-link-text: #ff4e45;
+   --spec-wordmark-text: #fff;
+}
+
+/* width */
+::-webkit-scrollbar {
+   width: 5px;
+   height: 5px;
+   border-radius: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+   background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+   background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+   background: #555;
+}
+
+.error_text {
+   color: var(--button-cl) !important;
 }
