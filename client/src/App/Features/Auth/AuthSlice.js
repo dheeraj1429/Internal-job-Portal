@@ -63,7 +63,10 @@ export const signInUser = createAsyncThunk('auth/signIn', async (data) => {
 
 // login in user
 export const logInUser = createAsyncThunk('auth/login', async (data) => {
-   const loginUserResponse = await axios.get(`/auth/login-user?email=${data.email}&password=${data.password}`, headers);
+   const loginUserResponse = await axios.get(
+      `/auth/login-user?email=${data.email}&password=${data.password}`,
+      headers
+   );
    return loginUserResponse;
 });
 

@@ -1,11 +1,6 @@
 import styled from 'styled-components';
 
 export const div = styled.div`
-   h1 {
-      font-size: 50px;
-      margin-bottom: 0.8rem;
-   }
-
    .jodit-workplace + .jodit-status-bar:not(:empty) {
       display: none;
    }
@@ -14,5 +9,15 @@ export const div = styled.div`
    .jodit-container .jodit-workplace .jodit-wysiwyg,
    .jodit-container .jodit-workplace .jodit-wysiwyg_iframe {
       min-height: 400px !important;
+   }
+
+   @media (max-width: 500px) {
+      h1 {
+         font-size: 30px;
+      }
+      p {
+         font-size: 12px;
+         line-height: 24px;
+      }
    }
 `;

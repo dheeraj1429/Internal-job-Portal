@@ -16,8 +16,19 @@ const checkIsUserValid = function (req, res, next) {
 };
 
 // API => GET
+route.get(
+   '/get-single-job-post-info/:token',
+   checkIsUserValid,
+   adminController.getSingleJobPostDetails
+);
 
 // API => POST
 route.post('/inert-new-job-post/:token', checkIsUserValid, adminController.postNewjob);
+
+// API => PATCH
+route.patch('/update-job-post/:token', checkIsUserValid, adminController.updateJobPost);
+
+// API => DELET
+route.delete('/delete-single-post/:token', checkIsUserValid, adminController.deleteSingleJobPost);
 
 module.exports = route;

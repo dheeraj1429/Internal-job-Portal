@@ -19,9 +19,11 @@ app.use(logger());
 // routs
 const authRoute = require('./routes/authRoute');
 const adminRoute = require('./routes/adminRoute');
+const indexRoute = require('./routes/indexRoute');
 
 app.use('/auth', authRoute);
 app.use('/admin', adminRoute);
+app.use('/index', indexRoute);
 
 // server listen
 databaseConnection(() =>

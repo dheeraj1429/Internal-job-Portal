@@ -4,6 +4,9 @@ export const div = styled.div`
    padding: 0.8rem 1rem;
    position: relative;
    cursor: pointer;
+   display: flex;
+   justify-content: center;
+   align-items: center;
 
    &::before {
       position: absolute;

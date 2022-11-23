@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 // components
 import SignInComponent from './Components/SignInComponent/SignInComponent';
 import PostJobComponent from './DashboardComponent/PostJobComponent/PostJobComponent';
+import AllJobsComponent from './DashboardComponent/AllJobsComponent/AllJobsComponent';
 
 // pages
 import SignInAndLoginPage from './Pages/SignInAndLoginPage/SignInAndLoginPage';
@@ -30,7 +31,9 @@ function App() {
                <Route path="login" element={<SignInComponent />} />
             </Route>
             <Route path="/dashboard" element={<DashboardPage />}>
-               <Route path="job" element={<PostJobComponent />} />
+               <Route path="job" element={<AllJobsComponent />} />
+               <Route path="job/create" element={<PostJobComponent />} />
+               <Route path="job/edit/:id" element={<PostJobComponent />} />
             </Route>
          </Routes>
       </div>
