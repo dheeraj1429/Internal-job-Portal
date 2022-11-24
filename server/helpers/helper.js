@@ -23,7 +23,21 @@ const httpStatusCodes = {
    INTERNAL_SERVER: 500,
 };
 
+const checkIsUserValid = function (req, res, next) {
+   const { token } = req.params;
+
+   if (!token) {
+      return res.status(200).json({
+         success: false,
+         message: 'invalid token',
+      });
+   } else {
+      next();
+   }
+};
+
 module.exports = {
    catchAsync,
    httpStatusCodes,
+   checkIsUserValid,
 };

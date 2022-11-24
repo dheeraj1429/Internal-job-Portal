@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 8000;
 const cors = require('cors');
 const logger = require('morgan');
 const databaseConnection = require('./model/database/db');
+const path = require('path');
 
 // middlewares
 app.use(
@@ -14,6 +15,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger());
 
 // routs

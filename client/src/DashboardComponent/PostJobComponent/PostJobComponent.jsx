@@ -6,7 +6,7 @@ import { MenuItem } from '@mui/material';
 import JoditEditor from 'jodit-react';
 import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useNavigate, Navigate } from 'react-router';
 import { message } from 'antd';
 import {
    postNewJob,
@@ -54,7 +54,7 @@ function PostJobComponent() {
    const sendHandler = function (event) {
       event.preventDefault();
 
-      if (user && user?.token) {
+      if (user && user?.userObject && user?.userObject?.token) {
          if (
             JobDetails.jobTitle &&
             JobDetails.salaryRangeStart &&
@@ -69,7 +69,7 @@ function PostJobComponent() {
                dispatch(
                   updateJobPost(
                      Object.assign(JobDetails, {
-                        token: user?.token,
+                        token: user?.userObject?.token,
                         metaData: content,
                         postId: singleJobPost.post._id,
                      })
@@ -77,7 +77,12 @@ function PostJobComponent() {
                );
             } else {
                dispatch(
-                  postNewJob(Object.assign(JobDetails, { token: user?.token, metaData: content }))
+                  postNewJob(
+                     Object.assign(JobDetails, {
+                        token: user?.userObject?.token,
+                        metaData: content,
+                     })
+                  )
                );
             }
          } else {
@@ -102,8 +107,8 @@ function PostJobComponent() {
    }, []);
 
    useEffect(() => {
-      if (params && !!params?.id && !!user && user?.token) {
-         dispatch(getSingleJobPostDetails({ token: user?.token, jobId: params.id }));
+      if (params && !!params?.id && !!user && user?.userObject && user?.userObject?.token) {
+         dispatch(getSingleJobPostDetails({ token: user?.userObject?.token, jobId: params.id }));
       }
    }, [params, user]);
 
@@ -120,6 +125,10 @@ function PostJobComponent() {
          setContent(singleJobPost.post.metaData);
       }
    }, [singleJobPost]);
+
+   if (!user) {
+      return <Navigate to={'/portal/signin'} />;
+   }
 
    return (
       <styled.div>

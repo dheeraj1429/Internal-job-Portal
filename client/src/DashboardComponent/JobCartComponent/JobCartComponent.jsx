@@ -10,6 +10,8 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router';
 import { deleteSingleJobPost } from '../../App/Features/Admin/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
+import { Link } from 'react-router-dom';
 
 function JobCartComponent({ data }) {
    const [anchorEl, setAnchorEl] = React.useState(null);
@@ -30,13 +32,13 @@ function JobCartComponent({ data }) {
 
    const EditHandler = function (jobId) {
       setAnchorEl(null);
-      navigation(`/dashboard/job/edit/${jobId}`);
+      navigation(`/job/edit/${jobId}`);
    };
 
    const DelteHander = function (jobId) {
-      if (!!user && user?.token) {
+      if (!!user && user?.userObject && user?.userObject?.token) {
          setAnchorEl(null);
-         dispatch(deleteSingleJobPost({ token: user?.token, postId: jobId }));
+         dispatch(deleteSingleJobPost({ token: user?.userObject?.token, postId: jobId }));
       }
    };
 
@@ -48,29 +50,31 @@ function JobCartComponent({ data }) {
                {/* <p className=" text-gray-500">San Farancicos</p> */}
             </div>
             <div>
-               <div className="flex justify-end w-full">
-                  <Button
-                     id="basic-button"
-                     aria-controls={open ? 'basic-menu' : undefined}
-                     aria-haspopup="true"
-                     aria-expanded={open ? 'true' : undefined}
-                     onClick={handleClick}
-                  >
-                     <BiDotsHorizontalRounded />
-                  </Button>
-                  <Menu
-                     id="basic-menu"
-                     anchorEl={anchorEl}
-                     open={open}
-                     onClose={handleClose}
-                     MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                     }}
-                  >
-                     <MenuItem onClick={() => EditHandler(data._id)}>Edit job post</MenuItem>
-                     <MenuItem onClick={() => DelteHander(data._id)}>Delete job post</MenuItem>
-                  </Menu>
-               </div>
+               {!!user && user?.userObject && user?.userObject?.role === 'admin' ? (
+                  <div className="flex justify-end w-full">
+                     <Button
+                        id="basic-button"
+                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        onClick={handleClick}
+                     >
+                        <BiDotsHorizontalRounded />
+                     </Button>
+                     <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                           'aria-labelledby': 'basic-button',
+                        }}
+                     >
+                        <MenuItem onClick={() => EditHandler(data._id)}>Edit job post</MenuItem>
+                        <MenuItem onClick={() => DelteHander(data._id)}>Delete job post</MenuItem>
+                     </Menu>
+                  </div>
+               ) : null}
                <span className=" text-gray-400">6 days ago</span>
             </div>
          </div>
@@ -99,6 +103,12 @@ function JobCartComponent({ data }) {
                <strong>Position Details</strong>
             </p>
             <p className="mt-2 text-gray-600">{data.positionDescription.slice(0, 200)}</p>
+
+            <Link
+               to={`/job/single/${data.jobTitle.toLowerCase().replaceAll(' ', '-')}/${data._id}`}
+            >
+               <CustomButtonComponent innerText={'View'} btnCl={'category_upload w-100'} />
+            </Link>
          </div>
       </div>
    );

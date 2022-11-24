@@ -1,9 +1,9 @@
 import React from 'react';
 import * as styled from './SpennerComponent.style';
 
-function SpennerComponent() {
+function SpennerComponent({ center }) {
    return (
-      <styled.div>
+      <styled.div center={center}>
          <img src="/images/spenner.svg" alt="" />
       </styled.div>
    );

@@ -5,7 +5,11 @@ import HOCSpenner from '../HocSpennerComponent/HocSpennerComponent';
 function CustomButtonComponent({ innerText, btnCl, type, onClick }) {
    return (
       <styled.div>
-         <styled.button onClick={onClick ? onClick : null} type={type ? type : 'button'} className={btnCl}>
+         <styled.button
+            onClick={onClick ? onClick : null}
+            type={type ? type : 'button'}
+            className={btnCl}
+         >
             {innerText}
          </styled.button>
       </styled.div>

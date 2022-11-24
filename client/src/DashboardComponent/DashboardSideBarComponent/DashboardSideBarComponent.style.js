@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 export const div = styled.div`
-   width: 3%;
+   width: 20%;
    height: 100%;
-   background-color: var(--dark-blue-cl);
+   background-color: var(--spec-elevated-background);
    padding-top: 1rem;
    transition: all 0.3s ease;
 
-   @media (max-width: 1700px) {
+   /* @media (max-width: 1700px) {
       width: 5%;
    }
    @media (max-width: 1600px) {
@@ -29,5 +29,5 @@ export const div = styled.div`
    }
    @media (max-width: 400px) {
       width: 13%;
-   }
+   } */
 `;

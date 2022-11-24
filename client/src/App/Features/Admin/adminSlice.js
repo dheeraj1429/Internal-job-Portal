@@ -6,10 +6,6 @@ const INITAL_STATE = {
    insertNewJobPost: null,
    insertNewJobPostLoading: false,
    insertNewJobPostError: null,
-   allJobs: null,
-   allJobsFetchLoading: false,
-   allJobsFetchError: null,
-   singleJobPost: null,
    singleJobPostFetchLoading: false,
    singleJobPostFetchError: null,
    deleteSinglePostInfo: null,
@@ -49,24 +45,6 @@ const adminSlice = createSlice({
             state.insertNewJobPostLoading = false;
             state.insertNewJobPost = action.payload.data;
             state.insertNewJobPostError = null;
-         });
-
-      // get all posted jobs
-      bulder
-         .addCase(getAllJobPosts.pending, (state) => {
-            state.allJobs = null;
-            state.allJobsFetchLoading = true;
-            state.allJobsFetchError = null;
-         })
-         .addCase(getAllJobPosts.rejected, (state, action) => {
-            state.allJobs = null;
-            state.allJobsFetchLoading = false;
-            state.allJobsFetchError = action.error.message;
-         })
-         .addCase(getAllJobPosts.fulfilled, (state, action) => {
-            state.allJobs = action.payload.data;
-            state.allJobsFetchLoading = false;
-            state.allJobsFetchError = null;
          });
 
       // get single post job information
@@ -143,11 +121,6 @@ export const updateJobPost = createAsyncThunk('admin/updateJobPost', async (data
    return updateJobPostResponse;
 });
 
-export const getAllJobPosts = createAsyncThunk('admin/getAllJobPosts', async () => {
-   const jobResponse = await axios.get(`/index/get-all-job-posts`, headers);
-   return jobResponse;
-});
-
 export const getSingleJobPostDetails = createAsyncThunk(
    'admin/getSingleJobPostInfo',
    async (data) => {
@@ -155,6 +128,7 @@ export const getSingleJobPostDetails = createAsyncThunk(
          `/admin/get-single-job-post-info/${data.token}?postId=${data.jobId}`,
          headers
       );
+      console.log(data);
       return jobResponse;
    }
 );

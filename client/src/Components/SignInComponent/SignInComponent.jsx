@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as styled from './SignInComponent.style';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import CustomButtonComponent from '../CustomButtonComponent/CustomButtonComponent';
 import { signInUser, logInUser } from '../../App/Features/Auth/AuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { Link, Navigate } from 'react-router-dom';
 
 function SignInComponent() {
@@ -17,8 +17,10 @@ function SignInComponent() {
    });
    const [Error, setError] = useState('');
    const { userAuthLoading, user } = useSelector((state) => state.auth);
+
    const dispatch = useDispatch();
    const location = useLocation();
+   const navigation = useNavigate();
 
    const changeHandler = function (e) {
       const { name, value } = e.target;
@@ -30,8 +32,10 @@ function SignInComponent() {
       const { name, email, password, confirmPassword } = UserInfo;
 
       if (location.pathname === '/portal/signin') {
-         if (!name && !email && !password && !confirmPassword) return setError('Please fill all filed');
-         if (password !== confirmPassword) return setError("Password or confirm password is't match");
+         if (!name && !email && !password && !confirmPassword)
+            return setError('Please fill all filed');
+         if (password !== confirmPassword)
+            return setError("Password or confirm password is't match");
          dispatch(signInUser({ name, email, password }));
       } else if (location.pathname === '/portal/login') {
          if (!email && !password) return setError('Please fill all filed');
@@ -39,14 +43,24 @@ function SignInComponent() {
       }
    };
 
-   if (!!user && user?.token) {
-      return <Navigate to="/dashboard" />;
+   useEffect(() => {
+      if (!!user) {
+         navigation('/');
+      }
+   }, [user]);
+
+   if (!!user && !!user && user?.userObject && user?.userObject?.token) {
+      return <Navigate to="/" />;
    }
 
    return (
       <styled.div>
-         <h1>{location.pathname === '/portal/login' ? 'Login with account' : 'Create an account'} </h1>
-         <p className="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos, dolorum?</p>
+         <h1>
+            {location.pathname === '/portal/login' ? 'Login with account' : 'Create an account'}{' '}
+         </h1>
+         <p className="mb-5">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos, dolorum?
+         </p>
          <Box
             component="form"
             sx={{
@@ -55,11 +69,41 @@ function SignInComponent() {
             noValidate
             autoComplete="off"
          >
-            {location.pathname === '/portal/login' ? null : <TextField id="outlined-basic" onChange={changeHandler} type={'text'} value={UserInfo.name} label="Name" name="name" variant="outlined" />}
-            <TextField id="outlined-basic" onChange={changeHandler} type={'email'} value={UserInfo.email} label="Email" name="email" variant="outlined" />
-            <TextField id="outlined-basic" onChange={changeHandler} type={'password'} value={UserInfo.password} label="Password" name="password" variant="outlined" />
             {location.pathname === '/portal/login' ? null : (
-               <TextField id="outlined-basic" onChange={changeHandler} type={'password'} value={UserInfo.confirmPassword} label="Re-enter password" name="confirmPassword" variant="outlined" />
+               <TextField
+                  onChange={changeHandler}
+                  type={'text'}
+                  value={UserInfo.name}
+                  label="Name"
+                  name="name"
+                  variant="outlined"
+               />
+            )}
+            <TextField
+               onChange={changeHandler}
+               type={'email'}
+               value={UserInfo.email}
+               label="Email"
+               name="email"
+               variant="outlined"
+            />
+            <TextField
+               onChange={changeHandler}
+               type={'password'}
+               value={UserInfo.password}
+               label="Password"
+               name="password"
+               variant="outlined"
+            />
+            {location.pathname === '/portal/login' ? null : (
+               <TextField
+                  onChange={changeHandler}
+                  type={'password'}
+                  value={UserInfo.confirmPassword}
+                  label="Re-enter password"
+                  name="confirmPassword"
+                  variant="outlined"
+               />
             )}
          </Box>
          <CustomButtonComponent

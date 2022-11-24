@@ -8,10 +8,13 @@ import { useDispatch } from 'react-redux';
 import SignInComponent from './Components/SignInComponent/SignInComponent';
 import PostJobComponent from './DashboardComponent/PostJobComponent/PostJobComponent';
 import AllJobsComponent from './DashboardComponent/AllJobsComponent/AllJobsComponent';
+import SingleJobPostDetailsComponent from './DashboardComponent/SingleJobPostDetailsComponent/SingleJobPostDetailsComponent';
 
 // pages
 import SignInAndLoginPage from './Pages/SignInAndLoginPage/SignInAndLoginPage';
 import DashboardPage from './Pages/DashboardPage/DashboardPage';
+import MyAccountPage from './Pages/MyAccountPage/MyAccountPage';
+import ContactInfoComponent from './Pages/ContactInfoComponent/ContactInfoComponent';
 
 function App() {
    const [cookie] = useCookies(['user']);
@@ -30,10 +33,13 @@ function App() {
                <Route path="signin" element={<SignInComponent />} />
                <Route path="login" element={<SignInComponent />} />
             </Route>
-            <Route path="/dashboard" element={<DashboardPage />}>
+            <Route path="/" element={<DashboardPage />}>
                <Route path="job" element={<AllJobsComponent />} />
                <Route path="job/create" element={<PostJobComponent />} />
                <Route path="job/edit/:id" element={<PostJobComponent />} />
+               <Route path="job/single/:name/:id" element={<SingleJobPostDetailsComponent />} />
+               <Route path="my-account" element={<MyAccountPage />} />
+               <Route path="contact" element={<ContactInfoComponent />} />
             </Route>
          </Routes>
       </div>

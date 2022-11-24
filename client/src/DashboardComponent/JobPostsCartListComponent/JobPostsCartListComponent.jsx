@@ -3,14 +3,14 @@ import * as styled from './JobPostsCartListComponent.style';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllJobPosts } from '../../App/Features/Admin/adminSlice';
 import SpennerComponent from '../../Components/SpennerComponent/SpennerComponent';
+import { getAllJobPosts } from '../../App/Features/index/indexSlice';
 
 const JobCartComponent = lazy(() => import('../JobCartComponent/JobCartComponent'));
 
 function JobPostsCartListComponent() {
    const dispatch = useDispatch();
-   const { allJobs, allJobsFetchLoading, allJobsFetchError } = useSelector((state) => state.admin);
+   const { allJobs, allJobsFetchLoading, allJobsFetchError } = useSelector((state) => state.index);
 
    useEffect(() => {
       dispatch(getAllJobPosts());

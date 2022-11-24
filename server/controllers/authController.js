@@ -25,6 +25,8 @@ const userSignIn = catchAsync(async function (req, res, next) {
       const userObject = {
          name,
          email,
+         profilePic: saveUser.userProfile,
+         role: saveUser.role,
          token,
       };
 
@@ -65,6 +67,8 @@ const userLogin = catchAsync(async function (req, res, next) {
    const userObject = {
       name: findUserAccount.name,
       email: findUserAccount.email,
+      profilePic: findUserAccount.userProfile,
+      role: findUserAccount.role,
       token,
    };
 

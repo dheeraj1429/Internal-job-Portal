@@ -11,6 +11,11 @@ const authSchema = new mongoose.Schema({
    userProfile: { type: String, default: 'default-user-pic.jpg' },
    createdAt: { type: Date, default: Date.now },
    tokens: [{ token: { type: String, required: [true, 'user token is required'] } }],
+   phone: { type: Number },
+   street: { type: String },
+   cityState: { type: String },
+   postalCode: { type: Number },
+   showNumber: { type: Boolean, default: false },
 });
 
 authSchema.index({ email: 1 });
@@ -19,7 +24,10 @@ authSchema.index({ email: 1 });
 authSchema.methods.genrateUserToken = async function () {
    try {
       // genrate the user token
-      const token = await jwt.sign({ _id: this._id.toString(), name: this.name, email: this.email }, SECRET_KEY);
+      const token = await jwt.sign(
+         { _id: this._id.toString(), name: this.name, email: this.email },
+         SECRET_KEY
+      );
       // add token inside the user collection token array
       this.tokens = this.tokens.concat({ token });
       this.save();

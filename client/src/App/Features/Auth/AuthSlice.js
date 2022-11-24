@@ -13,6 +13,12 @@ const authSlice = createSlice({
    initialState: INITAL_STATE,
    reducers: {
       setUser: (state, action) => {
+         state.user = {
+            success: true,
+            userObject: action.payload,
+         };
+      },
+      logOutUser: (state, action) => {
          state.user = action.payload;
       },
    },
@@ -70,6 +76,6 @@ export const logInUser = createAsyncThunk('auth/login', async (data) => {
    return loginUserResponse;
 });
 
-export const { setUser } = authSlice.actions;
+export const { setUser, logOutUser } = authSlice.actions;
 
 export default authSlice;

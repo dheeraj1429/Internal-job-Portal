@@ -1,3 +1,6 @@
+// https://cdn.dribbble.com/users/1892427/screenshots/10215245/media/7f893edb9957803349f6129f14990ffd.jpg
+// https://cdn.dribbble.com/users/1544980/screenshots/7358355/media/d83fb0e1b976bfe7fe1254945cf4ef53.jpg
+
 const { catchAsync } = require('../helpers/helper');
 const jobPostModel = require('../model/schema/jobSchema');
 const { httpStatusCodes } = require('../helpers/helper');

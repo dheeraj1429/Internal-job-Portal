@@ -1,19 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const adminController = require('../controllers/adminController');
-
-const checkIsUserValid = function (req, res, next) {
-   const { token } = req.params;
-
-   if (!token) {
-      return res.status(200).json({
-         success: false,
-         message: 'invalid token',
-      });
-   } else {
-      next();
-   }
-};
+const { checkIsUserValid } = require('../helpers/helper');
 
 // API => GET
 route.get(
