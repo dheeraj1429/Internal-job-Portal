@@ -16,6 +16,12 @@ const INITAL_STATE = {
    userContactInformation: null,
    userContactInformationFetchLoading: false,
    userContactInformationFetchError: null,
+   saveUserResumeResponse: null,
+   saveUserResumeLoading: false,
+   saveUserResumeError: null,
+   userResumeDetails: null,
+   userResumeDetailsFetchLoading: false,
+   userResumeDetailsFetchError: null,
 };
 
 const indexSlice = createSlice({
@@ -97,32 +103,157 @@ const indexSlice = createSlice({
             state.userContactInformationFetchLoading = false;
             state.userContactInformationFetchError = null;
          });
+
+      // save user resume information
+      bulder
+         .addCase(saveUserResumeInformation.pending, (state) => {
+            state.saveUserResumeResponse = null;
+            state.saveUserResumeLoading = true;
+            state.saveUserResumeError = null;
+         })
+         .addCase(saveUserResumeInformation.rejected, (state, action) => {
+            state.saveUserResumeResponse = null;
+            state.saveUserResumeLoading = false;
+            state.saveUserResumeError = action.error.message;
+         })
+         .addCase(saveUserResumeInformation.fulfilled, (state, action) => {
+            state.saveUserResumeResponse = action.payload.data;
+            state.saveUserResumeLoading = false;
+            state.saveUserResumeError = null;
+         });
+
+      // user resume data fetch
+      bulder
+         .addCase(fetchUserResumeInformation.pending, (state) => {
+            state.userResumeDetails = null;
+            state.userResumeDetailsFetchLoading = true;
+            state.userResumeDetailsFetchError = null;
+         })
+         .addCase(fetchUserResumeInformation.rejected, (state, action) => {
+            state.userResumeDetails = null;
+            state.userResumeDetailsFetchLoading = false;
+            state.userResumeDetailsFetchError = action.error.message;
+         })
+         .addCase(fetchUserResumeInformation.fulfilled, (state, action) => {
+            state.userResumeDetails = action.payload.data;
+            state.userResumeDetailsFetchLoading = false;
+            state.userResumeDetailsFetchError = null;
+         });
    },
 });
 
-export const getAllJobPosts = createAsyncThunk('admin/getAllJobPosts', async () => {
-   const jobResponse = await axios.get(`/index/get-all-job-posts`, headers);
-   return jobResponse;
-});
+export const getAllJobPosts = createAsyncThunk(
+   'admin/getAllJobPosts',
+   async (_, { rejectWithValue }) => {
+      try {
+         const jobResponse = await axios.get(`/index/get-all-job-posts`, headers);
+         return jobResponse;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
 
-export const getSingleJobPost = createAsyncThunk('index/getSingleJobPostDetail', async (data) => {
-   const postResponse = await axios.get(`/index/get-single-post-info/${data.postId}`, headers);
-   return postResponse;
-});
+export const getSingleJobPost = createAsyncThunk(
+   'index/getSingleJobPostDetail',
+   async (data, { rejectWithValue }) => {
+      try {
+         const postResponse = await axios.get(
+            `/index/get-single-post-info/${data.postId}`,
+            headers
+         );
+         return postResponse;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
 
-export const getUserContactInfo = createAsyncThunk('index/getUserContactInfo', async (data) => {
-   const contactInfo = await axios.get(`/index/get-user-contact-info/${data.token}`, headers);
-   return contactInfo;
-});
+export const getUserContactInfo = createAsyncThunk(
+   'index/getUserContactInfo',
+   async (data, { rejectWithValue }) => {
+      try {
+         const contactInfo = await axios.get(`/index/get-user-contact-info/${data.token}`, headers);
+         return contactInfo;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
 
-export const saveUserContactInfo = createAsyncThunk('index/saveUserContactInfo', async (data) => {
-   const contactInfoResponse = await axios.post(
-      `/index/save-user-contact-info/${data.token}`,
-      data,
-      headers
-   );
-   return contactInfoResponse;
-});
+export const saveUserContactInfo = createAsyncThunk(
+   'index/saveUserContactInfo',
+   async ({ token, formData }, { rejectWithValue }) => {
+      try {
+         const contactInfoResponse = await axios.post(
+            `/index/save-user-contact-info/${token}`,
+            formData,
+            {
+               headers: {
+                  'Content-Type': 'multipart/form-data; ',
+               },
+            }
+         );
+         return contactInfoResponse;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const saveUserResumeInformation = createAsyncThunk(
+   'index/saveUserResumeData',
+   async ({ formData, token }, { rejectWithValue }) => {
+      try {
+         const resumeResponse = await axios.post(
+            `/index/save-user-resume-information/${token}`,
+            formData,
+            {
+               headers: {
+                  'Content-Type': 'multipart/form-data; ',
+               },
+            }
+         );
+
+         return resumeResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const fetchUserResumeInformation = createAsyncThunk(
+   'index/getUserResumeInformation',
+   async (token, { rejectWithValue }) => {
+      try {
+         const resumeResponse = await axios.get(
+            `/index/get-user-resume-information/${token}`,
+            headers
+         );
+         return resumeResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
 
 export const { removeContactUpdateInformation } = indexSlice.actions;
 

@@ -95,6 +95,17 @@ code {
    margin: auto;
 }
 
+@media (max-width: 1600px) {
+   .sidePaddingOne {
+      width: 80%;
+      margin: auto;
+   }
+}
+
 .error_text {
    color: var(--button-cl) !important;
+}
+
+.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
+   max-height: calc(56% - 32px) !important;
 }

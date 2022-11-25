@@ -29,24 +29,25 @@ function DashboardSideBarComponent() {
    return (
       <styled.div>
          <UserProfileComponent />
+
+         <SidebarInnerSmComponent
+            icon={<BsBag />}
+            ActiveBar={ActiveBar}
+            active={false}
+            link={'/'}
+            heading={'job'}
+            onClick={ActiveHandler}
+         />
          {!!user && user?.userObject && user?.userObject?.role === 'admin' ? (
             <SidebarInnerSmComponent
                icon={<AiOutlineAppstoreAdd />}
                active={false}
-               link={'/'}
+               link={'/Dashboard'}
                heading={'Dashboard'}
                ActiveBar={ActiveBar}
                onClick={ActiveHandler}
             />
          ) : null}
-         <SidebarInnerSmComponent
-            icon={<BsBag />}
-            ActiveBar={ActiveBar}
-            active={false}
-            link={'job'}
-            heading={'job'}
-            onClick={ActiveHandler}
-         />
          {!!user ? (
             <SidebarInnerSmComponent
                icon={<IoIosLogOut />}

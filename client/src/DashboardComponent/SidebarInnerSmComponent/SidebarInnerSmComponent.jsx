@@ -8,7 +8,7 @@ function SidebarInnerSmComponent({ icon, cl, link, heading, ActiveBar, onClick }
          <div className="flex items-center" onClick={() => onClick(link)}>
             <styled.div
                className={`d-flex align-items-center ${cl ? cl : null}`}
-               active={ActiveBar === link ? true : false}
+               active={ActiveBar === link || link === '/' ? true : false}
             >
                {icon}
             </styled.div>

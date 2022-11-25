@@ -8,6 +8,7 @@ import SpennerComponent from '../../Components/SpennerComponent/SpennerComponent
 import { BiRupee } from '@react-icons/all-files/bi/BiRupee';
 import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 function SingleJobPostDetailsComponent() {
    const params = useParams();
@@ -75,11 +76,17 @@ function SingleJobPostDetailsComponent() {
                      __html: DOMPurify.sanitize(singleJobPost.post.metaData),
                   }}
                ></div>
-               <CustomButtonComponent
-                  onClick={ApplyHandler}
-                  innerText={'Apply'}
-                  btnCl={'category_upload'}
-               />
+               {!!user && user?.userObject && user?.userObject.role === 'admin' ? (
+                  <Link to={`/job/edit/${singleJobPost.post._id}`}>
+                     <CustomButtonComponent innerText={'Edit'} btnCl={'category_upload'} />
+                  </Link>
+               ) : (
+                  <CustomButtonComponent
+                     onClick={ApplyHandler}
+                     innerText={'Apply'}
+                     btnCl={'category_upload'}
+                  />
+               )}
             </div>
          ) : !!singleJobPostFetchError ? (
             <div>

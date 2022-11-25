@@ -6,6 +6,7 @@ import UserProfileOptionComponent from '../../DashboardComponent/UserProfileOpti
 function UserProfileComponent() {
    const [ShowOptions, setShowOptions] = useState(false);
    const { user } = useSelector((state) => state.auth);
+   const { userContactSaveInfo } = useSelector((state) => state.index);
 
    const ShowAndHideHandler = function () {
       setShowOptions(!ShowOptions);
@@ -21,11 +22,22 @@ function UserProfileComponent() {
             <styled.div className="p-3 flex items-center">
                <div>
                   <div className="userProfileDiv" onClick={() => ShowAndHideHandler()}>
-                     <img src={`/images/${user.userObject.profilePic}`} alt="" />
+                     <img
+                        src={`/usersProfileCompress/${
+                           !!userContactSaveInfo?.updatedData?.profilePic
+                              ? userContactSaveInfo?.updatedData.profilePic
+                              : user.userObject.profilePic
+                        }`}
+                        alt=""
+                     />
                   </div>
                </div>
                <div className="userProfileInfo ms-2">
-                  <h5 className="text-white mb-1">{user.userObject.name}</h5>
+                  <h5 className="text-white mb-1">
+                     {!!userContactSaveInfo?.updatedData?.name
+                        ? userContactSaveInfo.updatedData?.name
+                        : user.userObject.name}
+                  </h5>
                   <p className=" text-gray-300">{user.userObject.email}</p>
                </div>
                <UserProfileOptionComponent onClick={hideShowHandler} show={ShowOptions} />

@@ -63,17 +63,25 @@ const authSlice = createSlice({
 
 // sign in user
 export const signInUser = createAsyncThunk('auth/signIn', async (data) => {
-   const signInResponse = await axios.post('/auth/signin-user', data, headers);
-   return signInResponse;
+   try {
+      const signInResponse = await axios.post('/auth/signin-user', data, headers);
+      return signInResponse;
+   } catch (err) {
+      console.log(err);
+   }
 });
 
 // login in user
 export const logInUser = createAsyncThunk('auth/login', async (data) => {
-   const loginUserResponse = await axios.get(
-      `/auth/login-user?email=${data.email}&password=${data.password}`,
-      headers
-   );
-   return loginUserResponse;
+   try {
+      const loginUserResponse = await axios.get(
+         `/auth/login-user?email=${data.email}&password=${data.password}`,
+         headers
+      );
+      return loginUserResponse;
+   } catch (err) {
+      console.log(err);
+   }
 });
 
 export const { setUser, logOutUser } = authSlice.actions;

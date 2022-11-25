@@ -32,9 +32,12 @@ export const div = styled.div`
       color: var(--main-cl);
       border-radius: 5px;
       transition: all 0.4s ease;
+      border: 1px solid transparent;
    }
    .Delete_btn:hover {
       background-color: var(--spec-static-brand-red);
+      color: var(--dark-cl) !important;
+      border: 1px solid var(--dark-cl);
    }
    .clear_btn {
       padding: 0.3rem 3rem;

@@ -107,39 +107,79 @@ const adminSlice = createSlice({
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
-export const postNewJob = createAsyncThunk('admin/postNewJob', async (data) => {
-   const postResponse = await axios.post(`/admin/inert-new-job-post/${data.token}`, data, headers);
-   return postResponse;
-});
-
-export const updateJobPost = createAsyncThunk('admin/updateJobPost', async (data) => {
-   const updateJobPostResponse = await axios.patch(
-      `/admin/update-job-post/${data.token}`,
-      data,
-      headers
-   );
-   return updateJobPostResponse;
-});
-
-export const getSingleJobPostDetails = createAsyncThunk(
-   'admin/getSingleJobPostInfo',
-   async (data) => {
-      const jobResponse = await axios.get(
-         `/admin/get-single-job-post-info/${data.token}?postId=${data.jobId}`,
-         headers
-      );
-      console.log(data);
-      return jobResponse;
+export const postNewJob = createAsyncThunk(
+   'admin/postNewJob',
+   async (data, { rejectWithValue }) => {
+      try {
+         const postResponse = await axios.post(
+            `/admin/inert-new-job-post/${data.token}`,
+            data,
+            headers
+         );
+         return postResponse;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
    }
 );
 
-export const deleteSingleJobPost = createAsyncThunk('admin/deleteSingleJobPost', async (data) => {
-   const postResponse = await axios.delete(
-      `/admin/delete-single-post/${data.token}?postId=${data.postId}`,
-      headers
-   );
-   return postResponse;
-});
+export const updateJobPost = createAsyncThunk(
+   'admin/updateJobPost',
+   async (data, { rejectWithValue }) => {
+      try {
+         const updateJobPostResponse = await axios.patch(
+            `/admin/update-job-post/${data.token}`,
+            data,
+            headers
+         );
+         return updateJobPostResponse;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const getSingleJobPostDetails = createAsyncThunk(
+   'admin/getSingleJobPostInfo',
+   async (data, { rejectWithValue }) => {
+      try {
+         const jobResponse = await axios.get(
+            `/admin/get-single-job-post-info/${data.token}?postId=${data.jobId}`,
+            headers
+         );
+         return jobResponse;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const deleteSingleJobPost = createAsyncThunk(
+   'admin/deleteSingleJobPost',
+   async (data, { rejectWithValue }) => {
+      try {
+         const postResponse = await axios.delete(
+            `/admin/delete-single-post/${data.token}?postId=${data.postId}`,
+            headers
+         );
+         return postResponse;
+      } catch (err) {
+         if (!err.response) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
 
 export const { removeJobPostInfo, removeSingleJobPostInfo } = adminSlice.actions;
 

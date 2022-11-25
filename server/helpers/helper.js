@@ -24,6 +24,10 @@ const httpStatusCodes = {
 };
 
 const checkIsUserValid = function (req, res, next) {
+   /**
+    * @param { token } auth user token, user is valid or not.
+    * @return { Response } if the user is not valid then send back the invalid response to the client.
+    */
    const { token } = req.params;
 
    if (!token) {

@@ -18,6 +18,8 @@ const store = configureStore({
                'admin/getAllJobPosts/fulfilled',
                'auth/login/fulfilled',
                'index/getUserContactInfo/fulfilled',
+               'index/getUserResumeInformation/fulfilled',
+               'index/saveUserResumeData/fulfilled'
             ],
          },
       }).prepend(logger),

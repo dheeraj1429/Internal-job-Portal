@@ -16,6 +16,17 @@ const authSchema = new mongoose.Schema({
    cityState: { type: String },
    postalCode: { type: Number },
    showNumber: { type: Boolean, default: false },
+   bio: { type: String },
+   headline: { type: String },
+   objective: { type: String },
+   year: { type: Number },
+   month: { type: String },
+   date: { type: Number },
+   eligibility: { type: String },
+   industry: { type: String },
+   experience: { type: Number },
+   careerLevel: { type: String },
+   skills: [{ skill: { type: String }, yearOfExperience: { type: String } }],
 });
 
 authSchema.index({ email: 1 });

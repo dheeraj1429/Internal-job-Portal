@@ -15,13 +15,14 @@ import SignInAndLoginPage from './Pages/SignInAndLoginPage/SignInAndLoginPage';
 import DashboardPage from './Pages/DashboardPage/DashboardPage';
 import MyAccountPage from './Pages/MyAccountPage/MyAccountPage';
 import ContactInfoComponent from './Pages/ContactInfoComponent/ContactInfoComponent';
+import AddYourResume from './Pages/AddYourResume/AddYourResume';
 
 function App() {
    const [cookie] = useCookies(['user']);
    const dispatch = useDispatch();
 
    useEffect(() => {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
+      if (cookie && cookie?.user) {
          dispatch(setUser(cookie.user));
       }
    }, []);
@@ -34,12 +35,13 @@ function App() {
                <Route path="login" element={<SignInComponent />} />
             </Route>
             <Route path="/" element={<DashboardPage />}>
-               <Route path="job" element={<AllJobsComponent />} />
+               <Route path="" element={<AllJobsComponent />} />
                <Route path="job/create" element={<PostJobComponent />} />
                <Route path="job/edit/:id" element={<PostJobComponent />} />
                <Route path="job/single/:name/:id" element={<SingleJobPostDetailsComponent />} />
                <Route path="my-account" element={<MyAccountPage />} />
                <Route path="contact" element={<ContactInfoComponent />} />
+               <Route path="resume" element={<AddYourResume />} />
             </Route>
          </Routes>
       </div>

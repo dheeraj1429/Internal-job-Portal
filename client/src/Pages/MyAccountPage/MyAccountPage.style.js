@@ -7,4 +7,16 @@ export const div = styled.div`
    .contact_info {
       width: max-content;
    }
+   .userInfomationShowDiv {
+      width: 100%;
+      border-radius: 5px;
+
+      svg {
+         color: var(--spec-icon-disabled);
+      }
+   }
+
+   h5 {
+      font-size: 24px;
+   }
 `;
