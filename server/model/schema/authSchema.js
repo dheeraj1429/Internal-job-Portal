@@ -26,6 +26,7 @@ const authSchema = new mongoose.Schema({
    industry: { type: String },
    experience: { type: Number },
    careerLevel: { type: String },
+   resume: { type: String },
    skills: [{ skill: { type: String }, yearOfExperience: { type: String } }],
 });
 

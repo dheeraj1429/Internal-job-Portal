@@ -8,10 +8,12 @@ import { MdCallReceived } from '@react-icons/all-files/md/MdCallReceived';
 import { TiLocationOutline } from '@react-icons/all-files/ti/TiLocationOutline';
 import { useNavigate } from 'react-router-dom';
 import { AiFillEye } from '@react-icons/all-files/ai/AiFillEye';
+import { useCookies } from 'react-cookie';
 
 function MyAccountPage() {
    const { user } = useSelector((state) => state.auth);
    const { userContactInformation } = useSelector((state) => state.index);
+   const [cookie] = useCookies(['user']);
 
    const dispatch = useDispatch();
    const navigation = useNavigate();
@@ -21,10 +23,10 @@ function MyAccountPage() {
    };
 
    useEffect(() => {
-      if (user && user?.userObject && user?.userObject?.token) {
-         dispatch(getUserContactInfo({ token: user?.userObject?.token }));
+      if (!!cookie && cookie?.user && cookie?.user?.token) {
+         dispatch(getUserContactInfo({ token: cookie?.user?.token }));
       }
-   }, [!!user]);
+   }, []);
 
    return (
       <styled.div className="sidePaddingOne">

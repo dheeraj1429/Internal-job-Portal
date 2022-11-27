@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { YearData, MonthData, DateData, Career, Experience } from './ExtraData';
 import { GrAdd } from '@react-icons/all-files/gr/GrAdd';
-import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
+import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
 import { FiEdit2 } from '@react-icons/all-files/fi/FiEdit2';
 import { AiFillDelete } from '@react-icons/all-files/ai/AiFillDelete';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,6 +14,7 @@ import {
    saveUserResumeInformation,
    fetchUserResumeInformation,
 } from '../../App/Features/index/indexSlice';
+import { useCookies } from 'react-cookie';
 
 function AddYourResume() {
    const [UserResumeInfo, setUserResumeInfo] = useState({
@@ -27,12 +28,14 @@ function AddYourResume() {
       experience: '',
       careerLevel: '',
       skills: [],
+      resume: '',
    });
    const [ShowSkillOption, setShowSkillOption] = useState(false);
    const [SkillInfo, setSkillInfo] = useState({
       skill: '',
       yearOfExperience: '',
    });
+   const [cookie] = useCookies(['user']);
 
    const { user } = useSelector((state) => state.auth);
    const {
@@ -58,6 +61,11 @@ function AddYourResume() {
    const ShowSkillOptionHandler = function () {
       setShowSkillOption(!ShowSkillOption);
       setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
+   };
+
+   const ResumeHandler = function (event) {
+      const file = event.target.files[0];
+      setUserResumeInfo({ ...UserResumeInfo, resume: file });
    };
 
    const AddSkillHandler = function () {
@@ -100,7 +108,7 @@ function AddYourResume() {
          event.preventDefault();
          const formData = new FormData();
          formData.append('headline', UserResumeInfo.headline);
-         formData.append('objective', UserResumeInfo.objective);
+         formData.append('objective', !!UserResumeInfo.objective ? UserResumeInfo.objective : '');
          formData.append('year', UserResumeInfo.year);
          formData.append('month', UserResumeInfo.month);
          formData.append('date', UserResumeInfo.date);
@@ -110,6 +118,7 @@ function AddYourResume() {
          formData.append('careerLevel', UserResumeInfo.careerLevel);
          formData.append('skills[]', JSON.stringify(UserResumeInfo.skills));
          formData.append('token', user?.userObject?.token);
+         formData.append('resume', UserResumeInfo.resume);
          dispatch(saveUserResumeInformation({ formData, token: user?.userObject?.token }));
       } else {
          navigation('/portal/signin');
@@ -117,10 +126,10 @@ function AddYourResume() {
    };
 
    useEffect(() => {
-      if (!!user && user?.userObject && user?.userObject?.token) {
-         dispatch(fetchUserResumeInformation(user?.userObject?.token));
+      if (!!cookie && cookie?.user && cookie?.user?.token) {
+         dispatch(fetchUserResumeInformation(cookie?.user?.token));
       }
-   }, [!!user]);
+   }, []);
 
    useEffect(() => {
       if (!!userResumeDetails && userResumeDetails.success) {
@@ -261,6 +270,19 @@ function AddYourResume() {
                      variant="outlined"
                      type={'number'}
                   />
+                  <div className="py-3 px-3 updateResume flex items-center">
+                     <div>
+                        <img src="/images/file2.svg" alt="" />
+                     </div>
+                     <div className="ms-3">
+                        <p>
+                           {!!UserResumeInfo?.resume
+                              ? UserResumeInfo?.resume?.name || UserResumeInfo?.resume
+                              : 'Add your resume'}
+                        </p>
+                     </div>
+                     <input type="file" onChange={ResumeHandler} />
+                  </div>
                   <hr />
                   <div className=" mt-3 flex items-center justify-between">
                      <p>Skill - required</p>
@@ -311,7 +333,7 @@ function AddYourResume() {
                         </div>
                      </div>
                   ) : null}
-                  {!!UserResumeInfo.skills.length
+                  {!!UserResumeInfo?.skills && UserResumeInfo?.skills.length
                      ? UserResumeInfo.skills.map((el) => (
                           <div
                              className="flex items-center mt-3 justify-between"

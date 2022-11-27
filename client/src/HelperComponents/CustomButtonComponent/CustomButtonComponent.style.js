@@ -153,6 +153,18 @@ export const div = styled.div`
       background-color: var(--spec-call-to-action-inverse);
       border-radius: 5px;
    }
+   .editButton {
+      padding: 0.3rem 1px;
+      border-radius: 5px;
+      background-color: var(--spec-brand-background-solid);
+
+      p {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         color: var(--main-cl);
+      }
+   }
 `;
 
 export const button = styled.button`

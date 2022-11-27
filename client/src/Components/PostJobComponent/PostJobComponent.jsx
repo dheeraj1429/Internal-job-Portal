@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { MenuItem } from '@mui/material';
 import JoditEditor from 'jodit-react';
-import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
+import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Navigate } from 'react-router';
 import { message } from 'antd';
@@ -15,8 +15,9 @@ import {
    removeSingleJobPostInfo,
    updateJobPost,
 } from '../../App/Features/Admin/adminSlice';
-import HeadingComponent from '../../Components/HeadingComponent/HeadingComponent';
+import HeadingComponent from '../../HelperComponents/HeadingComponent/HeadingComponent';
 import { useParams } from 'react-router';
+import { Cookies, useCookies } from 'react-cookie';
 
 const jobTypeObAr = [{ value: 'Full-Time' }, { value: 'Part-Time' }];
 const jobCategoryObAr = [{ value: 'Exempt' }, { value: 'Non-Exempt' }];
@@ -32,6 +33,7 @@ function PostJobComponent() {
    });
    const editor = useRef(null);
    const [content, setContent] = useState('');
+   const [Coookie] = useCookies(['user']);
 
    const navigation = useNavigate();
    const dispatch = useDispatch();
@@ -107,10 +109,18 @@ function PostJobComponent() {
    }, []);
 
    useEffect(() => {
-      if (params && !!params?.id && !!user && user?.userObject && user?.userObject?.token) {
-         dispatch(getSingleJobPostDetails({ token: user?.userObject?.token, jobId: params.id }));
+      if (
+         params &&
+         !!params?.id &&
+         !!user &&
+         user?.userObject &&
+         !!Coookie &&
+         Coookie?.user &&
+         Coookie?.user?.token
+      ) {
+         dispatch(getSingleJobPostDetails({ token: Coookie?.user?.token, jobId: params.id }));
       }
-   }, [params, user]);
+   }, [params]);
 
    useEffect(() => {
       if (!!singleJobPost && singleJobPost.success && singleJobPost?.post) {

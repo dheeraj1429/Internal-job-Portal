@@ -3,7 +3,7 @@ import * as styled from './JobPostsCartListComponent.style';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import { useDispatch, useSelector } from 'react-redux';
-import SpennerComponent from '../../Components/SpennerComponent/SpennerComponent';
+import SpennerComponent from '../../HelperComponents/SpennerComponent/SpennerComponent';
 import { getAllJobPosts } from '../../App/Features/index/indexSlice';
 
 const JobCartComponent = lazy(() => import('../JobCartComponent/JobCartComponent'));

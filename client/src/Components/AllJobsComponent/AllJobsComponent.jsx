@@ -1,6 +1,6 @@
 import React from 'react';
 import * as styled from './AllJobsComponent.style';
-import HeadingComponent from '../../Components/HeadingComponent/HeadingComponent';
+import HeadingComponent from '../../HelperComponents/HeadingComponent/HeadingComponent';
 import JobPostsCartListComponent from '../JobPostsCartListComponent/JobPostsCartListComponent';
 import InfoBoxComponent from '../InfoBoxComponent/InfoBoxComponent';
 import { useSelector } from 'react-redux';

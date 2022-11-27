@@ -41,7 +41,7 @@ code {
    --spec-filled-container: rgba(255, 255, 255, 0.1);
    --spec-outlined-container: rgb(85, 84, 84);
    --spec-brand-background-solid: #212121;
-   --spec-brand-background-primary: rgba(33, 33, 33, 0.98);
+   --spec-brand-background-primary: rgba(33, 33, 33, 0.445);
    --spec-brand-background-secondary: rgba(33, 33, 33, 0.95);
    --spec-general-background-a: #181818;
    --spec-general-background-b: #0f0f0f;

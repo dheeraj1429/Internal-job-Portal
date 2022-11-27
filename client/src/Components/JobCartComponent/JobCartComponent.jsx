@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router';
 import { deleteSingleJobPost } from '../../App/Features/Admin/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
+import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
 import { Link } from 'react-router-dom';
 
 function JobCartComponent({ data }) {

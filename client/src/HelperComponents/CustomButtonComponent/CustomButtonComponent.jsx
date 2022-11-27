@@ -2,7 +2,7 @@ import React from 'react';
 import * as styled from './CustomButtonComponent.style';
 import HOCSpenner from '../HocSpennerComponent/HocSpennerComponent';
 
-function CustomButtonComponent({ innerText, btnCl, type, onClick }) {
+function CustomButtonComponent({ innerText, btnCl, type, onClick, children }) {
    return (
       <styled.div>
          <styled.button
@@ -10,7 +10,7 @@ function CustomButtonComponent({ innerText, btnCl, type, onClick }) {
             type={type ? type : 'button'}
             className={btnCl}
          >
-            {innerText}
+            {!!children ? children : innerText}
          </styled.button>
       </styled.div>
    );

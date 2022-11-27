@@ -19,7 +19,10 @@ const store = configureStore({
                'auth/login/fulfilled',
                'index/getUserContactInfo/fulfilled',
                'index/getUserResumeInformation/fulfilled',
-               'index/saveUserResumeData/fulfilled'
+               'index/saveUserResumeData/fulfilled',
+               'index/saveUserContactInfo/fulfilled',
+               'index/getSingleJobPostDetail/fulfilled',
+               'index/getUserResumeContantInformation/fulfilled',
             ],
          },
       }).prepend(logger),

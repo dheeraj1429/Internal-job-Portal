@@ -13,6 +13,10 @@ const storage = multer.diskStorage({
       ) {
          callback(null, './upload/usersProfile');
       }
+
+      if (file.mimetype === 'application/pdf') {
+         callback(null, `./upload/userResume`);
+      }
    },
    filename: function (req, file, callback) {
       callback(null, file.originalname);
@@ -30,6 +34,11 @@ route.get(
    checkIsUserValid,
    indexController.fetchUserResumeInformation
 );
+route.get(
+   '/get-user-resume-content/:token',
+   checkIsUserValid,
+   indexController.fetchUserResumeContactInformation
+);
 
 // API => POST
 route.post(
@@ -44,5 +53,6 @@ route.post(
    upload,
    indexController.saveUserResumeInformation
 );
+route.post('/submit-user-information/:token', checkIsUserValid, indexController.jobSubmition);
 
 module.exports = route;

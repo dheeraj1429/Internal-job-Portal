@@ -5,10 +5,11 @@ import { setUser } from './App/Features/Auth/AuthSlice';
 import { useDispatch } from 'react-redux';
 
 // components
-import SignInComponent from './Components/SignInComponent/SignInComponent';
-import PostJobComponent from './DashboardComponent/PostJobComponent/PostJobComponent';
-import AllJobsComponent from './DashboardComponent/AllJobsComponent/AllJobsComponent';
-import SingleJobPostDetailsComponent from './DashboardComponent/SingleJobPostDetailsComponent/SingleJobPostDetailsComponent';
+import SignInComponent from './HelperComponents/SignInComponent/SignInComponent';
+import PostJobComponent from './Components/PostJobComponent/PostJobComponent';
+import AllJobsComponent from './Components/AllJobsComponent/AllJobsComponent';
+import SingleJobPostDetailsComponent from './Components/SingleJobPostDetailsComponent/SingleJobPostDetailsComponent';
+import JobApplyResumeComponent from './Components/JobApplyResumeComponent/JobApplyResumeComponent';
 
 // pages
 import SignInAndLoginPage from './Pages/SignInAndLoginPage/SignInAndLoginPage';
@@ -16,6 +17,7 @@ import DashboardPage from './Pages/DashboardPage/DashboardPage';
 import MyAccountPage from './Pages/MyAccountPage/MyAccountPage';
 import ContactInfoComponent from './Pages/ContactInfoComponent/ContactInfoComponent';
 import AddYourResume from './Pages/AddYourResume/AddYourResume';
+import JobApplyFormPage from './Pages/JobApplyFormPage/JobApplyFormPage';
 
 function App() {
    const [cookie] = useCookies(['user']);
@@ -42,6 +44,9 @@ function App() {
                <Route path="my-account" element={<MyAccountPage />} />
                <Route path="contact" element={<ContactInfoComponent />} />
                <Route path="resume" element={<AddYourResume />} />
+            </Route>
+            <Route path="/beta/form" element={<JobApplyFormPage />}>
+               <Route path="resume/:id" element={<JobApplyResumeComponent />} />
             </Route>
          </Routes>
       </div>

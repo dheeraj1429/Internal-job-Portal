@@ -8,7 +8,15 @@ const path = require('path');
 const SECRET_KEY = process.env.SECRET_KEY;
 
 const getAllJobPosts = catchAsync(async function (req, res, next) {
-   const allJobs = await jobPostModel.find({}, { metaData: 0 });
+   const allJobs = await jobPostModel.find(
+      {},
+      {
+         metaData: 0,
+         'userApplied.reference': 0,
+         'userApplied.notes': 0,
+         'userApplied.referenceResume': 0,
+      }
+   );
    const documentCount = await jobPostModel.countDocuments();
    if (allJobs) {
       return res.status(httpStatusCodes.OK).json({
@@ -26,7 +34,10 @@ const getAllJobPosts = catchAsync(async function (req, res, next) {
 
 const getSingleJobPostDetail = catchAsync(async function (req, res, next) {
    const { id } = req.params;
-   const singleJobPost = await jobPostModel.findOne({ _id: id });
+   const singleJobPost = await jobPostModel.findOne(
+      { _id: id },
+      { 'userApplied.reference': 0, 'userApplied.notes': 0, 'userApplied.referenceResume': 0 }
+   );
    if (singleJobPost) {
       return res.status(httpStatusCodes.OK).json({
          success: true,
@@ -123,20 +134,7 @@ const getUserContactInfo = catchAsync(async function (req, res, next) {
    }
 });
 
-const saveUserResumeInformation = catchAsync(async function (req, res, next) {
-   // check which user is post the data
-   const { token } = req.body;
-   // varify the user
-   const varifyToken = await jwt.verify(token, SECRET_KEY);
-   const { _id } = varifyToken;
-
-   // create a shallow copy of the req.body object values.
-   const userPostedData = Object.assign(req.body);
-   delete userPostedData.token;
-
-   // parse the json object
-   userPostedData.skills = JSON.parse(userPostedData.skills);
-
+const sendResumeUploadResponse = async function (_id, userPostedData, res) {
    const updateUserInfo = await authModel.updateOne({ _id }, { $set: userPostedData });
 
    if (!!updateUserInfo.modifiedCount) {
@@ -149,6 +147,29 @@ const saveUserResumeInformation = catchAsync(async function (req, res, next) {
          success: true,
          message: 'information is already saved',
       });
+   }
+};
+
+const saveUserResumeInformation = catchAsync(async function (req, res, next) {
+   const file = req.files[0];
+   // check which user is post the data
+   const { token } = req.body;
+   // varify the user
+   const varifyToken = await jwt.verify(token, SECRET_KEY);
+   const { _id } = varifyToken;
+   // create a shallow copy of the req.body object values.
+   const userPostedData = Object.assign(req.body);
+   delete userPostedData.token;
+   delete userPostedData.resume;
+   // parse the json object
+   userPostedData.skills = JSON.parse(userPostedData.skills);
+
+   if (file) {
+      const fileName = file.originalname;
+      userPostedData.resume = fileName;
+      sendResumeUploadResponse(_id, userPostedData, res);
+   } else {
+      sendResumeUploadResponse(_id, userPostedData, res);
    }
 });
 
@@ -171,6 +192,7 @@ const fetchUserResumeInformation = catchAsync(async function (req, res, next) {
          experience: 1,
          careerLevel: 1,
          skills: 1,
+         resume: 1,
       }
    );
 
@@ -187,6 +209,71 @@ const fetchUserResumeInformation = catchAsync(async function (req, res, next) {
    }
 });
 
+const fetchUserResumeContactInformation = catchAsync(async function (req, res, next) {
+   const { token } = req.params;
+   // varify the user
+   const varifyToken = await jwt.verify(token, SECRET_KEY);
+   const { _id } = varifyToken;
+   const findUserDetails = await authModel.findOne(
+      { _id },
+      {
+         name: 1,
+         email: 1,
+         street: 1,
+         postalCode: 1,
+         resume: 1,
+         industry: 1,
+         experience: 1,
+      }
+   );
+
+   if (findUserDetails) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         info: findUserDetails,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: 'Internal server error',
+      });
+   }
+});
+
+const jobSubmition = catchAsync(async function (req, res, next) {
+   const { token } = req.params;
+   const { reference, notes, referenceResume, jobId } = req.body;
+   // varify the user
+   const varifyToken = await jwt.verify(token, SECRET_KEY);
+   const { _id } = varifyToken;
+
+   const insertUserSubmition = await jobPostModel.updateOne(
+      { jobId },
+      {
+         $push: {
+            userApplied: {
+               user: _id,
+               reference,
+               notes,
+               referenceResume,
+            },
+         },
+      }
+   );
+
+   if (!!insertUserSubmition.modifiedCount) {
+      return res.status(httpStatusCodes.CREATED).json({
+         success: true,
+         message: 'Job apply successful',
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: 'Internal server error',
+      });
+   }
+});
+
 module.exports = {
    getAllJobPosts,
    getSingleJobPostDetail,
@@ -194,4 +281,6 @@ module.exports = {
    getUserContactInfo,
    saveUserResumeInformation,
    fetchUserResumeInformation,
+   fetchUserResumeContactInformation,
+   jobSubmition,
 };

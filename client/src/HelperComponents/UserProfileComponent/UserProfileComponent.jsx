@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as styled from './UserProfileComponent.style';
 import { useSelector } from 'react-redux';
-import UserProfileOptionComponent from '../../DashboardComponent/UserProfileOptionComponent/UserProfileOptionComponent';
+import UserProfileOptionComponent from '../../Components/UserProfileOptionComponent/UserProfileOptionComponent';
 
 function UserProfileComponent() {
    const [ShowOptions, setShowOptions] = useState(false);
@@ -28,7 +28,6 @@ function UserProfileComponent() {
                               ? userContactSaveInfo?.updatedData.profilePic
                               : user.userObject.profilePic
                         }`}
-                        alt=""
                      />
                   </div>
                </div>

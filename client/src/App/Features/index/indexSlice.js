@@ -22,6 +22,9 @@ const INITAL_STATE = {
    userResumeDetails: null,
    userResumeDetailsFetchLoading: false,
    userResumeDetailsFetchError: null,
+   jobSubmitionResponse: null,
+   jobSubmitionFetchLoading: false,
+   jobSubmitionFetchError: null,
 };
 
 const indexSlice = createSlice({
@@ -30,6 +33,12 @@ const indexSlice = createSlice({
    reducers: {
       removeContactUpdateInformation: (state, action) => {
          state.userContactSaveInfo = action.payload;
+      },
+      removeUserResumeDetails: (state, action) => {
+         state.userResumeDetails = action.payload;
+      },
+      removeJobSubmitionInformation: (state, action) => {
+         state.jobSubmitionResponse = action.payload;
       },
    },
    extraReducers: (bulder) => {
@@ -138,6 +147,40 @@ const indexSlice = createSlice({
             state.userResumeDetails = action.payload.data;
             state.userResumeDetailsFetchLoading = false;
             state.userResumeDetailsFetchError = null;
+         });
+
+      bulder
+         .addCase(fetchUserResumeContactInformation.pending, (state) => {
+            state.userResumeDetails = null;
+            state.userResumeDetailsFetchLoading = true;
+            state.userResumeDetailsFetchError = null;
+         })
+         .addCase(fetchUserResumeContactInformation.rejected, (state, action) => {
+            state.userResumeDetails = null;
+            state.userResumeDetailsFetchLoading = false;
+            state.userResumeDetailsFetchError = action.error.message;
+         })
+         .addCase(fetchUserResumeContactInformation.fulfilled, (state, action) => {
+            state.userResumeDetails = action.payload.data;
+            state.userResumeDetailsFetchLoading = false;
+            state.userResumeDetailsFetchError = null;
+         });
+
+      bulder
+         .addCase(jobSubmition.pending, (state) => {
+            state.jobSubmitionResponse = null;
+            state.jobSubmitionFetchLoading = true;
+            state.jobSubmitionFetchError = null;
+         })
+         .addCase(jobSubmition.rejected, (state, action) => {
+            state.jobSubmitionResponse = null;
+            state.jobSubmitionFetchLoading = false;
+            state.jobSubmitionFetchError = action.error.message;
+         })
+         .addCase(jobSubmition.fulfilled, (state, action) => {
+            state.jobSubmitionResponse = action.payload.data;
+            state.jobSubmitionFetchLoading = false;
+            state.jobSubmitionFetchError = null;
          });
    },
 });
@@ -255,6 +298,47 @@ export const fetchUserResumeInformation = createAsyncThunk(
    }
 );
 
-export const { removeContactUpdateInformation } = indexSlice.actions;
+export const fetchUserResumeContactInformation = createAsyncThunk(
+   'index/getUserResumeContantInformation',
+   async (token, { rejectWithValue }) => {
+      try {
+         const userInformation = await axios.get(
+            `/index/get-user-resume-content/${token}`,
+            headers
+         );
+         return userInformation;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const jobSubmition = createAsyncThunk(
+   'index/submitUserInformation',
+   async ({ token, data }, { rejectWithValue }) => {
+      try {
+         const submitionResponse = await axios.post(
+            `/index/submit-user-information/${token}`,
+            data,
+            headers
+         );
+         return submitionResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const {
+   removeContactUpdateInformation,
+   removeUserResumeDetails,
+   removeJobSubmitionInformation,
+} = indexSlice.actions;
 
 export default indexSlice;

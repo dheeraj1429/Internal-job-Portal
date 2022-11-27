@@ -44,7 +44,7 @@ function SignInComponent() {
    };
 
    useEffect(() => {
-      if (!!user) {
+      if (!!user && user.success) {
          navigation('/');
       }
    }, [user]);

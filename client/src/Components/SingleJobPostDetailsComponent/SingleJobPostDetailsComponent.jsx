@@ -4,9 +4,9 @@ import { useParams } from 'react-router';
 import { getSingleJobPost } from '../../App/Features/index/indexSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DOMPurify from 'dompurify';
-import SpennerComponent from '../../Components/SpennerComponent/SpennerComponent';
+import SpennerComponent from '../../HelperComponents/SpennerComponent/SpennerComponent';
 import { BiRupee } from '@react-icons/all-files/bi/BiRupee';
-import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
+import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
@@ -20,10 +20,12 @@ function SingleJobPostDetailsComponent() {
    );
    const { user } = useSelector((state) => state.auth);
 
-   const ApplyHandler = function () {
+   const ApplyHandler = function (id) {
       if (!user) {
          return navigation('/portal/signin');
       }
+
+      navigation(`/beta/form/resume/${id}`);
    };
 
    useEffect(() => {
@@ -82,8 +84,20 @@ function SingleJobPostDetailsComponent() {
                   </Link>
                ) : (
                   <CustomButtonComponent
-                     onClick={ApplyHandler}
-                     innerText={'Apply'}
+                     onClick={
+                        singleJobPost.post.userApplied
+                           .map((el) => el.user)
+                           .includes(user?.userObject._id)
+                           ? null
+                           : () => ApplyHandler(singleJobPost.post._id)
+                     }
+                     innerText={
+                        singleJobPost.post.userApplied
+                           .map((el) => el.user)
+                           .includes(user?.userObject._id)
+                           ? 'Applyed'
+                           : 'Apply'
+                     }
                      btnCl={'category_upload'}
                   />
                )}

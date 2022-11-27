@@ -8,7 +8,15 @@ const jobModelSchema = new mongoose.Schema({
    jobCategory: { type: String },
    positionDescription: { type: String },
    metaData: { type: String },
-   userApplied: [{ user: { type: mongoose.Types.ObjectId, ref: 'auth' } }],
+   userApplied: [
+      {
+         user: { type: mongoose.Types.ObjectId, ref: 'auth' },
+         reference: { type: Boolean },
+         notes: { type: String },
+         referenceResume: { type: String },
+         createdAt: { type: Date, default: Date.now },
+      },
+   ],
 });
 
 const jobPostModel = mongoose.model('jobPost', jobModelSchema);

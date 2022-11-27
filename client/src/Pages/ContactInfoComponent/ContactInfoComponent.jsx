@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import CustomButtonComponent from '../../Components/CustomButtonComponent/CustomButtonComponent';
+import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import {
    saveUserContactInfo,
@@ -13,7 +13,8 @@ import {
    removeContactUpdateInformation,
 } from '../../App/Features/index/indexSlice';
 import { HiOutlineArrowNarrowRight } from '@react-icons/all-files/hi/HiOutlineArrowNarrowRight';
-import SpennerComponent from '../../Components/SpennerComponent/SpennerComponent';
+import SpennerComponent from '../../HelperComponents/SpennerComponent/SpennerComponent';
+import { useCookies } from 'react-cookie';
 
 function ContactInfoComponent() {
    const [UserContact, setUserContact] = useState({
@@ -29,6 +30,7 @@ function ContactInfoComponent() {
    const [Error, setError] = useState('');
    const [ImagePrev, setImagePrev] = useState('');
    const image = useRef(null);
+   const [cookie] = useCookies(['user']);
 
    const dispatch = useDispatch();
 
@@ -56,7 +58,8 @@ function ContactInfoComponent() {
       }
    };
 
-   const SendHandler = function () {
+   const SendHandler = function (event) {
+      event.preventDefault();
       const { name, phone, street, cityState, postalCode, bio, showNumber } = UserContact;
       const formData = new FormData();
 
@@ -82,22 +85,28 @@ function ContactInfoComponent() {
    };
 
    useEffect(() => {
-      if (user && user?.userObject && user?.userObject?.token) {
-         dispatch(getUserContactInfo({ token: user?.userObject?.token }));
+      if (!!cookie && cookie?.user && cookie?.user?.token) {
+         dispatch(getUserContactInfo({ token: cookie?.user?.token }));
       }
-   }, [!!user]);
+      return () => {
+         // dispatch(removeContactUpdateInformation(null));
+      };
+   }, []);
 
    useEffect(() => {
       if (!!userContactInformation && userContactInformation.success) {
-         setUserContact(userContactInformation.info);
+         setUserContact({
+            name: userContactInformation?.info?.name || '',
+            phone: userContactInformation?.info?.phone || '',
+            bio: userContactInformation?.info?.bio || '',
+            street: userContactInformation?.info?.street || '',
+            cityState: userContactInformation?.info?.cityState || '',
+            postalCode: userContactInformation?.info?.postalCode || '',
+            showNumber: userContactInformation?.info?.showNumber || false,
+            profile: userContactInformation?.info?.profile || '',
+         });
       }
    }, [!!userContactInformation]);
-
-   useEffect(() => {
-      return () => {
-         dispatch(removeContactUpdateInformation(null));
-      };
-   }, []);
 
    return (
       <styled.div className="sidePaddingOne">
@@ -124,125 +133,126 @@ function ContactInfoComponent() {
                   />
                   <input type="file" ref={image} onChange={ImageUploadHander} />
                </div>
-               <Box
-                  component="form"
-                  sx={{
-                     '& > :not(style)': { my: 1, width: '100%' },
-                  }}
-                  noValidate
-                  autoComplete="off"
-               >
-                  <TextField
-                     id="outlined-basic"
-                     label="Name"
-                     name="name"
-                     value={UserContact.name}
-                     onChange={ChangeHandler}
-                     required
-                     type={'text'}
-                     variant="outlined"
-                  />
-                  <TextField
-                     id="outlined-basic"
-                     label="Phone"
-                     name="phone"
-                     value={UserContact.phone}
-                     onChange={ChangeHandler}
-                     required
-                     type={'number'}
-                     variant="outlined"
-                  />
-                  <TextField
-                     label="Bio"
-                     name="bio"
-                     multiline
-                     rows={4}
-                     onChange={ChangeHandler}
-                     value={UserContact.bio}
-                  />
-                  <div>
-                     <FormGroup>
-                        <FormControlLabel
-                           className="fixWidth"
-                           control={
-                              <Checkbox
-                                 checked={UserContact.showNumber}
-                                 name="showNumber"
-                                 onChange={(event) =>
-                                    setUserContact({
-                                       ...UserContact,
-                                       showNumber: event.target.checked,
-                                    })
-                                 }
-                              />
-                           }
-                           label="Only i can see my phone number"
-                        />
-                        <p className=" text-gray-600 mt-1">
-                           By submitting the form with this box checked, you confirm that you are
-                           the primary user and subscriber to the telephone number provided, and you
-                           agree to receive calls (including using artificial or pre-recorded
-                           voice), texts, and WhatsApp messages from Indeed and employers who use
-                           Indeed at the telephone number provided above.
-                        </p>
-                     </FormGroup>
-                  </div>
-                  <div className="mt-4">
-                     <h5>Email</h5>
-                     <div className="flex items-center justify-between">
+               <form onSubmit={SendHandler}>
+                  <Box
+                     sx={{
+                        '& > :not(style)': { my: 1, width: '100%' },
+                     }}
+                     noValidate
+                     autoComplete="off"
+                  >
+                     <TextField
+                        id="outlined-basic"
+                        label="Name"
+                        name="name"
+                        value={UserContact.name}
+                        onChange={ChangeHandler}
+                        required
+                        type={'text'}
+                        variant="outlined"
+                     />
+                     <TextField
+                        id="outlined-basic"
+                        label="Phone"
+                        name="phone"
+                        value={UserContact.phone}
+                        onChange={ChangeHandler}
+                        required
+                        type={'number'}
+                        variant="outlined"
+                     />
+                     <TextField
+                        label="Bio"
+                        name="bio"
+                        multiline
+                        rows={4}
+                        onChange={ChangeHandler}
+                        value={UserContact.bio}
+                     />
+                     <div>
+                        <FormGroup>
+                           <FormControlLabel
+                              className="fixWidth"
+                              control={
+                                 <Checkbox
+                                    checked={UserContact.showNumber}
+                                    name="showNumber"
+                                    onChange={(event) =>
+                                       setUserContact({
+                                          ...UserContact,
+                                          showNumber: event.target.checked,
+                                       })
+                                    }
+                                 />
+                              }
+                              label="Only i can see my phone number"
+                           />
+                           <p className=" text-gray-600 mt-1">
+                              By submitting the form with this box checked, you confirm that you are
+                              the primary user and subscriber to the telephone number provided, and
+                              you agree to receive calls (including using artificial or pre-recorded
+                              voice), texts, and WhatsApp messages from Indeed and employers who use
+                              Indeed at the telephone number provided above.
+                           </p>
+                        </FormGroup>
+                     </div>
+                     <div className="mt-4">
+                        <h5>Email</h5>
+                        <div className="flex items-center justify-between">
+                           <p className="mt-2 text-gray-500">
+                              {!!user && user?.userObject ? user.userObject.email : null}
+                           </p>
+                           <p className=" cursor-pointer flex items-center">
+                              Edit <HiOutlineArrowNarrowRight className="ms-2" />
+                           </p>
+                        </div>
+                     </div>
+                     <div className="mt-4">
+                        <h5>Street address</h5>
                         <p className="mt-2 text-gray-500">
-                           {!!user && user?.userObject ? user.userObject.email : null}
-                        </p>
-                        <p className=" cursor-pointer flex items-center">
-                           Edit <HiOutlineArrowNarrowRight className="ms-2" />
+                           Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae,
+                           blanditiis.
                         </p>
                      </div>
-                  </div>
-                  <div className="mt-4">
-                     <h5>Street address</h5>
-                     <p className="mt-2 text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae,
-                        blanditiis.
-                     </p>
-                  </div>
-                  <TextField
-                     id="outlined-basic"
-                     label="Street"
-                     name="street"
-                     value={UserContact.street}
-                     onChange={ChangeHandler}
-                     required
-                     type={'text'}
-                     variant="outlined"
+                     <TextField
+                        id="outlined-basic"
+                        label="Street"
+                        name="street"
+                        value={UserContact.street}
+                        onChange={ChangeHandler}
+                        required
+                        type={'text'}
+                        variant="outlined"
+                     />
+                     <TextField
+                        id="outlined-basic"
+                        label="City, State"
+                        name="cityState"
+                        value={UserContact.cityState}
+                        onChange={ChangeHandler}
+                        required
+                        type={'text'}
+                        variant="outlined"
+                     />
+                     <TextField
+                        id="outlined-basic"
+                        label="Postal code"
+                        name="postalCode"
+                        value={UserContact.postalCode}
+                        onChange={ChangeHandler}
+                        required
+                        type={'number'}
+                        variant="outlined"
+                     />
+                  </Box>
+                  <CustomButtonComponent
+                     isLaoding={userContactSaveLoading}
+                     type={'submit'}
+                     innerText={'Save'}
+                     btnCl={'category_upload'}
                   />
-                  <TextField
-                     id="outlined-basic"
-                     label="City, State"
-                     name="cityState"
-                     value={UserContact.cityState}
-                     onChange={ChangeHandler}
-                     required
-                     type={'text'}
-                     variant="outlined"
-                  />
-                  <TextField
-                     id="outlined-basic"
-                     label="Postal code"
-                     name="postalCode"
-                     value={UserContact.postalCode}
-                     onChange={ChangeHandler}
-                     required
-                     type={'number'}
-                     variant="outlined"
-                  />
-               </Box>
-               <CustomButtonComponent
-                  onClick={SendHandler}
-                  isLaoding={userContactSaveLoading}
-                  type={'submit'}
-                  innerText={'Save'}
-                  btnCl={'category_upload'}
-               />
+               </form>
+
                {!!Error ? <p className=" text-red-500 mt-2">{Error}</p> : null}
                {!!userContactSaveError ? (
                   <p className=" text-red-500 mt-2">{userContactSaveError}</p>
