@@ -7,6 +7,7 @@ import { signInUser, logInUser } from '../../App/Features/Auth/AuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
 import { Link, Navigate } from 'react-router-dom';
+import validator from 'validator';
 
 function SignInComponent() {
    const [UserInfo, setUserInfo] = useState({
@@ -36,7 +37,12 @@ function SignInComponent() {
             return setError('Please fill all filed');
          if (password !== confirmPassword)
             return setError("Password or confirm password is't match");
-         dispatch(signInUser({ name, email, password }));
+         if (password.length != 8) return setError('password almost 8 digit long');
+         if (validator.isEmail(email)) {
+            dispatch(signInUser({ name, email, password }));
+         } else {
+            setError('Please enter valid email address');
+         }
       } else if (location.pathname === '/portal/login') {
          if (!email && !password) return setError('Please fill all filed');
          dispatch(logInUser({ email, password }));

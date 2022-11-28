@@ -53,6 +53,11 @@ route.post(
    upload,
    indexController.saveUserResumeInformation
 );
-route.post('/submit-user-information/:token', checkIsUserValid, indexController.jobSubmition);
+route.post(
+   '/submit-user-information/:token',
+   checkIsUserValid,
+   upload,
+   indexController.jobSubmition
+);
 
 module.exports = route;

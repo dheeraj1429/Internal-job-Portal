@@ -26,4 +26,4 @@ function HeadingComponent({ heading, subHeading, btn }) {
    );
 }
 
-export default HeadingComponent;
+export default React.memo(HeadingComponent);

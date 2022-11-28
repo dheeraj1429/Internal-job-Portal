@@ -31,7 +31,6 @@ function ContactInfoComponent() {
    const [ImagePrev, setImagePrev] = useState('');
    const image = useRef(null);
    const [cookie] = useCookies(['user']);
-
    const dispatch = useDispatch();
 
    const ChangeHandler = function (event) {
@@ -160,6 +159,11 @@ function ContactInfoComponent() {
                         required
                         type={'number'}
                         variant="outlined"
+                        onInput={(e) => {
+                           e.target.value = Math.max(0, parseInt(e.target.value))
+                              .toString()
+                              .slice(0, 10);
+                        }}
                      />
                      <TextField
                         label="Bio"

@@ -6,9 +6,6 @@ const INITAL_STATE = {
    singleJobPost: null,
    singleJobPostFetchLoading: false,
    singleJobPostFetchError: null,
-   allJobs: null,
-   allJobsFetchLoading: false,
-   allJobsFetchError: null,
    singleJobPost: null,
    userContactSaveInfo: null,
    userContactSaveLoading: false,
@@ -57,24 +54,6 @@ const indexSlice = createSlice({
             state.singleJobPost = action.payload.data;
             state.singleJobPostFetchLoading = false;
             state.singleJobPostFetchError = null;
-         });
-
-      // get all posted jobs
-      bulder
-         .addCase(getAllJobPosts.pending, (state) => {
-            state.allJobs = null;
-            state.allJobsFetchLoading = true;
-            state.allJobsFetchError = null;
-         })
-         .addCase(getAllJobPosts.rejected, (state, action) => {
-            state.allJobs = null;
-            state.allJobsFetchLoading = false;
-            state.allJobsFetchError = action.error.message;
-         })
-         .addCase(getAllJobPosts.fulfilled, (state, action) => {
-            state.allJobs = action.payload.data;
-            state.allJobsFetchLoading = false;
-            state.allJobsFetchError = null;
          });
 
       // update user contact info
@@ -184,21 +163,6 @@ const indexSlice = createSlice({
          });
    },
 });
-
-export const getAllJobPosts = createAsyncThunk(
-   'admin/getAllJobPosts',
-   async (_, { rejectWithValue }) => {
-      try {
-         const jobResponse = await axios.get(`/index/get-all-job-posts`, headers);
-         return jobResponse;
-      } catch (err) {
-         if (!err.response) {
-            throw err;
-         }
-         return rejectWithValue(err.response.data);
-      }
-   }
-);
 
 export const getSingleJobPost = createAsyncThunk(
    'index/getSingleJobPostDetail',
@@ -318,12 +282,16 @@ export const fetchUserResumeContactInformation = createAsyncThunk(
 
 export const jobSubmition = createAsyncThunk(
    'index/submitUserInformation',
-   async ({ token, data }, { rejectWithValue }) => {
+   async ({ token, formData }, { rejectWithValue }) => {
       try {
          const submitionResponse = await axios.post(
             `/index/submit-user-information/${token}`,
-            data,
-            headers
+            formData,
+            {
+               headers: {
+                  'Content-Type': 'multipart/form-data; ',
+               },
+            }
          );
          return submitionResponse;
       } catch (err) {

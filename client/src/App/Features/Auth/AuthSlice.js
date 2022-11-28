@@ -19,7 +19,7 @@ const authSlice = createSlice({
          };
       },
       logOutUser: (state, action) => {
-         state.user = action.payload;
+         state.user = action.payload.data;
       },
    },
    extraReducers: (bulder) => {

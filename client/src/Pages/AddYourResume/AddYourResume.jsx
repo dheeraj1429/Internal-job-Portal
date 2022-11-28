@@ -36,6 +36,7 @@ function AddYourResume() {
       yearOfExperience: '',
    });
    const [cookie] = useCookies(['user']);
+   const [Error, setError] = useState('');
 
    const { user } = useSelector((state) => state.auth);
    const {
@@ -81,14 +82,25 @@ function AddYourResume() {
          setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
          setShowSkillOption(false);
       } else {
-         const id = new Date().getTime().toString(36) + Math.random().toString(16).slice(2);
-         SkillInfo.id = id;
-         setUserResumeInfo({
-            ...UserResumeInfo,
-            skills: UserResumeInfo.skills.concat(SkillInfo),
-         });
-         setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
-         setShowSkillOption(false);
+         const isExists = UserResumeInfo.skills.find(
+            (el) =>
+               el.skill.toLowerCase().replaceAll(' ', '') ===
+               SkillInfo.skill.toLowerCase().replaceAll(' ', '')
+         );
+
+         if (isExists) {
+            setError('skill is already exists');
+         } else {
+            setError('');
+            const id = new Date().getTime().toString(36) + Math.random().toString(16).slice(2);
+            SkillInfo.id = id;
+            setUserResumeInfo({
+               ...UserResumeInfo,
+               skills: UserResumeInfo.skills.concat(SkillInfo),
+            });
+            setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
+            setShowSkillOption(false);
+         }
       }
    };
 
@@ -133,7 +145,20 @@ function AddYourResume() {
 
    useEffect(() => {
       if (!!userResumeDetails && userResumeDetails.success) {
-         setUserResumeInfo(userResumeDetails.info);
+         // setUserResumeInfo(userResumeDetails.info);
+         setUserResumeInfo({
+            headline: userResumeDetails.info?.headline || '',
+            objective: userResumeDetails.info?.objective || '',
+            year: userResumeDetails.info?.year || '',
+            month: userResumeDetails.info?.month || '',
+            date: userResumeDetails.info?.date || '',
+            eligibility: userResumeDetails.info?.eligibility || '',
+            industry: userResumeDetails.info?.industry || '',
+            experience: userResumeDetails.info?.experience || '',
+            careerLevel: userResumeDetails.info?.careerLevel || '',
+            skills: userResumeDetails.info?.skills || [],
+            resume: userResumeDetails.info?.resume || '',
+         });
       }
    }, [!!userResumeDetails]);
 
@@ -375,6 +400,7 @@ function AddYourResume() {
                      type="submit"
                      isLaoding={saveUserResumeLoading}
                   />
+                  {!!Error ? <p className=" text-red-400">{Error}</p> : null}
                   {!!saveUserResumeError || userResumeDetailsFetchError ? (
                      <p className=" text-red-500">
                         {!!saveUserResumeError ? saveUserResumeError : userResumeDetailsFetchError}

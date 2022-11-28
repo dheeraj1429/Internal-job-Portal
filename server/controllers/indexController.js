@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const sharp = require('sharp');
 const path = require('path');
 const SECRET_KEY = process.env.SECRET_KEY;
+const jobAppliedModel = require('../model/schema/jobAppliedSchema');
 
 const getAllJobPosts = catchAsync(async function (req, res, next) {
    const allJobs = await jobPostModel.find(
@@ -240,37 +241,65 @@ const fetchUserResumeContactInformation = catchAsync(async function (req, res, n
    }
 });
 
-const jobSubmition = catchAsync(async function (req, res, next) {
-   const { token } = req.params;
-   const { reference, notes, referenceResume, jobId } = req.body;
-   // varify the user
-   const varifyToken = await jwt.verify(token, SECRET_KEY);
-   const { _id } = varifyToken;
+const submitUserJobApplication = async function (data, jobId, userData, res) {
+   const jobSubmitionRes = await jobAppliedModel(data).save();
 
-   const insertUserSubmition = await jobPostModel.updateOne(
-      { jobId },
-      {
-         $push: {
-            userApplied: {
-               user: _id,
-               reference,
-               notes,
-               referenceResume,
+   if (jobSubmitionRes) {
+      // and alost store information inside the job post database.
+      const insertUserSubmition = await jobPostModel.updateOne(
+         { _id: jobId },
+         {
+            $push: {
+               userApplied: userData,
             },
-         },
+         }
+      );
+      if (!!insertUserSubmition.modifiedCount) {
+         return res.status(httpStatusCodes.CREATED).json({
+            success: true,
+            message: 'Job apply successful',
+         });
       }
-   );
-
-   if (!!insertUserSubmition.modifiedCount) {
-      return res.status(httpStatusCodes.CREATED).json({
-         success: true,
-         message: 'Job apply successful',
-      });
    } else {
       return res.status(httpStatusCodes.INTERNAL_SERVER).json({
          success: false,
          message: 'Internal server error',
       });
+   }
+};
+
+const jobSubmition = catchAsync(async function (req, res, next) {
+   const { token } = req.params;
+   const { reference, notes, candidateName, candidateNumber, referenceResume, jobId } = req.body;
+
+   // varify the user
+   const varifyToken = await jwt.verify(token, SECRET_KEY);
+   const { _id } = varifyToken;
+
+   const file = req.files[0];
+   const insertedObject = {
+      jobId,
+      userId: _id,
+      reference,
+      notes,
+   };
+
+   const userData = {
+      user: _id,
+      reference,
+      notes,
+      referenceResume,
+   };
+
+   if (file) {
+      const originalname = file.originalname;
+      insertedObject.candidateName = candidateName;
+      insertedObject.candidateNumber = candidateNumber;
+      insertedObject.referenceResume = originalname;
+      submitUserJobApplication(insertedObject, jobId, userData, res);
+   } else {
+      insertedObject.referenceResume = referenceResume;
+      submitUserJobApplication(insertedObject, jobId, userData, res);
    }
 });
 

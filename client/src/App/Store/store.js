@@ -23,9 +23,11 @@ const store = configureStore({
                'index/saveUserContactInfo/fulfilled',
                'index/getSingleJobPostDetail/fulfilled',
                'index/getUserResumeContantInformation/fulfilled',
+               'admin/getAllJobApplications/fulfilled',
             ],
          },
-      }).prepend(logger),
+      }),
+   // .prepend(logger),
 });
 
 export default store;

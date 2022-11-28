@@ -23,6 +23,8 @@ function JobApplyResumeComponent() {
    const [UserJobInfo, setUserJobInfo] = useState({
       reference: false,
       notes: '',
+      candidateName: '',
+      candidateNumber: '',
       referenceResume: '',
    });
    const [Error, setError] = useState('');
@@ -57,7 +59,7 @@ function JobApplyResumeComponent() {
 
    const ResumeHandlerUploadHandler = function (event) {
       const file = event.target.files[0];
-      console.log(file);
+      setUserJobInfo({ ...UserJobInfo, referenceResume: file });
    };
 
    const ApplyHandler = function () {
@@ -73,17 +75,41 @@ function JobApplyResumeComponent() {
          }
 
          if (!UserJobInfo.reference) {
+            const formData = new FormData();
+            formData.append('token', cookie?.user?.token);
+            formData.append('reference', UserJobInfo.reference);
+            formData.append('notes', UserJobInfo.notes);
+            formData.append('jobId', jobId);
+
             return dispatch(
                jobSubmition({
                   token: cookie?.user?.token,
-                  data: Object.assign(UserJobInfo, { jobId }),
+                  formData: formData,
                })
             );
          }
 
          if (UserJobInfo.reference) {
-            if (!!UserJobInfo?.referenceResume) {
-               //
+            if (
+               !!UserJobInfo?.referenceResume &&
+               !!UserJobInfo?.candidateName &&
+               !!UserJobInfo?.candidateNumber
+            ) {
+               const formData = new FormData();
+               formData.append('token', cookie?.user?.token);
+               formData.append('reference', UserJobInfo.reference);
+               formData.append('notes', UserJobInfo.notes);
+               formData.append('candidateName', UserJobInfo.candidateName);
+               formData.append('candidateNumber', UserJobInfo.candidateNumber);
+               formData.append('referenceResume', UserJobInfo.referenceResume);
+               formData.append('jobId', jobId);
+
+               dispatch(
+                  jobSubmition({
+                     token: cookie?.user?.token,
+                     formData: formData,
+                  })
+               );
             } else {
                setError(
                   'If you check the reference checkbox then you have to pass the reference candidate’s information.'
@@ -195,6 +221,9 @@ function JobApplyResumeComponent() {
                         label="Reference candidate’s name"
                         variant="outlined"
                         type={'text'}
+                        name="candidateName"
+                        value={UserJobInfo.candidateName}
+                        onChange={(event) => ChangeHandler(event)}
                      />
                      <TextField
                         id="outlined-basic"
@@ -202,6 +231,14 @@ function JobApplyResumeComponent() {
                         label="Reference candidate’s number"
                         variant="outlined"
                         type={'number'}
+                        name="candidateNumber"
+                        onChange={(event) => ChangeHandler(event)}
+                        value={UserJobInfo.candidateNumber}
+                        onInput={(e) => {
+                           e.target.value = Math.max(0, parseInt(e.target.value))
+                              .toString()
+                              .slice(0, 10);
+                        }}
                      />
 
                      <div className="py-3 px-3 border w-100 mt-3 selectDiv updateResume flex items-center">

@@ -9,6 +9,16 @@ route.get(
    checkIsUserValid,
    adminController.getSingleJobPostDetails
 );
+route.get(
+   '/get-all-job-application/:token',
+   checkIsUserValid,
+   adminController.getAllJobApplications
+);
+route.get(
+   '/get-single-job-application/:token',
+   checkIsUserValid,
+   adminController.getSingleJobAplpication
+);
 
 // API => POST
 route.post('/inert-new-job-post/:token', checkIsUserValid, adminController.postNewjob);
