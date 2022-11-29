@@ -61,6 +61,7 @@ const sendUserContactRespone = async function (updateUserContact, res, _id, upda
          email: userInfo.email,
          profilePic: userInfo.userProfile,
          role: userInfo.role,
+         _id,
          token,
       };
 

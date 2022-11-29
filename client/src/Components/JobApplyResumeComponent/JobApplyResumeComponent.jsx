@@ -38,7 +38,6 @@ function JobApplyResumeComponent() {
       userResumeDetailsFetchError,
       jobSubmitionResponse,
       jobSubmitionFetchLoading,
-      jobSubmitionFetchError,
    } = useSelector((state) => state.index);
    const { user } = useSelector((state) => state.auth);
    const params = useParams();
@@ -246,7 +245,11 @@ function JobApplyResumeComponent() {
                            <img src="/images/file2.svg" alt="" />
                         </div>
                         <div className="ms-3">
-                           <p>Add your reference candidate’s resume</p>
+                           {!!UserJobInfo.referenceResume && UserJobInfo.referenceResume?.name ? (
+                              <p>{UserJobInfo.referenceResume?.name}</p>
+                           ) : (
+                              <p>Add your reference candidate’s resume</p>
+                           )}
                         </div>
                         <input type="file" onChange={ResumeHandlerUploadHandler} />
                      </div>

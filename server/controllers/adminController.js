@@ -3,6 +3,7 @@ const jobPostModel = require('../model/schema/jobSchema');
 const { httpStatusCodes } = require('../helpers/helper');
 const jobAppliedModel = require('../model/schema/jobAppliedSchema');
 const { default: mongoose } = require('mongoose');
+const path = require('path');
 
 const postNewjob = catchAsync(async function (req, res, next) {
    const insertedObject = { ...req.body };
@@ -196,10 +197,9 @@ const getSingleJobAplpication = catchAsync(async function (req, res, next) {
             _id: 1,
             reference: 1,
             notes: 1,
-            referenecResume: 1,
+            referenceResume: 1,
             candidateName: 1,
             candidateNumber: 1,
-            referenecResume: 1,
             jobApplied: { $arrayElemAt: ['$jobApplied', 0] },
             user: { $arrayElemAt: ['$user', 0] },
          },
@@ -209,10 +209,9 @@ const getSingleJobAplpication = catchAsync(async function (req, res, next) {
             _id: 1,
             reference: 1,
             notes: 1,
-            referenecResume: 1,
+            referenceResume: 1,
             candidateName: 1,
             candidateNumber: 1,
-            referenecResume: 1,
             'jobApplied._id': 1,
             'jobApplied.jobTitle': 1,
             'jobApplied.salaryRangeStart': 1,
@@ -232,6 +231,7 @@ const getSingleJobAplpication = catchAsync(async function (req, res, next) {
             'user.experience': 1,
             'user.industry': 1,
             'user.skills': 1,
+            'user.resume': 1,
          },
       },
    ]);
@@ -249,6 +249,12 @@ const getSingleJobAplpication = catchAsync(async function (req, res, next) {
    }
 });
 
+const downloadUserResume = catchAsync(async function (req, res, next) {
+   const { resume } = req.query;
+   const resumePata = path.join(__dirname, '..', 'upload', 'userResume', resume);
+   res.download(resumePata);
+});
+
 module.exports = {
    postNewjob,
    getSingleJobPostDetails,
@@ -256,4 +262,5 @@ module.exports = {
    deleteSingleJobPost,
    getAllJobApplications,
    getSingleJobAplpication,
+   downloadUserResume,
 };

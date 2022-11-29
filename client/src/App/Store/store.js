@@ -24,6 +24,7 @@ const store = configureStore({
                'index/getSingleJobPostDetail/fulfilled',
                'index/getUserResumeContantInformation/fulfilled',
                'admin/getAllJobApplications/fulfilled',
+               'auth/signIn/fulfilled',
             ],
          },
       }),

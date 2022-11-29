@@ -5,6 +5,7 @@
 .env
 /notes.txt
 /upload
+/build
 
 
 # testing

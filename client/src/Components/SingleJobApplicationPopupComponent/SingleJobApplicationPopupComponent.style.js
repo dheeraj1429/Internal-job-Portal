@@ -26,6 +26,7 @@ export const div = styled.div`
       opacity: ${(props) => (props.show ? '1' : '0')};
       transform: ${(props) => (props.show ? 'scale(1)' : 'scale(.6)')};
       z-index: 20;
+      overflow-x: hidden;
 
       .closeBtnDiv {
          position: absolute;
@@ -67,6 +68,10 @@ export const div = styled.div`
          border-radius: 5px;
          font-size: 14px;
          margin-right: 1rem;
+      }
+
+      .sm_downloda {
+         width: 10px;
       }
    }
 `;

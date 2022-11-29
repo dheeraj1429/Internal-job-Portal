@@ -42,6 +42,14 @@ function JobCartComponent({ data }) {
       }
    };
 
+   const checkDays = function () {
+      return Math.abs(
+         Math.ceil(new Date('2022-11-29T07:29:24.804Z') - new Date()) / (1000 * 60 * 60 * 24)
+      ).toFixed();
+   };
+
+   let days = checkDays();
+
    return (
       <div className="jobPostCart shadow  rounded-lg">
          <div className="flex items-center justify-between px-4 py-3 border-bottom">
@@ -75,7 +83,9 @@ function JobCartComponent({ data }) {
                      </Menu>
                   </div>
                ) : null}
-               <span className=" text-gray-400">6 days ago</span>
+               <span className=" text-gray-400">
+                  Posted {days === '0' ? 'Today' : `${days} days ago`}
+               </span>
             </div>
          </div>
          <div className="mt-2 pt-2 pb-3 px-4">

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { headers } from '../../../axiosConfig';
+import FileDownload from 'js-file-download';
 
 const INITAL_STATE = {
    insertNewJobPost: null,
@@ -20,6 +21,8 @@ const INITAL_STATE = {
    allJobs: null,
    allJobsFetchLoading: false,
    allJobsFetchError: null,
+   downloadResumeLoading: false,
+   downloadResumeError: null,
 };
 
 const adminSlice = createSlice({
@@ -164,6 +167,20 @@ const adminSlice = createSlice({
             state.singleJobApplicationFetchLoading = false;
             state.singleJobApplicationFetchError = null;
          });
+
+      bulder
+         .addCase(downloadResume.pending, (state) => {
+            state.downloadResumeLoading = true;
+            state.downloadResumeError = null;
+         })
+         .addCase(downloadResume.rejected, (state, action) => {
+            state.downloadResumeLoading = false;
+            state.downloadResumeError = action.error.message;
+         })
+         .addCase(downloadResume.fulfilled, (state, action) => {
+            state.downloadResumeLoading = false;
+            state.downloadResumeError = null;
+         });
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
@@ -284,6 +301,28 @@ export const getSingleJobApplication = createAsyncThunk(
             headers
          );
          return SingleJobApplicationResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const downloadResume = createAsyncThunk(
+   'admin/downloadUserResume',
+   async ({ token, resume }, { rejectWithValue }) => {
+      try {
+         const resumeResponse = await axios.get(
+            `/admin/downloadUserResume/${token}?resume=${resume}`,
+            {
+               responseType: 'blob',
+            }
+         );
+
+         FileDownload(resumeResponse?.data, 'resume.pdf');
+         return resumeResponse;
       } catch (err) {
          if (err) {
             throw err;

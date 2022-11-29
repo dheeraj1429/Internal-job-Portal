@@ -10,7 +10,7 @@ function ListComponent({ heading, subHeading, subHeadingSecond, icon }) {
             </div>
             <span className=" text-gray-500 flex items-center">
                {!!icon ? icon : null}
-               {subHeading} {!!subHeadingSecond ? `- ${subHeadingSecond}` : null}
+               {subHeading} {!!subHeadingSecond ? subHeadingSecond : null}
             </span>
          </div>
       </styled.div>

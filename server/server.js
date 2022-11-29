@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'upload')));
+app.use(express.static(path.join(path.resolve(__dirname), 'build')));
 app.use(logger());
 
 // routs
@@ -27,6 +28,11 @@ const indexRoute = require('./routes/indexRoute');
 app.use('/auth', authRoute);
 app.use('/admin', adminRoute);
 app.use('/index', indexRoute);
+
+// for build file
+app.get('*', (req, res) => {
+   res.sendFile(path.join(path.resolve(__dirname), 'build', 'index.html'));
+});
 
 // server listen
 databaseConnection(() =>

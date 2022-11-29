@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { headers } from '../../../axiosConfig';
+import { headers, multipartData } from '../../../axiosConfig';
 
 const INITAL_STATE = {
    singleJobPost: null,
@@ -204,11 +204,7 @@ export const saveUserContactInfo = createAsyncThunk(
          const contactInfoResponse = await axios.post(
             `/index/save-user-contact-info/${token}`,
             formData,
-            {
-               headers: {
-                  'Content-Type': 'multipart/form-data; ',
-               },
-            }
+            multipartData
          );
          return contactInfoResponse;
       } catch (err) {
@@ -227,11 +223,7 @@ export const saveUserResumeInformation = createAsyncThunk(
          const resumeResponse = await axios.post(
             `/index/save-user-resume-information/${token}`,
             formData,
-            {
-               headers: {
-                  'Content-Type': 'multipart/form-data; ',
-               },
-            }
+            multipartData
          );
 
          return resumeResponse;
@@ -287,11 +279,7 @@ export const jobSubmition = createAsyncThunk(
          const submitionResponse = await axios.post(
             `/index/submit-user-information/${token}`,
             formData,
-            {
-               headers: {
-                  'Content-Type': 'multipart/form-data; ',
-               },
-            }
+            multipartData
          );
          return submitionResponse;
       } catch (err) {

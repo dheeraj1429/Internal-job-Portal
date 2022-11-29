@@ -7,11 +7,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-   saveUserContactInfo,
-   getUserContactInfo,
-   removeContactUpdateInformation,
-} from '../../App/Features/index/indexSlice';
+import { saveUserContactInfo, getUserContactInfo } from '../../App/Features/index/indexSlice';
 import { HiOutlineArrowNarrowRight } from '@react-icons/all-files/hi/HiOutlineArrowNarrowRight';
 import SpennerComponent from '../../HelperComponents/SpennerComponent/SpennerComponent';
 import { useCookies } from 'react-cookie';
@@ -45,15 +41,28 @@ function ContactInfoComponent() {
       userContactSaveError,
       userContactInformation,
       userContactInformationFetchLoading,
-      userContactInformationFetchError,
    } = useSelector((state) => state.index);
+
+   const ValidateImage = function (value) {
+      const allowedFiles = ['.jpg', '.png', '.jpeg'];
+      const regex = new RegExp('([a-zA-Z0-9s_\\.-:])+(' + allowedFiles.join('|') + ')$');
+      if (!regex.test(value)) return false;
+      else return true;
+   };
 
    const ImageUploadHander = function (event) {
       const file = event.target.files[0];
-      setUserContact({ ...UserContact, profile: file });
-      if (file) {
-         const src = URL.createObjectURL(file);
-         setImagePrev(src);
+
+      const checkImage = ValidateImage(image.current.value);
+      if (checkImage) {
+         setUserContact({ ...UserContact, profile: file });
+         if (file) {
+            setError('');
+            const src = URL.createObjectURL(file);
+            setImagePrev(src);
+         }
+      } else {
+         setError(`Please upload files having extensions: jpg, png, jpeg only.`);
       }
    };
 
@@ -67,7 +76,7 @@ function ContactInfoComponent() {
 
       if (String(phone).length !== 10) return setError('Enter 10 digit phone number');
 
-      if (!!user && user?.userObject && user?.userObject?.token) {
+      if (!Error && !!user && user?.userObject && user?.userObject?.token) {
          formData.append('name', name);
          formData.append('phone', phone);
          formData.append('street', street);
@@ -87,9 +96,6 @@ function ContactInfoComponent() {
       if (!!cookie && cookie?.user && cookie?.user?.token) {
          dispatch(getUserContactInfo({ token: cookie?.user?.token }));
       }
-      return () => {
-         // dispatch(removeContactUpdateInformation(null));
-      };
    }, []);
 
    useEffect(() => {
@@ -247,6 +253,11 @@ function ContactInfoComponent() {
                         required
                         type={'number'}
                         variant="outlined"
+                        onInput={(e) => {
+                           e.target.value = Math.max(0, parseInt(e.target.value))
+                              .toString()
+                              .slice(0, 10);
+                        }}
                      />
                   </Box>
                   <CustomButtonComponent

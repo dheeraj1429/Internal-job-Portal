@@ -28,6 +28,12 @@ function SignInComponent() {
       setUserInfo({ ...UserInfo, [name]: value });
    };
 
+   const checkPassword = function (pwd) {
+      var paswd = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+      if (pwd.match(paswd)) return true;
+      else return false;
+   };
+
    const signInHandler = function (e) {
       e.preventDefault();
       const { name, email, password, confirmPassword } = UserInfo;
@@ -35,14 +41,19 @@ function SignInComponent() {
       if (location.pathname === '/portal/signin') {
          if (!name && !email && !password && !confirmPassword)
             return setError('Please fill all filed');
+
          if (password !== confirmPassword)
             return setError("Password or confirm password is't match");
-         if (password.length != 8) return setError('password almost 8 digit long');
-         if (validator.isEmail(email)) {
-            dispatch(signInUser({ name, email, password }));
-         } else {
-            setError('Please enter valid email address');
-         }
+
+         if (!validator.isEmail(email)) return setError('Please enter valid email address');
+
+         const passwordCheck = checkPassword(password);
+         if (!passwordCheck)
+            return setError(
+               'Password between 8 to 15 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character'
+            );
+
+         dispatch(signInUser({ name, email, password }));
       } else if (location.pathname === '/portal/login') {
          if (!email && !password) return setError('Please fill all filed');
          dispatch(logInUser({ email, password }));
@@ -120,9 +131,23 @@ function SignInComponent() {
             btnCl={'category_upload mb-2'}
          />
          {location.pathname === '/portal/login' ? (
-            <span>Create an account {<Link to={'/portal/signin'}>Click here</Link>}</span>
+            <span>
+               Create an account{' '}
+               {
+                  <Link to={'/portal/signin'} className=" text-sky-500">
+                     Click here
+                  </Link>
+               }
+            </span>
          ) : (
-            <span>Already have an account {<Link to={'/portal/login'}>Click here</Link>}</span>
+            <span>
+               Already have an account{' '}
+               {
+                  <Link to={'/portal/login'} className=" text-sky-500">
+                     Click here
+                  </Link>
+               }
+            </span>
          )}
          {!!Error ? <p className="error_text mt-2">{Error}</p> : null}
          {!!user && !user.success ? <p className="error_text mt-2">{user.message}</p> : null}

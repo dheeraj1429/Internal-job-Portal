@@ -72,26 +72,28 @@ function MyAccountPage() {
                )}
             </div>
          ) : null}
-         <div className="mt-5">
-            <h5>Resumes</h5>
-            <div
-               className="userInfomationShowDiv shadow px-5 py-4 mt-4 cursor-pointer flex items-center"
-               onClick={() => navigation('/resume')}
-            >
-               <div className="me-4">
-                  <img src="/images/file.svg" alt="" />
-               </div>
-               <div>
-                  <p>Resume</p>
-                  <div>
-                     <span className=" text-gray-700">Updated Aug 10, 2022</span>
+         {!!user && user?.userObject && user?.userObject?.role === 'admin' ? null : (
+            <div className="mt-5">
+               <h5>Resumes</h5>
+               <div
+                  className="userInfomationShowDiv shadow px-5 py-4 mt-4 cursor-pointer flex items-center"
+                  onClick={() => navigation('/resume')}
+               >
+                  <div className="me-4">
+                     <img src="/images/file.svg" alt="" />
                   </div>
-                  <span className=" text-gray-700 flex items-center">
-                     <AiFillEye className="me-2" /> Public
-                  </span>
+                  <div>
+                     <p>Resume</p>
+                     <div>
+                        <span className=" text-gray-700">Updated Aug 10, 2022</span>
+                     </div>
+                     <span className=" text-gray-700 flex items-center">
+                        <AiFillEye className="me-2" /> Public
+                     </span>
+                  </div>
                </div>
             </div>
-         </div>
+         )}
       </styled.div>
    );
 }

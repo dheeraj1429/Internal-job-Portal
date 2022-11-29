@@ -3,19 +3,30 @@ import * as styled from './SingleJobApplicationPopupComponent.style';
 import ReactDOM from 'react-dom';
 import { VscClose } from '@react-icons/all-files/vsc/VscClose';
 import SpennerComponent from '../../HelperComponents/SpennerComponent/SpennerComponent';
-import { getSingleJobApplication } from '../../App/Features/Admin/adminSlice';
+import { getSingleJobApplication, downloadResume } from '../../App/Features/Admin/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { BiRupee } from '@react-icons/all-files/bi/BiRupee';
 import ListComponent from '../ListComponent/ListComponent';
+import { BsEyeFill } from '@react-icons/all-files/bs/BsEyeFill';
+import { useCookies } from 'react-cookie';
 
 function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
    const dispatch = useDispatch();
+   const [cookie] = useCookies(['user']);
 
    const {
       singleJobApplication,
       singleJobApplicationFetchLoading,
       singleJobApplicationFetchError,
+      downloadResumeLoading,
+      downloadResumeError,
    } = useSelector((state) => state.admin);
+
+   const DownloadResumeHandler = function (resume) {
+      if (!!cookie && cookie?.user && cookie?.user?.token) {
+         dispatch(downloadResume({ token: cookie?.user?.token, resume }));
+      }
+   };
 
    useEffect(() => {
       if (!!show?.jobId && !!show?.token) {
@@ -34,7 +45,8 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                   <SpennerComponent />
                </div>
             ) : null}
-            {!!singleJobApplication &&
+            {!singleJobApplicationFetchError &&
+            !!singleJobApplication &&
             singleJobApplication?.success &&
             singleJobApplication?.applications ? (
                <>
@@ -55,9 +67,7 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                   <ListComponent
                      heading={'Salary'}
                      subHeading={singleJobApplication?.applications[0]?.jobApplied.salaryRangeStart}
-                     subHeadingSecond={
-                        singleJobApplication?.applications[0]?.jobApplied.salaryRangeEnd
-                     }
+                     subHeadingSecond={`- ${singleJobApplication?.applications[0]?.jobApplied.salaryRangeEnd}`}
                      icon={<BiRupee />}
                   />
                   <hr className="mt-3 mb-3" />
@@ -113,6 +123,32 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                      heading={'Eligibility'}
                      subHeading={singleJobApplication?.applications[0]?.user.eligibility}
                   />
+                  {!!singleJobApplication?.applications[0]?.user?.resume ? (
+                     <ListComponent
+                        heading={'Resume'}
+                        subHeading={
+                           singleJobApplication?.applications[0]?.referenceResume ||
+                           singleJobApplication?.applications[0]?.user.resume
+                        }
+                        subHeadingSecond={
+                           !!downloadResumeLoading ? (
+                              <div className="sm_downloda ms-2">
+                                 <SpennerComponent />
+                              </div>
+                           ) : (
+                              <BsEyeFill
+                                 className="ms-2 cursor-pointer"
+                                 onClick={() =>
+                                    DownloadResumeHandler(
+                                       singleJobApplication?.applications[0]?.referenceResume ||
+                                          singleJobApplication?.applications[0]?.user.resume
+                                    )
+                                 }
+                              />
+                           )
+                        }
+                     />
+                  ) : null}
                   <h5 className="mt-4">Skills</h5>
                   <div className="mt-3 topDiv">
                      {!!singleJobApplication?.applications[0]?.user?.skills &&
@@ -127,6 +163,14 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                      )}
                   </div>
                </>
+            ) : !!singleJobApplicationFetchError ? (
+               <div>
+                  <p className=" text-red-500">{singleJobApplicationFetchError}</p>
+               </div>
+            ) : null}
+
+            {!!downloadResumeError ? (
+               <p className=" text-red-600 text-sm">{downloadResumeError}</p>
             ) : null}
          </div>
       </styled.div>,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as styled from './AddYourResume.style';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -9,7 +9,7 @@ import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/
 import { FiEdit2 } from '@react-icons/all-files/fi/FiEdit2';
 import { AiFillDelete } from '@react-icons/all-files/ai/AiFillDelete';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
+import { useNavigate, Navigate } from 'react-router';
 import {
    saveUserResumeInformation,
    fetchUserResumeInformation,
@@ -31,6 +31,7 @@ function AddYourResume() {
       resume: '',
    });
    const [ShowSkillOption, setShowSkillOption] = useState(false);
+   const ResumeRef = useRef(null);
    const [SkillInfo, setSkillInfo] = useState({
       skill: '',
       yearOfExperience: '',
@@ -44,7 +45,6 @@ function AddYourResume() {
       saveUserResumeResponse,
       saveUserResumeError,
       userResumeDetails,
-      userResumeDetailsFetchLoading,
       userResumeDetailsFetchError,
    } = useSelector((state) => state.index);
    const dispatch = useDispatch();
@@ -54,6 +54,8 @@ function AddYourResume() {
       const { name, value } = event.target;
       if (eventTarget === 'skillHandler') {
          setSkillInfo({ ...SkillInfo, [name]: value });
+      } else if (eventTarget === 'monthSelector') {
+         setUserResumeInfo({ ...UserResumeInfo, [name]: value });
       } else {
          setUserResumeInfo({ ...UserResumeInfo, [name]: value });
       }
@@ -64,9 +66,23 @@ function AddYourResume() {
       setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
    };
 
+   const ValidateResumePdf = function (value) {
+      const allowedFiles = ['.pdf'];
+      const regex = new RegExp('([a-zA-Z0-9s_\\.-:])+(' + allowedFiles.join('|') + ')$');
+      if (!regex.test(value)) return false;
+      else return true;
+   };
+
    const ResumeHandler = function (event) {
       const file = event.target.files[0];
-      setUserResumeInfo({ ...UserResumeInfo, resume: file });
+
+      const checkResumeIsValid = ValidateResumePdf(ResumeRef.current.value);
+      if (checkResumeIsValid) {
+         setUserResumeInfo({ ...UserResumeInfo, resume: file });
+         setError('');
+      } else {
+         setError('Please upload files having extensions: pdf only.');
+      }
    };
 
    const AddSkillHandler = function () {
@@ -77,7 +93,13 @@ function AddYourResume() {
       if (findSkillIsExists) {
          setUserResumeInfo({
             ...UserResumeInfo,
-            skills: UserResumeInfo.skills.map((el) => (el._id === SkillInfo._id ? SkillInfo : el)),
+            skills: UserResumeInfo.skills.map((el) => {
+               if (!!SkillInfo?._id) {
+                  return el._id === SkillInfo._id ? SkillInfo : el;
+               } else {
+                  return el.id === SkillInfo.id ? SkillInfo : el;
+               }
+            }),
          });
          setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
          setShowSkillOption(false);
@@ -91,15 +113,20 @@ function AddYourResume() {
          if (isExists) {
             setError('skill is already exists');
          } else {
-            setError('');
             const id = new Date().getTime().toString(36) + Math.random().toString(16).slice(2);
             SkillInfo.id = id;
-            setUserResumeInfo({
-               ...UserResumeInfo,
-               skills: UserResumeInfo.skills.concat(SkillInfo),
-            });
-            setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
-            setShowSkillOption(false);
+
+            if (!!SkillInfo?.skill) {
+               setError('');
+               setUserResumeInfo({
+                  ...UserResumeInfo,
+                  skills: UserResumeInfo.skills.concat(SkillInfo),
+               });
+               setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
+               setShowSkillOption(false);
+            } else {
+               setError('Skill name is required!');
+            }
          }
       }
    };
@@ -116,8 +143,9 @@ function AddYourResume() {
    };
 
    const SaveHandler = function (event) {
-      if (!!user && user?.userObject && user?.userObject?.token) {
+      if (!Error && !!user && user?.userObject && user?.userObject?.token) {
          event.preventDefault();
+
          const formData = new FormData();
          formData.append('headline', UserResumeInfo.headline);
          formData.append('objective', !!UserResumeInfo.objective ? UserResumeInfo.objective : '');
@@ -145,7 +173,6 @@ function AddYourResume() {
 
    useEffect(() => {
       if (!!userResumeDetails && userResumeDetails.success) {
-         // setUserResumeInfo(userResumeDetails.info);
          setUserResumeInfo({
             headline: userResumeDetails.info?.headline || '',
             objective: userResumeDetails.info?.objective || '',
@@ -161,6 +188,10 @@ function AddYourResume() {
          });
       }
    }, [!!userResumeDetails]);
+
+   if (!!user && user?.userObject && user?.userObject?.role === 'admin') {
+      return <Navigate to={'/'} />;
+   }
 
    return (
       <styled.div className="sidePaddingOne">
@@ -221,7 +252,7 @@ function AddYourResume() {
                            name="month"
                            required
                            value={UserResumeInfo.month}
-                           onChange={(event) => ChangeHandler(event)}
+                           onChange={(event) => ChangeHandler(event, 'monthSelector')}
                            helperText="Please select month"
                            className="w-100"
                         >
@@ -306,7 +337,7 @@ function AddYourResume() {
                               : 'Add your resume'}
                         </p>
                      </div>
-                     <input type="file" onChange={ResumeHandler} />
+                     <input type="file" ref={ResumeRef} onChange={ResumeHandler} />
                   </div>
                   <hr />
                   <div className=" mt-3 flex items-center justify-between">

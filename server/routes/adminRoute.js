@@ -19,6 +19,7 @@ route.get(
    checkIsUserValid,
    adminController.getSingleJobAplpication
 );
+route.get('/downloadUserResume/:token', checkIsUserValid, adminController.downloadUserResume);
 
 // API => POST
 route.post('/inert-new-job-post/:token', checkIsUserValid, adminController.postNewjob);
