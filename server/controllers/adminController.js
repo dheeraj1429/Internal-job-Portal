@@ -4,6 +4,7 @@ const { httpStatusCodes } = require('../helpers/helper');
 const jobAppliedModel = require('../model/schema/jobAppliedSchema');
 const { default: mongoose } = require('mongoose');
 const path = require('path');
+const authModel = require('../model/schema/authSchema');
 
 const postNewjob = catchAsync(async function (req, res, next) {
    const insertedObject = { ...req.body };
@@ -255,6 +256,72 @@ const downloadUserResume = catchAsync(async function (req, res, next) {
    res.download(resumePata);
 });
 
+const getAllLoginUsers = catchAsync(async function (req, res, next) {
+   const allUsers = await authModel.find(
+      { role: { $ne: 'admin' } },
+      { tokens: 0, skills: 0, password: 0 }
+   );
+   if (allUsers) {
+      res.status(httpStatusCodes.OK).json({
+         success: true,
+         users: allUsers,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: 'Internal server error',
+      });
+   }
+});
+
+const updateUserRole = catchAsync(async function (req, res, next) {
+   const { role, userId } = req.body;
+   const updateUser = await authModel.updateOne(
+      { _id: userId },
+      {
+         $set: {
+            role,
+         },
+      }
+   );
+
+   if (!!updateUser.modifiedCount) {
+      return res.status(httpStatusCodes.CREATED).json({
+         success: true,
+         message: 'user role updated',
+         userId,
+         role,
+      });
+   } else {
+      return res.status(httpStatusCodes.OK).json({
+         success: false,
+         message: 'user role already updated',
+         userId,
+         role,
+      });
+   }
+});
+
+const deleteUserAccount = catchAsync(async function (req, res, next) {
+   const { userId } = req.query;
+   if (!userId) {
+      throw new Error('user id is required!');
+   }
+   const deleteAccount = await authModel.deleteOne({ _id: userId });
+   if (!!deleteAccount.deletedCount) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         message: 'user account deleted',
+         userId,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: 'Internal server error',
+      });
+   }
+});
+
 module.exports = {
    postNewjob,
    getSingleJobPostDetails,
@@ -263,4 +330,7 @@ module.exports = {
    getAllJobApplications,
    getSingleJobAplpication,
    downloadUserResume,
+   getAllLoginUsers,
+   updateUserRole,
+   deleteUserAccount,
 };

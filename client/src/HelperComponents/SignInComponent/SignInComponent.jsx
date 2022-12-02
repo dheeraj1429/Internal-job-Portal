@@ -143,7 +143,7 @@ function SignInComponent() {
             <span>
                Already have an account{' '}
                {
-                  <Link to={'/portal/login'} className=" text-sky-500">
+                  <Link to={'/portal/login'} className=" text-sky-500" onClick={() => setError('')}>
                      Click here
                   </Link>
                }

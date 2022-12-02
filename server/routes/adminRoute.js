@@ -20,14 +20,17 @@ route.get(
    adminController.getSingleJobAplpication
 );
 route.get('/downloadUserResume/:token', checkIsUserValid, adminController.downloadUserResume);
+route.get('/get-all-login-users/:token', checkIsUserValid, adminController.getAllLoginUsers);
 
 // API => POST
 route.post('/inert-new-job-post/:token', checkIsUserValid, adminController.postNewjob);
 
 // API => PATCH
 route.patch('/update-job-post/:token', checkIsUserValid, adminController.updateJobPost);
+route.patch('/update-user-role/:token', checkIsUserValid, adminController.updateUserRole);
 
-// API => DELET
+// API => DELETE
 route.delete('/delete-single-post/:token', checkIsUserValid, adminController.deleteSingleJobPost);
+route.delete('/delete-user-account/:token', checkIsUserValid, adminController.deleteUserAccount);
 
 module.exports = route;

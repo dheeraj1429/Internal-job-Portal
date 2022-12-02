@@ -95,6 +95,11 @@ code {
    margin: auto;
 }
 
+.centerDiv {
+   width: 100%;
+   height: 100vh;
+}
+
 @media (max-width: 1600px) {
    .sidePaddingOne {
       width: 80%;
@@ -108,4 +113,8 @@ code {
 
 .css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-paper {
    max-height: calc(56% - 32px) !important;
+}
+
+.css-dev-only-do-not-override-1e67qka:nth-child(2) {
+   background-color: var(--dark-blue-cl);
 }

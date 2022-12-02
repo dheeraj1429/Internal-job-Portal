@@ -11,6 +11,7 @@ import AllJobsComponent from './Components/AllJobsComponent/AllJobsComponent';
 import SingleJobPostDetailsComponent from './Components/SingleJobPostDetailsComponent/SingleJobPostDetailsComponent';
 import JobApplyResumeComponent from './Components/JobApplyResumeComponent/JobApplyResumeComponent';
 import JobApplicationComponent from './Components/JobApplicationComponent/JobApplicationComponent';
+import AllUserComponent from './Components/AllUserComponent/AllUserComponent';
 
 // pages
 import SignInAndLoginPage from './Pages/SignInAndLoginPage/SignInAndLoginPage';
@@ -46,6 +47,7 @@ function App() {
                <Route path="contact" element={<ContactInfoComponent />} />
                <Route path="resume" element={<AddYourResume />} />
                <Route path="applications" element={<JobApplicationComponent />} />
+               <Route path="all-users" element={<AllUserComponent />} />
             </Route>
             <Route path="/beta/form" element={<JobApplyFormPage />}>
                <Route path="resume/:id" element={<JobApplyResumeComponent />} />

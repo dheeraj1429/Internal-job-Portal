@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import * as styled from './SidebarInnerSmComponent.style';
 
-function SidebarInnerSmComponent({ icon, cl, link, heading, ActiveBar, onClick }) {
+function SidebarInnerSmComponent({ icon, cl, link, heading, onClick }) {
    return (
       <Link to={link}>
          <div className="flex items-center" onClick={onClick ? () => onClick() : null}>

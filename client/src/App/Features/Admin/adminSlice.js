@@ -23,6 +23,14 @@ const INITAL_STATE = {
    allJobsFetchError: null,
    downloadResumeLoading: false,
    downloadResumeError: null,
+   allUsers: null,
+   allUsersFetchLoading: false,
+   allUsersFetchError: null,
+   updateUserRolePending: false,
+   updateUserRoleError: null,
+   userAccountDeleteInfo: null,
+   userAccountDeleteLoading: false,
+   userAccountDeleteError: null,
 };
 
 const adminSlice = createSlice({
@@ -38,6 +46,9 @@ const adminSlice = createSlice({
          state.singleJobPost = null;
          state.singleJobPostFetchLoading = false;
          state.singleJobPostFetchError = null;
+      },
+      removeAccountInfo: (state) => {
+         state.userAccountDeleteInfo = null;
       },
    },
    extraReducers: (bulder) => {
@@ -180,6 +191,64 @@ const adminSlice = createSlice({
          .addCase(downloadResume.fulfilled, (state, action) => {
             state.downloadResumeLoading = false;
             state.downloadResumeError = null;
+         });
+
+      bulder
+         .addCase(getAllLoginUsers.pending, (state) => {
+            state.allUsers = null;
+            state.allUsersFetchLoading = true;
+            state.allUsersFetchError = null;
+         })
+         .addCase(getAllLoginUsers.rejected, (state, action) => {
+            state.allUsers = null;
+            state.allUsersFetchLoading = false;
+            state.allUsersFetchError = action.error.message;
+         })
+         .addCase(getAllLoginUsers.fulfilled, (state, action) => {
+            state.allUsers = action.payload.data;
+            state.allUsersFetchLoading = false;
+            state.allUsersFetchError = null;
+         });
+
+      bulder
+         .addCase(updateUserRole.pending, (state) => {
+            state.updateUserRolePending = false;
+            state.updateUserRoleError = null;
+         })
+         .addCase(updateUserRole.rejected, (state, action) => {
+            state.updateUserRolePending = false;
+            state.updateUserRoleError = action.error.message;
+         })
+         .addCase(updateUserRole.fulfilled, (state, action) => {
+            console.log(action.payload);
+
+            state.updateUserRolePending = false;
+            state.updateUserRoleError = null;
+            state.allUsers.users = state.allUsers?.users.map((el) =>
+               el._id === action.payload.data.userId
+                  ? { ...el, role: action.payload.data.role }
+                  : el
+            );
+         });
+
+      bulder
+         .addCase(deleteUserAccount.pending, (state) => {
+            state.userAccountDeleteInfo = null;
+            state.userAccountDeleteLoading = true;
+            state.userAccountDeleteError = null;
+         })
+         .addCase(deleteUserAccount.rejected, (state, action) => {
+            state.userAccountDeleteInfo = null;
+            state.userAccountDeleteLoading = false;
+            state.userAccountDeleteError = action.error.message;
+         })
+         .addCase(deleteUserAccount.fulfilled, (state, action) => {
+            state.userAccountDeleteInfo = action.payload.data;
+            state.userAccountDeleteLoading = false;
+            state.userAccountDeleteError = null;
+            state.allUsers.users = state.allUsers.users.filter(
+               (el) => el._id !== action.payload.data.userId
+            );
          });
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
@@ -332,6 +401,61 @@ export const downloadResume = createAsyncThunk(
    }
 );
 
-export const { removeJobPostInfo, removeSingleJobPostInfo } = adminSlice.actions;
+export const getAllLoginUsers = createAsyncThunk(
+   'admin/getAllLoginUsers',
+   async ({ token }, { rejectWithValue }) => {
+      try {
+         const users = await axios.get(`/admin/get-all-login-users/${token}`, headers);
+         return users;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const updateUserRole = createAsyncThunk(
+   'admin/updateUserRole',
+   async ({ token, ...others }, { rejectWithValue }) => {
+      try {
+         const userResponse = await axios.patch(
+            `/admin/update-user-role/${token}`,
+            {
+               ...others,
+            },
+            headers
+         );
+         return userResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const deleteUserAccount = createAsyncThunk(
+   'admin/deleteUserAccount',
+   async ({ token, userId }, { rejectWithValue }) => {
+      try {
+         const deleteResponse = await axios.delete(
+            `/admin/delete-user-account/${token}?userId=${userId}`,
+            headers
+         );
+         return deleteResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const { removeJobPostInfo, removeSingleJobPostInfo, removeAccountInfo } = adminSlice.actions;
 
 export default adminSlice;

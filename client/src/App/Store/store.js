@@ -25,6 +25,7 @@ const store = configureStore({
                'index/getUserResumeContantInformation/fulfilled',
                'admin/getAllJobApplications/fulfilled',
                'auth/signIn/fulfilled',
+               'admin/getAllLoginUsers/fulfilled',
             ],
          },
       }),
