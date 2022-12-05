@@ -44,7 +44,7 @@ function JobCartComponent({ data }) {
 
    const checkDays = function () {
       return Math.abs(
-         Math.ceil(new Date('2022-11-29T07:29:24.804Z') - new Date()) / (1000 * 60 * 60 * 24)
+         Math.ceil(new Date(data.createdAt) - new Date()) / (1000 * 60 * 60 * 24)
       ).toFixed();
    };
 

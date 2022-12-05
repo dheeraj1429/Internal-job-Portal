@@ -14,13 +14,18 @@ export const div = styled.div`
          font-size: 15px;
       }
    }
-   @media (max-width: 500px) {
+   @media (max-width: 700px) {
       h1 {
          font-size: 30px;
       }
       p {
          font-size: 12px;
          line-height: 24px;
+      }
+   }
+   @media (max-width: 400px) {
+      h1 {
+         font-size: 20px;
       }
    }
 `;

@@ -19,7 +19,7 @@ function UserProfileComponent() {
    return (
       <>
          {!!user && !!user && user?.userObject && user?.userObject?.token ? (
-            <styled.div className="p-3 flex items-center">
+            <styled.div className="p-3 flex items-center justify-content-lg-start justify-center">
                <div>
                   <div className="userProfileDiv" onClick={() => ShowAndHideHandler()}>
                      <img
@@ -31,6 +31,10 @@ function UserProfileComponent() {
                      />
                   </div>
                </div>
+               <div
+                  className={ShowOptions ? 'overLayDiv' : 'overLayDiv d-none'}
+                  onClick={hideShowHandler}
+               ></div>
                <div className="userProfileInfo ms-2">
                   <h5 className="text-white mb-1">
                      {!!userContactSaveInfo?.updatedData?.name

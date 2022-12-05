@@ -3,6 +3,8 @@ import styled from 'styled-components';
 export const div = styled.div`
    position: absolute;
    top: 90%;
+   width: 100%;
+   height: 100%;
    left: 10px;
    width: 250px;
    background-color: var(--main-cl);

@@ -5,11 +5,14 @@ import * as styled from './SidebarInnerSmComponent.style';
 function SidebarInnerSmComponent({ icon, cl, link, heading, onClick }) {
    return (
       <Link to={link}>
-         <div className="flex items-center" onClick={onClick ? () => onClick() : null}>
+         <div
+            className="flex items-center justify-center justify-content-lg-start"
+            onClick={onClick ? () => onClick() : null}
+         >
             <styled.div className={`d-flex align-items-center ${cl ? cl : null}`}>
                {icon}
             </styled.div>
-            <p className=" text-white">{heading}</p>
+            <p className=" text-white d-lg-block d-none">{heading}</p>
          </div>
       </Link>
    );
