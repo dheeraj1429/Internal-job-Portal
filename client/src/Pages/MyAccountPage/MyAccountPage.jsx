@@ -13,7 +13,7 @@ import { useCookies } from 'react-cookie';
 function MyAccountPage() {
    const { user } = useSelector((state) => state.auth);
    const { userContactInformation } = useSelector((state) => state.index);
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
 
    const dispatch = useDispatch();
    const navigation = useNavigate();
@@ -23,8 +23,8 @@ function MyAccountPage() {
    };
 
    useEffect(() => {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(getUserContactInfo({ token: cookie?.user?.token }));
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(getUserContactInfo({ token: cookie?._ijp_at_user?.token }));
       }
    }, []);
 
@@ -35,21 +35,12 @@ function MyAccountPage() {
                {userContactInformation?.info ? (
                   <>
                      <h1 className="banerHeading">{userContactInformation?.info?.name}</h1>
-                     <p className="mt-3">
-                        {!!userContactInformation?.info?.bio
-                           ? userContactInformation?.info?.bio
-                           : 'Add your bio'}
-                     </p>
+                     <p className="mt-3">{!!userContactInformation?.info?.bio ? userContactInformation?.info?.bio : 'Add your bio'}</p>
                   </>
                ) : null}
 
-               {userContactInformation?.info?.email &&
-               userContactInformation?.info?.phone &&
-               userContactInformation?.info?.cityState ? (
-                  <div
-                     className="userInfomationShowDiv shadow px-5 py-3 mt-4 cursor-pointer"
-                     onClick={Handler}
-                  >
+               {userContactInformation?.info?.email && userContactInformation?.info?.phone && userContactInformation?.info?.cityState ? (
+                  <div className="userInfomationShowDiv shadow px-5 py-3 mt-4 cursor-pointer" onClick={Handler}>
                      <div className="flex items-center">
                         <AiOutlineMail className="me-3" />
                         <p className=" text-gray-500">{userContactInformation.info.email}</p>
@@ -75,10 +66,7 @@ function MyAccountPage() {
          {!!user && user?.userObject && user?.userObject?.role === 'admin' ? null : (
             <div className="mt-5">
                <h5>Resumes</h5>
-               <div
-                  className="userInfomationShowDiv shadow px-5 py-4 mt-4 cursor-pointer flex items-center"
-                  onClick={() => navigation('/resume')}
-               >
+               <div className="userInfomationShowDiv shadow px-5 py-4 mt-4 cursor-pointer flex items-center" onClick={() => navigation('/resume')}>
                   <div className="me-4">
                      <img src="/images/file.svg" alt="" />
                   </div>

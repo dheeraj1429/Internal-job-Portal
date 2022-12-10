@@ -15,12 +15,13 @@ export const div = styled.div`
       top: 0;
       width: 2px;
       height: 100%;
-      background-color: ${(props) => (props.active ? 'var(--spec-brand-link-text)' : null)};
+      background-color: ${(props) =>
+         props.active ? 'var(--spec-brand-link-text)' : null};
    }
 
    svg {
       fill: var(--main-cl);
-      font-size: 18px;
+      font-size: 15px !important;
    }
 
    p {

@@ -17,7 +17,7 @@ import { MdDelete } from '@react-icons/all-files/md/MdDelete';
 import { message, Popconfirm } from 'antd';
 
 function AllUserComponent() {
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
    const [ShowInfoPopup, setShowInfoPopup] = useState(false);
    const [SelectedUser, setSelectedUser] = useState('');
 
@@ -37,8 +37,13 @@ function AllUserComponent() {
    } = useSelector((state) => state.admin);
 
    const confirm = (id) => {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(deleteUserAccount({ token: cookie?.user?.token, userId: id }));
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(
+            deleteUserAccount({
+               token: cookie?._ijp_at_user?.token,
+               userId: id,
+            })
+         );
       }
    };
 
@@ -51,8 +56,8 @@ function AllUserComponent() {
    }, [userAccountDeleteInfo]);
 
    useEffect(() => {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(getAllLoginUsers({ token: cookie?.user?.token }));
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token }));
       }
       return () => {
          dispatch(removeAccountInfo());
@@ -74,12 +79,18 @@ function AllUserComponent() {
             <div>
                <SpennerComponent />
             </div>
-         ) : !allUsersFetchLoading && !!allUsers && allUsers?.success && allUsers?.users?.length ? (
+         ) : !allUsersFetchLoading &&
+           !!allUsers &&
+           allUsers?.success &&
+           allUsers?.users?.length ? (
             <div className="mt-5">
                <table>
                   <tr>
                      {row.map((el) => (
-                        <th className=" text-gray-600" key={el.value.replaceAll(' ', '-')}>
+                        <th
+                           className=" text-gray-600"
+                           key={el.value.replaceAll(' ', '-')}
+                        >
                            {el.value}
                         </th>
                      ))}
@@ -88,13 +99,18 @@ function AllUserComponent() {
                      <tr className=" shadow-sm" key={el._id}>
                         <td>
                            <div className="user_images">
-                              <img src={`/usersProfileCompress/${el.userProfile}`} alt="" />
+                              <img
+                                 src={`/usersProfileCompress/${el.userProfile}`}
+                                 alt=""
+                              />
                            </div>
                         </td>
                         <td className=" text-sm text-gray-500">{el.name}</td>
                         <td className=" text-sky-600">{el.email}</td>
                         <td className=" text-sm text-gray-500">{el.role}</td>
-                        <td className=" text-sm text-gray-500">{el.showNumber ? 'Yes' : 'No'}</td>
+                        <td className=" text-sm text-gray-500">
+                           {el.showNumber ? 'Yes' : 'No'}
+                        </td>
                         <td className=" text-sm text-gray-500">
                            {dayjs(el.createdAt).format('YY/MM/DD h:m:s A')}
                         </td>

@@ -5,12 +5,21 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const authSchema = new mongoose.Schema({
    name: { type: String, required: [true, 'user name is required'] },
-   email: { type: String, required: [true, 'user email is required'], unique: true },
-   password: { type: String, required: [true, 'user account password is required'] },
+   email: {
+      type: String,
+      required: [true, 'user email is required'],
+      unique: true,
+   },
+   password: {
+      type: String,
+      required: [true, 'user account password is required'],
+   },
    role: { type: String, default: 'employee' },
    userProfile: { type: String, default: 'default-user-pic.jpg' },
    createdAt: { type: Date, default: Date.now },
-   tokens: [{ token: { type: String, required: [true, 'user token is required'] } }],
+   tokens: [
+      { token: { type: String, required: [true, 'user token is required'] } },
+   ],
    phone: { type: Number },
    street: { type: String },
    cityState: { type: String },

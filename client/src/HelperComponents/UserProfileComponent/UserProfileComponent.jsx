@@ -21,7 +21,10 @@ function UserProfileComponent() {
          {!!user && !!user && user?.userObject && user?.userObject?.token ? (
             <styled.div className="p-3 flex items-center justify-content-lg-start justify-center">
                <div>
-                  <div className="userProfileDiv" onClick={() => ShowAndHideHandler()}>
+                  <div
+                     className="userProfileDiv"
+                     onClick={() => ShowAndHideHandler()}
+                  >
                      <img
                         src={`/usersProfileCompress/${
                            !!userContactSaveInfo?.updatedData?.profilePic
@@ -35,15 +38,18 @@ function UserProfileComponent() {
                   className={ShowOptions ? 'overLayDiv' : 'overLayDiv d-none'}
                   onClick={hideShowHandler}
                ></div>
-               <div className="userProfileInfo ms-2">
+               <div className="userProfileInfo ms-3">
                   <h5 className="text-white mb-1">
                      {!!userContactSaveInfo?.updatedData?.name
                         ? userContactSaveInfo.updatedData?.name
                         : user.userObject.name}
                   </h5>
-                  <p className=" text-gray-300">{user.userObject.email}</p>
+                  <p className=" text-gray-400">{user.userObject.email}</p>
                </div>
-               <UserProfileOptionComponent onClick={hideShowHandler} show={ShowOptions} />
+               <UserProfileOptionComponent
+                  onClick={hideShowHandler}
+                  show={ShowOptions}
+               />
             </styled.div>
          ) : null}
       </>

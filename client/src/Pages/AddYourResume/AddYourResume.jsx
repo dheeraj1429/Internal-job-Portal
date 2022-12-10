@@ -10,10 +10,7 @@ import { FiEdit2 } from '@react-icons/all-files/fi/FiEdit2';
 import { AiFillDelete } from '@react-icons/all-files/ai/AiFillDelete';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Navigate } from 'react-router';
-import {
-   saveUserResumeInformation,
-   fetchUserResumeInformation,
-} from '../../App/Features/index/indexSlice';
+import { saveUserResumeInformation, fetchUserResumeInformation } from '../../App/Features/index/indexSlice';
 import { useCookies } from 'react-cookie';
 
 function AddYourResume() {
@@ -36,17 +33,11 @@ function AddYourResume() {
       skill: '',
       yearOfExperience: '',
    });
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
    const [Error, setError] = useState('');
 
    const { user } = useSelector((state) => state.auth);
-   const {
-      saveUserResumeLoading,
-      saveUserResumeResponse,
-      saveUserResumeError,
-      userResumeDetails,
-      userResumeDetailsFetchError,
-   } = useSelector((state) => state.index);
+   const { saveUserResumeLoading, saveUserResumeResponse, saveUserResumeError, userResumeDetails, userResumeDetailsFetchError } = useSelector((state) => state.index);
    const dispatch = useDispatch();
    const navigation = useNavigate();
 
@@ -86,9 +77,7 @@ function AddYourResume() {
    };
 
    const AddSkillHandler = function () {
-      const findSkillIsExists = UserResumeInfo.skills.find((el) =>
-         !!SkillInfo?._id ? el._id === SkillInfo._id : SkillInfo.id === el.id
-      );
+      const findSkillIsExists = UserResumeInfo.skills.find((el) => (!!SkillInfo?._id ? el._id === SkillInfo._id : SkillInfo.id === el.id));
 
       if (findSkillIsExists) {
          setUserResumeInfo({
@@ -104,11 +93,7 @@ function AddYourResume() {
          setSkillInfo({ skill: '', yearOfExperience: '', id: '' });
          setShowSkillOption(false);
       } else {
-         const isExists = UserResumeInfo.skills.find(
-            (el) =>
-               el.skill.toLowerCase().replaceAll(' ', '') ===
-               SkillInfo.skill.toLowerCase().replaceAll(' ', '')
-         );
+         const isExists = UserResumeInfo.skills.find((el) => el.skill.toLowerCase().replaceAll(' ', '') === SkillInfo.skill.toLowerCase().replaceAll(' ', ''));
 
          if (isExists) {
             setError('skill is already exists');
@@ -166,8 +151,8 @@ function AddYourResume() {
    };
 
    useEffect(() => {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(fetchUserResumeInformation(cookie?.user?.token));
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(fetchUserResumeInformation(cookie?._ijp_at_user?.token));
       }
    }, []);
 
@@ -205,23 +190,8 @@ function AddYourResume() {
                   noValidate
                   autoComplete="off"
                >
-                  <TextField
-                     label="Headline"
-                     onChange={(event) => ChangeHandler(event)}
-                     name="headline"
-                     value={UserResumeInfo.headline}
-                     variant="outlined"
-                     type={'text'}
-                  />
-                  <TextField
-                     onChange={(event) => ChangeHandler(event)}
-                     label="Objective"
-                     name="objective"
-                     value={UserResumeInfo.objective}
-                     multiline
-                     rows={6}
-                     type={'text'}
-                  />
+                  <TextField label="Headline" onChange={(event) => ChangeHandler(event)} name="headline" value={UserResumeInfo.headline} variant="outlined" type={'text'} />
+                  <TextField onChange={(event) => ChangeHandler(event)} label="Objective" name="objective" value={UserResumeInfo.objective} multiline rows={6} type={'text'} />
                   <hr />
                   <p className="mt-3">Personal Details</p>
                   <div className="lg-d-flex items-center md-d-block">
@@ -308,15 +278,7 @@ function AddYourResume() {
                         </MenuItem>
                      ))}
                   </TextField>
-                  <TextField
-                     label="Industry"
-                     onChange={(event) => ChangeHandler(event)}
-                     name="industry"
-                     required
-                     value={UserResumeInfo.industry}
-                     variant="outlined"
-                     type={'text'}
-                  />
+                  <TextField label="Industry" onChange={(event) => ChangeHandler(event)} name="industry" required value={UserResumeInfo.industry} variant="outlined" type={'text'} />
                   <TextField
                      label="Total years of experience"
                      onChange={(event) => ChangeHandler(event)}
@@ -331,35 +293,19 @@ function AddYourResume() {
                         <img src="/images/file2.svg" alt="" />
                      </div>
                      <div className="ms-3">
-                        <p>
-                           {!!UserResumeInfo?.resume
-                              ? UserResumeInfo?.resume?.name || UserResumeInfo?.resume
-                              : 'Add your resume'}
-                        </p>
+                        <p>{!!UserResumeInfo?.resume ? UserResumeInfo?.resume?.name || UserResumeInfo?.resume : 'Add your resume'}</p>
                      </div>
                      <input type="file" ref={ResumeRef} onChange={ResumeHandler} />
                   </div>
                   <hr />
                   <div className=" mt-3 flex items-center justify-between">
                      <p>Skill - required</p>
-                     {ShowSkillOption ? null : (
-                        <GrAdd className=" cursor-pointer" onClick={ShowSkillOptionHandler} />
-                     )}
+                     {ShowSkillOption ? null : <GrAdd className=" cursor-pointer" onClick={ShowSkillOptionHandler} />}
                   </div>
-                  <span className=" text-gray-500">
-                     e.g. Microsoft Office, Java, Tally, Python etc.
-                  </span>
+                  <span className=" text-gray-500">e.g. Microsoft Office, Java, Tally, Python etc.</span>
                   {!!ShowSkillOption ? (
                      <div className="mt-3 w-100">
-                        <TextField
-                           label="Skill"
-                           onChange={(event) => ChangeHandler(event, 'skillHandler')}
-                           name="skill"
-                           value={SkillInfo.skill}
-                           variant="outlined"
-                           type={'text'}
-                           className="w-100"
-                        />
+                        <TextField label="Skill" onChange={(event) => ChangeHandler(event, 'skillHandler')} name="skill" value={SkillInfo.skill} variant="outlined" type={'text'} className="w-100" />
                         <TextField
                            id="outlined-select-currency"
                            select
@@ -376,67 +322,30 @@ function AddYourResume() {
                            ))}
                         </TextField>
                         <div className=" flex items-center">
-                           <CustomButtonComponent
-                              onClick={AddSkillHandler}
-                              innerText={'Save'}
-                              btnCl={'category_upload'}
-                           />
-                           <CustomButtonComponent
-                              onClick={ShowSkillOptionHandler}
-                              innerText={'Clear'}
-                              btnCl={'Delete_btn ms-2'}
-                           />
+                           <CustomButtonComponent onClick={AddSkillHandler} innerText={'Save'} btnCl={'category_upload'} />
+                           <CustomButtonComponent onClick={ShowSkillOptionHandler} innerText={'Clear'} btnCl={'Delete_btn ms-2'} />
                         </div>
                      </div>
                   ) : null}
                   {!!UserResumeInfo?.skills && UserResumeInfo?.skills.length
                      ? UserResumeInfo.skills.map((el) => (
-                          <div
-                             className="flex items-center mt-3 justify-between"
-                             key={!!el?._id ? el._id : el.id}
-                          >
+                          <div className="flex items-center mt-3 justify-between" key={!!el?._id ? el._id : el.id}>
                              <div>
                                 <p className=" text-gray-800">
-                                   {el.skill} -{' '}
-                                   <span className=" text-gray-600">{el.yearOfExperience}</span>
+                                   {el.skill} - <span className=" text-gray-600">{el.yearOfExperience}</span>
                                 </p>
                              </div>
                              <div className="flex items-center">
-                                <FiEdit2
-                                   className="me-3 cursor-pointer"
-                                   onClick={() =>
-                                      EditSkillHandler(
-                                         !!el?._id ? el._id : el.id,
-                                         !!el?._id ? '_id' : 'id'
-                                      )
-                                   }
-                                />
-                                <AiFillDelete
-                                   className=" cursor-pointer"
-                                   onClick={() =>
-                                      DeleteSkillHandler(
-                                         !!el?._id ? el._id : el.id,
-                                         !!el?._id ? '_id' : 'id'
-                                      )
-                                   }
-                                />
+                                <FiEdit2 className="me-3 cursor-pointer" onClick={() => EditSkillHandler(!!el?._id ? el._id : el.id, !!el?._id ? '_id' : 'id')} />
+                                <AiFillDelete className=" cursor-pointer" onClick={() => DeleteSkillHandler(!!el?._id ? el._id : el.id, !!el?._id ? '_id' : 'id')} />
                              </div>
                           </div>
                        ))
                      : null}
 
-                  <CustomButtonComponent
-                     innerText={'Save Inforamtion'}
-                     btnCl={'category_upload'}
-                     type="submit"
-                     isLaoding={saveUserResumeLoading}
-                  />
+                  <CustomButtonComponent innerText={'Save Inforamtion'} btnCl={'category_upload'} type="submit" isLaoding={saveUserResumeLoading} />
                   {!!Error ? <p className=" text-red-400">{Error}</p> : null}
-                  {!!saveUserResumeError || userResumeDetailsFetchError ? (
-                     <p className=" text-red-500">
-                        {!!saveUserResumeError ? saveUserResumeError : userResumeDetailsFetchError}
-                     </p>
-                  ) : null}
+                  {!!saveUserResumeError || userResumeDetailsFetchError ? <p className=" text-red-500">{!!saveUserResumeError ? saveUserResumeError : userResumeDetailsFetchError}</p> : null}
                   {!!saveUserResumeResponse ? <p>{saveUserResumeResponse.message}</p> : null}
                </Box>
             </form>

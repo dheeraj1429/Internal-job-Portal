@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as styled from './JobApplyResumeComponent.style';
 import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
 import { FiEdit2 } from '@react-icons/all-files/fi/FiEdit2';
-import {
-   fetchUserResumeContactInformation,
-   removeJobSubmitionInformation,
-   removeUserResumeDetails,
-} from '../../App/Features/index/indexSlice';
+import { fetchUserResumeContactInformation, removeJobSubmitionInformation, removeUserResumeDetails } from '../../App/Features/index/indexSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router';
@@ -29,16 +25,9 @@ function JobApplyResumeComponent() {
    });
    const [Error, setError] = useState('');
    const dispatch = useDispatch();
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
    const naviation = useNavigate();
-   const {
-      singleJobPost,
-      userResumeDetails,
-      userResumeDetailsFetchLoading,
-      userResumeDetailsFetchError,
-      jobSubmitionResponse,
-      jobSubmitionFetchLoading,
-   } = useSelector((state) => state.index);
+   const { singleJobPost, userResumeDetails, userResumeDetailsFetchLoading, userResumeDetailsFetchError, jobSubmitionResponse, jobSubmitionFetchLoading } = useSelector((state) => state.index);
    const { user } = useSelector((state) => state.auth);
    const params = useParams();
 
@@ -62,7 +51,7 @@ function JobApplyResumeComponent() {
    };
 
    const ApplyHandler = function () {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
          const jobId = params.id;
 
          if (!userResumeDetails.info?.street) {
@@ -75,27 +64,23 @@ function JobApplyResumeComponent() {
 
          if (!UserJobInfo.reference) {
             const formData = new FormData();
-            formData.append('token', cookie?.user?.token);
+            formData.append('token', cookie?._ijp_at_user?.token);
             formData.append('reference', UserJobInfo.reference);
             formData.append('notes', UserJobInfo.notes);
             formData.append('jobId', jobId);
 
             return dispatch(
                jobSubmition({
-                  token: cookie?.user?.token,
+                  token: cookie?._ijp_at_user?.token,
                   formData: formData,
                })
             );
          }
 
          if (UserJobInfo.reference) {
-            if (
-               !!UserJobInfo?.referenceResume &&
-               !!UserJobInfo?.candidateName &&
-               !!UserJobInfo?.candidateNumber
-            ) {
+            if (!!UserJobInfo?.referenceResume && !!UserJobInfo?.candidateName && !!UserJobInfo?.candidateNumber) {
                const formData = new FormData();
-               formData.append('token', cookie?.user?.token);
+               formData.append('token', cookie?._ijp_at_user?.token);
                formData.append('reference', UserJobInfo.reference);
                formData.append('notes', UserJobInfo.notes);
                formData.append('candidateName', UserJobInfo.candidateName);
@@ -105,14 +90,12 @@ function JobApplyResumeComponent() {
 
                dispatch(
                   jobSubmition({
-                     token: cookie?.user?.token,
+                     token: cookie?._ijp_at_user?.token,
                      formData: formData,
                   })
                );
             } else {
-               setError(
-                  'If you check the reference checkbox then you have to pass the reference candidate’s information.'
-               );
+               setError('If you check the reference checkbox then you have to pass the reference candidate’s information.');
             }
          }
       } else {
@@ -121,8 +104,8 @@ function JobApplyResumeComponent() {
    };
 
    useEffect(() => {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(fetchUserResumeContactInformation(cookie?.user?.token));
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(fetchUserResumeContactInformation(cookie?._ijp_at_user?.token));
       }
       return () => {
          dispatch(removeUserResumeDetails(null));
@@ -134,10 +117,7 @@ function JobApplyResumeComponent() {
       <styled.div>
          <PopupAlertComponent show={jobSubmitionResponse} />
          <h1>Add a resume for the employer</h1>
-         {!userResumeDetailsFetchLoading &&
-         !!userResumeDetails &&
-         userResumeDetails?.success &&
-         userResumeDetails?.info ? (
+         {!userResumeDetailsFetchLoading && !!userResumeDetails && userResumeDetails?.success && userResumeDetails?.info ? (
             <div className="mt-5">
                <div className="border p-3 selectDiv ">
                   <img src="/images/right.svg" alt="" className="rightPgn" />
@@ -173,41 +153,21 @@ function JobApplyResumeComponent() {
                            <img src="/images/file2.svg" alt="" />
                         </div>
                         <div className="ms-3">
-                           <p>
-                              {!!userResumeDetails?.info?.resume
-                                 ? userResumeDetails?.info?.resume
-                                 : 'Add your resume'}
-                           </p>
+                           <p>{!!userResumeDetails?.info?.resume ? userResumeDetails?.info?.resume : 'Add your resume'}</p>
                         </div>
                      </div>
                   </div>
                ) : null}
                <h2 className="mt-4">Questions from the employer</h2>
                <p className=" text-gray-500 mt-3 selectDiv">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Esse, laborum voluptatum
-                  aliquid consequatur unde eos cum, perferendis ipsum saepe mollitia asperiores.
-                  Nemo, eligendi distinctio. Quisquam expedita odit distinctio cupiditate nulla.
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Esse, laborum voluptatum aliquid consequatur unde eos cum, perferendis ipsum saepe mollitia asperiores. Nemo, eligendi
+                  distinctio. Quisquam expedita odit distinctio cupiditate nulla.
                </p>
-               <TextField
-                  id="outlined-multiline"
-                  className="mt-3 selectDiv"
-                  label="Notes"
-                  multiline
-                  onChange={(event) => ChangeHandler(event)}
-                  value={UserJobInfo.notes}
-                  name="notes"
-                  rows={4}
-               />
+               <TextField id="outlined-multiline" className="mt-3 selectDiv" label="Notes" multiline onChange={(event) => ChangeHandler(event)} value={UserJobInfo.notes} name="notes" rows={4} />
                <div className="fit">
                   <FormGroup className="mt-2">
                      <FormControlLabel
-                        control={
-                           <Checkbox
-                              checked={UserJobInfo.reference}
-                              name="reference"
-                              onChange={(event) => ChangeHandler(event, 'checkbox')}
-                           />
-                        }
+                        control={<Checkbox checked={UserJobInfo.reference} name="reference" onChange={(event) => ChangeHandler(event, 'checkbox')} />}
                         label="Apply this job for your reference"
                      />
                   </FormGroup>
@@ -234,9 +194,7 @@ function JobApplyResumeComponent() {
                         onChange={(event) => ChangeHandler(event)}
                         value={UserJobInfo.candidateNumber}
                         onInput={(e) => {
-                           e.target.value = Math.max(0, parseInt(e.target.value))
-                              .toString()
-                              .slice(0, 10);
+                           e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10);
                         }}
                      />
 
@@ -245,11 +203,7 @@ function JobApplyResumeComponent() {
                            <img src="/images/file2.svg" alt="" />
                         </div>
                         <div className="ms-3">
-                           {!!UserJobInfo.referenceResume && UserJobInfo.referenceResume?.name ? (
-                              <p>{UserJobInfo.referenceResume?.name}</p>
-                           ) : (
-                              <p>Add your reference candidate’s resume</p>
-                           )}
+                           {!!UserJobInfo.referenceResume && UserJobInfo.referenceResume?.name ? <p>{UserJobInfo.referenceResume?.name}</p> : <p>Add your reference candidate’s resume</p>}
                         </div>
                         <input type="file" onChange={ResumeHandlerUploadHandler} />
                      </div>
@@ -257,20 +211,8 @@ function JobApplyResumeComponent() {
                ) : null}
 
                <CustomButtonComponent
-                  onClick={
-                     singleJobPost?.post?.userApplied
-                        .map((el) => el.user)
-                        .includes(user?.userObject._id)
-                        ? null
-                        : () => ApplyHandler()
-                  }
-                  innerText={
-                     singleJobPost?.post?.userApplied
-                        .map((el) => el.user)
-                        .includes(user?.userObject._id)
-                        ? 'Applyed'
-                        : 'Apply'
-                  }
+                  onClick={singleJobPost?.post?.userApplied.map((el) => el.user).includes(user?.userObject._id) ? null : () => ApplyHandler()}
+                  innerText={singleJobPost?.post?.userApplied.map((el) => el.user).includes(user?.userObject._id) ? 'Applyed' : 'Apply'}
                   btnCl={'category_upload'}
                   isLaoding={jobSubmitionFetchLoading}
                />

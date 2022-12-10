@@ -12,33 +12,27 @@ import SingleJobApplicationPopupComponent from '../SingleJobApplicationPopupComp
 import { GrFormView } from '@react-icons/all-files/gr/GrFormView';
 
 function JobApplicationComponent() {
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
    const dispatch = useDispatch();
    const [ShowPopUp, setShowPopUp] = useState({
       show: false,
       jobId: '',
       token: '',
    });
-   const { allJobApplications, allJobApplicationsFetchLoading, allJobApplicationsFetchError } =
-      useSelector((state) => state.admin);
+   const {
+      allJobApplications,
+      allJobApplicationsFetchLoading,
+      allJobApplicationsFetchError,
+   } = useSelector((state) => state.admin);
 
-   const [ActionMenu, setActionMenu] = useState(null);
-   const open = Boolean(ActionMenu);
-   const handleClick = (event) => {
-      setActionMenu(event.currentTarget);
-   };
-   const handleClose = () => {
-      setActionMenu(null);
-   };
    const ViewHandler = function (jobId) {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
          setShowPopUp({
             jobId,
             show: true,
-            token: cookie?.user?.token,
+            token: cookie?._ijp_at_user?.token,
          });
       }
-      setActionMenu(null);
    };
    const ClosePopup = function () {
       setShowPopUp({
@@ -49,18 +43,30 @@ function JobApplicationComponent() {
    };
 
    useEffect(() => {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(getAllJobApplications({ token: cookie?.user?.token, page: 1 }));
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(
+            getAllJobApplications({
+               token: cookie?._ijp_at_user?.token,
+               page: 1,
+            })
+         );
       }
    }, []);
 
-   if (!!cookie && cookie?.user && cookie?.user?.role !== 'admin') {
+   if (
+      !!cookie &&
+      cookie?._ijp_at_user &&
+      cookie?._ijp_at_user?.role !== 'admin'
+   ) {
       return <Navigate to={'/'} />;
    }
 
    return (
       <styled.div>
-         <SingleJobApplicationPopupComponent show={ShowPopUp} CloseHandler={ClosePopup} />
+         <SingleJobApplicationPopupComponent
+            show={ShowPopUp}
+            CloseHandler={ClosePopup}
+         />
          <HeadingComponent
             heading={'Job Applications'}
             subHeading={`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries`}
@@ -70,7 +76,9 @@ function JobApplicationComponent() {
                <SpennerComponent />
             ) : !allJobApplications && !!allJobApplicationsFetchError ? (
                <div>
-                  <p className=" text-red-500">{allJobApplicationsFetchError}</p>
+                  <p className=" text-red-500">
+                     {allJobApplicationsFetchError}
+                  </p>
                </div>
             ) : !allJobApplicationsFetchLoading &&
               !!allJobApplications &&
@@ -88,21 +96,36 @@ function JobApplicationComponent() {
                      <tr key={elm._id} id={elm._id} className=" shadow-sm">
                         <td className="p-3">
                            <div className="userProfileDiv">
-                              <img src={`/usersProfileCompress/${elm?.user.userProfile}`} alt="" />
+                              <img
+                                 src={`/usersProfileCompress/${elm?.user.userProfile}`}
+                                 alt=""
+                              />
                            </div>
                         </td>
-                        <td className=" text-gray-600 text-sm">{elm?.user.name}</td>
-                        <td className=" text-sky-600 text-sm">{elm?.user.email}</td>
-                        <td className=" text-sky-600 text-sm">{elm?.jobApplied.jobTitle}</td>
+                        <td className=" text-gray-600 text-sm">
+                           {elm?.user.name}
+                        </td>
+                        <td className=" text-sky-600 text-sm">
+                           {elm?.user.email}
+                        </td>
+                        <td className=" text-sky-600 text-sm">
+                           {elm?.jobApplied.jobTitle}
+                        </td>
                         <td className=" text-gray-600 text-sm ">
                            <div className="flex items-center">
                               <BiRupee /> {elm?.jobApplied.salaryRangeStart} -{' '}
                               {elm?.jobApplied.salaryRangeEnd}
                            </div>
                         </td>
-                        <td className=" text-gray-600 text-sm">{elm?.user.cityState}</td>
-                        <td className=" text-gray-600 text-sm">{elm?.user.phone}</td>
-                        <td className=" text-gray-600 text-sm">{elm?.user.postalCode}</td>
+                        <td className=" text-gray-600 text-sm">
+                           {elm?.user.cityState}
+                        </td>
+                        <td className=" text-gray-600 text-sm">
+                           {elm?.user.phone}
+                        </td>
+                        <td className=" text-gray-600 text-sm">
+                           {elm?.user.postalCode}
+                        </td>
                         <td>
                            <GrFormView
                               className=" cursor-pointer"

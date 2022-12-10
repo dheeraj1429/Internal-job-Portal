@@ -12,6 +12,8 @@ import SingleJobPostDetailsComponent from './Components/SingleJobPostDetailsComp
 import JobApplyResumeComponent from './Components/JobApplyResumeComponent/JobApplyResumeComponent';
 import JobApplicationComponent from './Components/JobApplicationComponent/JobApplicationComponent';
 import AllUserComponent from './Components/AllUserComponent/AllUserComponent';
+import ForgetPasswordComponent from './Components/ForgetPasswordComponent/ForgetPasswordComponent';
+import ForgetPasswordChangeComponent from './Components/ForgetPasswordChangeComponent/ForgetPasswordChangeComponent';
 
 // pages
 import SignInAndLoginPage from './Pages/SignInAndLoginPage/SignInAndLoginPage';
@@ -22,12 +24,12 @@ import AddYourResume from './Pages/AddYourResume/AddYourResume';
 import JobApplyFormPage from './Pages/JobApplyFormPage/JobApplyFormPage';
 
 function App() {
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
    const dispatch = useDispatch();
 
    useEffect(() => {
-      if (cookie && cookie?.user) {
-         dispatch(setUser(cookie.user));
+      if (cookie && cookie?._ijp_at_user) {
+         dispatch(setUser(cookie._ijp_at_user));
       }
    }, []);
 
@@ -37,16 +39,30 @@ function App() {
             <Route path="/portal" element={<SignInAndLoginPage />}>
                <Route path="signin" element={<SignInComponent />} />
                <Route path="login" element={<SignInComponent />} />
+               <Route
+                  path="forget-password"
+                  element={<ForgetPasswordComponent />}
+               />
+               <Route
+                  path="password-forget/:id"
+                  element={<ForgetPasswordChangeComponent />}
+               />
             </Route>
             <Route path="/" element={<DashboardPage />}>
                <Route path="" element={<AllJobsComponent />} />
                <Route path="job/create" element={<PostJobComponent />} />
                <Route path="job/edit/:id" element={<PostJobComponent />} />
-               <Route path="job/single/:name/:id" element={<SingleJobPostDetailsComponent />} />
+               <Route
+                  path="job/single/:name/:id"
+                  element={<SingleJobPostDetailsComponent />}
+               />
                <Route path="my-account" element={<MyAccountPage />} />
                <Route path="contact" element={<ContactInfoComponent />} />
                <Route path="resume" element={<AddYourResume />} />
-               <Route path="applications" element={<JobApplicationComponent />} />
+               <Route
+                  path="applications"
+                  element={<JobApplicationComponent />}
+               />
                <Route path="all-users" element={<AllUserComponent />} />
             </Route>
             <Route path="/beta/form" element={<JobApplyFormPage />}>

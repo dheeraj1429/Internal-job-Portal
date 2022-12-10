@@ -2,7 +2,6 @@ import styled from 'styled-components';
 export const div = styled.div`
    width: 20%;
    height: 100%;
-   background-color: var(--spec-elevated-background);
    padding-top: 1rem;
    transition: all 0.3s ease;
 

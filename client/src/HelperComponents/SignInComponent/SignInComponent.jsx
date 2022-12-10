@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router';
 import { Link, Navigate } from 'react-router-dom';
 import validator from 'validator';
+import { checkPassword } from '../../Components/Helper/helper';
 
 function SignInComponent() {
    const [UserInfo, setUserInfo] = useState({
@@ -28,12 +29,6 @@ function SignInComponent() {
       setUserInfo({ ...UserInfo, [name]: value });
    };
 
-   const checkPassword = function (pwd) {
-      var paswd = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
-      if (pwd.match(paswd)) return true;
-      else return false;
-   };
-
    const signInHandler = function (e) {
       e.preventDefault();
       const { name, email, password, confirmPassword } = UserInfo;
@@ -45,7 +40,8 @@ function SignInComponent() {
          if (password !== confirmPassword)
             return setError("Password or confirm password is't match");
 
-         if (!validator.isEmail(email)) return setError('Please enter valid email address');
+         if (!validator.isEmail(email))
+            return setError('Please enter valid email address');
 
          const passwordCheck = checkPassword(password);
          if (!passwordCheck)
@@ -71,12 +67,15 @@ function SignInComponent() {
    }
 
    return (
-      <styled.div>
+      <styled.div className=" text-center">
          <h1>
-            {location.pathname === '/portal/login' ? 'Login with account' : 'Create an account'}{' '}
+            {location.pathname === '/portal/login'
+               ? 'Login with account'
+               : 'Create an account'}{' '}
          </h1>
-         <p className="mb-5">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos, dolorum?
+         <p className="mb-3 text-gray-500">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos,
+            dolorum?
          </p>
          <Box
             component="form"
@@ -127,7 +126,11 @@ function SignInComponent() {
             onClick={signInHandler}
             type="submit"
             isLaoding={userAuthLoading}
-            innerText={location.pathname === '/portal/login' ? 'login' : 'Create Account'}
+            innerText={
+               location.pathname === '/portal/login'
+                  ? 'login'
+                  : 'Create Account'
+            }
             btnCl={'category_upload mb-2'}
          />
          {location.pathname === '/portal/login' ? (
@@ -143,14 +146,23 @@ function SignInComponent() {
             <span>
                Already have an account{' '}
                {
-                  <Link to={'/portal/login'} className=" text-sky-500" onClick={() => setError('')}>
+                  <Link
+                     to={'/portal/login'}
+                     className=" text-sky-500"
+                     onClick={() => setError('')}
+                  >
                      Click here
                   </Link>
                }
             </span>
          )}
+         <Link to={'/portal/forget-password'}>
+            <p className="mt-2">Forget password</p>
+         </Link>
          {!!Error ? <p className="error_text mt-2">{Error}</p> : null}
-         {!!user && !user.success ? <p className="error_text mt-2">{user.message}</p> : null}
+         {!!user && !user.success ? (
+            <p className="error_text mt-2">{user.message}</p>
+         ) : null}
       </styled.div>
    );
 }

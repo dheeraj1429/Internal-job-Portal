@@ -3,7 +3,10 @@ import * as styled from './SingleJobApplicationPopupComponent.style';
 import ReactDOM from 'react-dom';
 import { VscClose } from '@react-icons/all-files/vsc/VscClose';
 import SpennerComponent from '../../HelperComponents/SpennerComponent/SpennerComponent';
-import { getSingleJobApplication, downloadResume } from '../../App/Features/Admin/adminSlice';
+import {
+   getSingleJobApplication,
+   downloadResume,
+} from '../../App/Features/Admin/adminSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { BiRupee } from '@react-icons/all-files/bi/BiRupee';
 import ListComponent from '../ListComponent/ListComponent';
@@ -12,7 +15,7 @@ import { useCookies } from 'react-cookie';
 
 function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
    const dispatch = useDispatch();
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
 
    const {
       singleJobApplication,
@@ -23,14 +26,18 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
    } = useSelector((state) => state.admin);
 
    const DownloadResumeHandler = function (resume) {
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(downloadResume({ token: cookie?.user?.token, resume }));
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(
+            downloadResume({ token: cookie?._ijp_at_user?.token, resume })
+         );
       }
    };
 
    useEffect(() => {
       if (!!show?.jobId && !!show?.token) {
-         dispatch(getSingleJobApplication({ token: show?.token, jobId: show?.jobId }));
+         dispatch(
+            getSingleJobApplication({ token: show?.token, jobId: show?.jobId })
+         );
       }
    }, [show.jobId]);
 
@@ -50,23 +57,37 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
             singleJobApplication?.success &&
             singleJobApplication?.applications ? (
                <>
-                  <h1>{singleJobApplication?.applications[0]?.jobApplied.jobTitle}</h1>
+                  <h1>
+                     {
+                        singleJobApplication?.applications[0]?.jobApplied
+                           .jobTitle
+                     }
+                  </h1>
                   <p className=" text-gray-600 text-sm mt-2">
-                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa quam neque
-                     accusamus dolor cupiditate voluptates assumenda doloribus cumque. Possimus,
-                     consectetur.
+                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                     Culpa quam neque accusamus dolor cupiditate voluptates
+                     assumenda doloribus cumque. Possimus, consectetur.
                   </p>
                   <ListComponent
                      heading={'Job type'}
-                     subHeading={singleJobApplication?.applications[0]?.jobApplied.jobType}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.jobApplied
+                           .jobType
+                     }
                   />
                   <ListComponent
                      heading={'Job Category'}
-                     subHeading={singleJobApplication?.applications[0]?.jobApplied.jobCategory}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.jobApplied
+                           .jobCategory
+                     }
                   />
                   <ListComponent
                      heading={'Salary'}
-                     subHeading={singleJobApplication?.applications[0]?.jobApplied.salaryRangeStart}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.jobApplied
+                           .salaryRangeStart
+                     }
                      subHeadingSecond={`- ${singleJobApplication?.applications[0]?.jobApplied.salaryRangeEnd}`}
                      icon={<BiRupee />}
                   />
@@ -79,7 +100,9 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                         />
                      </div>
                      <div className="ms-2">
-                        <h5>{singleJobApplication?.applications[0]?.user?.name}</h5>
+                        <h5>
+                           {singleJobApplication?.applications[0]?.user?.name}
+                        </h5>
                         <p className=" text-sm text-sky-500 mt-1">
                            {singleJobApplication?.applications[0]?.user?.email}
                         </p>
@@ -87,47 +110,66 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                   </div>
                   <ListComponent
                      heading={'City'}
-                     subHeading={singleJobApplication?.applications[0]?.user.cityState}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.user.cityState
+                     }
                   />
                   <ListComponent
                      heading={'Street'}
-                     subHeading={singleJobApplication?.applications[0]?.user.street}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.user.street
+                     }
                   />
                   <ListComponent
                      heading={'Career Level'}
-                     subHeading={singleJobApplication?.applications[0]?.user.careerLevel}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.user.careerLevel
+                     }
                   />
                   <ListComponent
                      heading={'Reference'}
                      subHeading={
-                        !!singleJobApplication?.applications[0]?.reference ? 'Yes' : 'No reference'
+                        !!singleJobApplication?.applications[0]?.reference
+                           ? 'Yes'
+                           : 'No reference'
                      }
                   />
                   {!!singleJobApplication?.applications[0]?.reference ? (
                      <>
                         <ListComponent
                            heading={'Candidate Name'}
-                           subHeading={singleJobApplication?.applications[0]?.candidateName}
+                           subHeading={
+                              singleJobApplication?.applications[0]
+                                 ?.candidateName
+                           }
                         />
                         <ListComponent
                            heading={'Candidate Number'}
-                           subHeading={singleJobApplication?.applications[0]?.candidateNumber}
+                           subHeading={
+                              singleJobApplication?.applications[0]
+                                 ?.candidateNumber
+                           }
                         />
                      </>
                   ) : null}
                   <ListComponent
                      heading={'Industry'}
-                     subHeading={singleJobApplication?.applications[0]?.user.industry}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.user.industry
+                     }
                   />
                   <ListComponent
                      heading={'Eligibility'}
-                     subHeading={singleJobApplication?.applications[0]?.user.eligibility}
+                     subHeading={
+                        singleJobApplication?.applications[0]?.user.eligibility
+                     }
                   />
                   {!!singleJobApplication?.applications[0]?.user?.resume ? (
                      <ListComponent
                         heading={'Resume'}
                         subHeading={
-                           singleJobApplication?.applications[0]?.referenceResume ||
+                           singleJobApplication?.applications[0]
+                              ?.referenceResume ||
                            singleJobApplication?.applications[0]?.user.resume
                         }
                         subHeadingSecond={
@@ -140,8 +182,10 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                                  className="ms-2 cursor-pointer"
                                  onClick={() =>
                                     DownloadResumeHandler(
-                                       singleJobApplication?.applications[0]?.referenceResume ||
-                                          singleJobApplication?.applications[0]?.user.resume
+                                       singleJobApplication?.applications[0]
+                                          ?.referenceResume ||
+                                          singleJobApplication?.applications[0]
+                                             ?.user.resume
                                     )
                                  }
                               />
@@ -152,12 +196,18 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                   <h5 className="mt-4">Skills</h5>
                   <div className="mt-3 topDiv">
                      {!!singleJobApplication?.applications[0]?.user?.skills &&
-                     singleJobApplication?.applications[0]?.user?.skills.length ? (
-                        singleJobApplication?.applications[0]?.user?.skills.map((el) => (
-                           <div className="skill_Round_div shadow" key={el._id}>
-                              {el.skill}
-                           </div>
-                        ))
+                     singleJobApplication?.applications[0]?.user?.skills
+                        .length ? (
+                        singleJobApplication?.applications[0]?.user?.skills.map(
+                           (el) => (
+                              <div
+                                 className="skill_Round_div shadow"
+                                 key={el._id}
+                              >
+                                 {el.skill}
+                              </div>
+                           )
+                        )
                      ) : (
                         <p>No Skills</p>
                      )}
@@ -165,7 +215,9 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                </>
             ) : !!singleJobApplicationFetchError ? (
                <div>
-                  <p className=" text-red-500">{singleJobApplicationFetchError}</p>
+                  <p className=" text-red-500">
+                     {singleJobApplicationFetchError}
+                  </p>
                </div>
             ) : null}
 

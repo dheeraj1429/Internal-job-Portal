@@ -15,7 +15,7 @@ const UserRole = [{ value: 'admin' }, { value: 'subAdmin' }, { value: 'employee'
 function EditUserInfromation({ show, eventClick, user }) {
    const [UserRoleInfo, setUserRoleInfo] = useState('');
    const dispatch = useDispatch();
-   const [cookie] = useCookies(['user']);
+   const [cookie] = useCookies(['_ijp_at_user']);
 
    const ChangeHandler = (event) => {
       setUserRoleInfo(event.target.value);
@@ -23,10 +23,8 @@ function EditUserInfromation({ show, eventClick, user }) {
 
    const updateUserHandler = function (e) {
       e.preventDefault();
-      if (!!cookie && cookie?.user && cookie?.user?.token) {
-         dispatch(
-            updateUserRole({ token: cookie?.user?.token, role: UserRoleInfo, userId: user._id })
-         );
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(updateUserRole({ token: cookie?._ijp_at_user?.token, role: UserRoleInfo, userId: user._id }));
       }
    };
 
@@ -52,14 +50,7 @@ function EditUserInfromation({ show, eventClick, user }) {
             >
                <TextField id="outlined-basic" value={user.name} variant="outlined" />
                <TextField id="outlined-basic" value={user.email} variant="outlined" />
-               <TextField
-                  id="outlined-select-currency"
-                  select
-                  label="Select"
-                  value={UserRoleInfo}
-                  onChange={ChangeHandler}
-                  helperText="Change user role"
-               >
+               <TextField id="outlined-select-currency" select label="Select" value={UserRoleInfo} onChange={ChangeHandler} helperText="Change user role">
                   {UserRole.map((option) => (
                      <MenuItem key={option.value} value={option.value}>
                         {option.value}
