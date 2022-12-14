@@ -122,17 +122,19 @@ function SignInComponent() {
                />
             )}
          </Box>
-         <CustomButtonComponent
-            onClick={signInHandler}
-            type="submit"
-            isLaoding={userAuthLoading}
-            innerText={
-               location.pathname === '/portal/login'
-                  ? 'login'
-                  : 'Create Account'
-            }
-            btnCl={'category_upload mb-2'}
-         />
+         <div className="flex items-center justify-center">
+            <CustomButtonComponent
+               onClick={signInHandler}
+               type="submit"
+               isLaoding={userAuthLoading}
+               innerText={
+                  location.pathname === '/portal/login'
+                     ? 'login'
+                     : 'Create Account'
+               }
+               btnCl={'category_upload mb-2'}
+            />
+         </div>
          {location.pathname === '/portal/login' ? (
             <span>
                Create an account{' '}

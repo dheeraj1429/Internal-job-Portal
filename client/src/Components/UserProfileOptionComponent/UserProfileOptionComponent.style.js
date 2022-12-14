@@ -1,10 +1,9 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    position: absolute;
    top: 90%;
    width: 100%;
-   height: 100%;
    left: 10px;
    width: 250px;
    background-color: var(--main-cl);
@@ -12,7 +11,7 @@ export const div = styled.div`
    transition: all 0.2s ease;
    overflow: hidden;
    transition: all 0.3s ease;
-   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+   visibility: ${(props) => (props.show ? "visible" : "hidden")};
    opacity: ${(props) => (props.show ? 1 : 0)};
 
    /* .overFlow_div {

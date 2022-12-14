@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authSlice from '../Features/Auth/AuthSlice';
-import adminSlice from '../Features/Admin/adminSlice';
-import indexSlice from '../Features/index/indexSlice';
-import logger from 'redux-logger';
+import { configureStore } from "@reduxjs/toolkit";
+import authSlice from "../Features/Auth/AuthSlice";
+import adminSlice from "../Features/Admin/adminSlice";
+import indexSlice from "../Features/index/indexSlice";
+import logger from "redux-logger";
 
 const store = configureStore({
    reducer: {
@@ -15,17 +15,18 @@ const store = configureStore({
          serializableCheck: {
             // Ignore these action types
             ignoredActions: [
-               'admin/getAllJobPosts/fulfilled',
-               'auth/login/fulfilled',
-               'index/getUserContactInfo/fulfilled',
-               'index/getUserResumeInformation/fulfilled',
-               'index/saveUserResumeData/fulfilled',
-               'index/saveUserContactInfo/fulfilled',
-               'index/getSingleJobPostDetail/fulfilled',
-               'index/getUserResumeContantInformation/fulfilled',
-               'admin/getAllJobApplications/fulfilled',
-               'auth/signIn/fulfilled',
-               'admin/getAllLoginUsers/fulfilled',
+               "admin/getAllJobPosts/fulfilled",
+               "auth/login/fulfilled",
+               "index/getUserContactInfo/fulfilled",
+               "index/getUserResumeInformation/fulfilled",
+               "index/saveUserResumeData/fulfilled",
+               "index/saveUserContactInfo/fulfilled",
+               "index/getSingleJobPostDetail/fulfilled",
+               "index/getUserResumeContantInformation/fulfilled",
+               "admin/getAllJobApplications/fulfilled",
+               "auth/signIn/fulfilled",
+               "admin/getAllLoginUsers/fulfilled",
+               "admin/getUserGroups/fulfilled",
             ],
          },
       }),

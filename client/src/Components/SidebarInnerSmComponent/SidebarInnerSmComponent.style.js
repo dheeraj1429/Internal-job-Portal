@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    padding: 0.8rem 1rem;
@@ -10,13 +10,12 @@ export const div = styled.div`
 
    &::before {
       position: absolute;
-      content: '';
+      content: "";
       left: 0;
       top: 0;
       width: 2px;
       height: 100%;
-      background-color: ${(props) =>
-         props.active ? 'var(--spec-brand-link-text)' : null};
+      background-color: ${(props) => (props.active ? "var(--spec-brand-link-text)" : null)};
    }
 
    svg {
@@ -27,5 +26,18 @@ export const div = styled.div`
    p {
       color: var(--main-cl);
       margin: 0;
+   }
+
+   .user_Profile {
+      width: 30px;
+      height: 30px;
+      border-radius: 50px;
+      overflow: hidden;
+
+      img {
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+      }
    }
 `;

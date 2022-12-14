@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { headers } from '../../../axiosConfig';
-import FileDownload from 'js-file-download';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { headers } from "../../../axiosConfig";
+import FileDownload from "js-file-download";
 
 const INITAL_STATE = {
    insertNewJobPost: null,
@@ -31,10 +31,12 @@ const INITAL_STATE = {
    userAccountDeleteInfo: null,
    userAccountDeleteLoading: false,
    userAccountDeleteError: null,
+   employeesGroup: null,
+   employeesCreateGroupLoading: false,
 };
 
 const adminSlice = createSlice({
-   name: 'admin',
+   name: "admin",
    initialState: INITAL_STATE,
    reducers: {
       removeJobPostInfo: (state) => {
@@ -49,6 +51,25 @@ const adminSlice = createSlice({
       },
       removeAccountInfo: (state) => {
          state.userAccountDeleteInfo = null;
+      },
+      createEmployeesGroup: (state, action) => {
+         state.employeesGroup =
+            action?.payload?.success && state?.employeesGroup?.groupInfo
+               ? {
+                    ...state.employeesGroup,
+                    groupInfo: state.employeesGroup?.groupInfo.concat(action.payload?.groupInfo),
+                    error: null,
+                 }
+               : action?.payload?.success
+               ? action.payload
+               : {
+                    ...state.employeesGroup,
+                    error: action.payload,
+                 };
+         state.employeesCreateGroupLoading = false;
+      },
+      createEmployeesGroupLoading: (state, action) => {
+         state.employeesCreateGroupLoading = action.payload.data;
       },
    },
    extraReducers: (bulder) => {
@@ -250,12 +271,23 @@ const adminSlice = createSlice({
                (el) => el._id !== action.payload.data.userId
             );
          });
+
+      bulder
+         .addCase(getUserGroups.pending, (state) => {})
+         .addCase(getUserGroups.rejected, (state, action) => {
+            state.employeesGroup = {
+               error: action.error.message,
+            };
+         })
+         .addCase(getUserGroups.fulfilled, (state, action) => {
+            state.employeesGroup = action.payload.data;
+         });
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 export const getAllJobPosts = createAsyncThunk(
-   'admin/getAllJobPosts',
+   "admin/getAllJobPosts",
    async (_, { rejectWithValue }) => {
       try {
          const jobResponse = await axios.get(`/index/get-all-job-posts`, headers);
@@ -270,7 +302,7 @@ export const getAllJobPosts = createAsyncThunk(
 );
 
 export const postNewJob = createAsyncThunk(
-   'admin/postNewJob',
+   "admin/postNewJob",
    async (data, { rejectWithValue }) => {
       try {
          const postResponse = await axios.post(
@@ -289,7 +321,7 @@ export const postNewJob = createAsyncThunk(
 );
 
 export const updateJobPost = createAsyncThunk(
-   'admin/updateJobPost',
+   "admin/updateJobPost",
    async (data, { rejectWithValue }) => {
       try {
          const updateJobPostResponse = await axios.patch(
@@ -308,7 +340,7 @@ export const updateJobPost = createAsyncThunk(
 );
 
 export const getSingleJobPostDetails = createAsyncThunk(
-   'admin/getSingleJobPostInfo',
+   "admin/getSingleJobPostInfo",
    async (data, { rejectWithValue }) => {
       try {
          const jobResponse = await axios.get(
@@ -326,7 +358,7 @@ export const getSingleJobPostDetails = createAsyncThunk(
 );
 
 export const deleteSingleJobPost = createAsyncThunk(
-   'admin/deleteSingleJobPost',
+   "admin/deleteSingleJobPost",
    async (data, { rejectWithValue }) => {
       try {
          const postResponse = await axios.delete(
@@ -344,7 +376,7 @@ export const deleteSingleJobPost = createAsyncThunk(
 );
 
 export const getAllJobApplications = createAsyncThunk(
-   'admin/getAllJobApplications',
+   "admin/getAllJobApplications",
    async ({ token, page }, { rejectWithValue }) => {
       try {
          const applicationsResponse = await axios.get(
@@ -362,7 +394,7 @@ export const getAllJobApplications = createAsyncThunk(
 );
 
 export const getSingleJobApplication = createAsyncThunk(
-   'admin/getSingleJobAplpication',
+   "admin/getSingleJobAplpication",
    async ({ token, jobId }, { rejectWithValue }) => {
       try {
          const SingleJobApplicationResponse = await axios.get(
@@ -380,17 +412,17 @@ export const getSingleJobApplication = createAsyncThunk(
 );
 
 export const downloadResume = createAsyncThunk(
-   'admin/downloadUserResume',
+   "admin/downloadUserResume",
    async ({ token, resume }, { rejectWithValue }) => {
       try {
          const resumeResponse = await axios.get(
             `/admin/downloadUserResume/${token}?resume=${resume}`,
             {
-               responseType: 'blob',
+               responseType: "blob",
             }
          );
 
-         FileDownload(resumeResponse?.data, 'resume.pdf');
+         FileDownload(resumeResponse?.data, "resume.pdf");
          return resumeResponse;
       } catch (err) {
          if (err) {
@@ -402,10 +434,10 @@ export const downloadResume = createAsyncThunk(
 );
 
 export const getAllLoginUsers = createAsyncThunk(
-   'admin/getAllLoginUsers',
-   async ({ token }, { rejectWithValue }) => {
+   "admin/getAllLoginUsers",
+   async ({ token, page }, { rejectWithValue }) => {
       try {
-         const users = await axios.get(`/admin/get-all-login-users/${token}`, headers);
+         const users = await axios.get(`/admin/get-all-login-users/${token}?page=${page}`, headers);
          return users;
       } catch (err) {
          if (err) {
@@ -418,7 +450,7 @@ export const getAllLoginUsers = createAsyncThunk(
 );
 
 export const updateUserRole = createAsyncThunk(
-   'admin/updateUserRole',
+   "admin/updateUserRole",
    async ({ token, ...others }, { rejectWithValue }) => {
       try {
          const userResponse = await axios.patch(
@@ -439,7 +471,7 @@ export const updateUserRole = createAsyncThunk(
 );
 
 export const deleteUserAccount = createAsyncThunk(
-   'admin/deleteUserAccount',
+   "admin/deleteUserAccount",
    async ({ token, userId }, { rejectWithValue }) => {
       try {
          const deleteResponse = await axios.delete(
@@ -456,6 +488,27 @@ export const deleteUserAccount = createAsyncThunk(
    }
 );
 
-export const { removeJobPostInfo, removeSingleJobPostInfo, removeAccountInfo } = adminSlice.actions;
+export const getUserGroups = createAsyncThunk(
+   "admin/getUserGroups",
+   async ({ token }, { rejectWithValue }) => {
+      try {
+         const getAllGroups = await axios.get(`/admin/get-all-groups/${token}`, headers);
+         return getAllGroups;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const {
+   removeJobPostInfo,
+   removeSingleJobPostInfo,
+   removeAccountInfo,
+   createEmployeesGroup,
+   createEmployeesGroupLoading,
+} = adminSlice.actions;
 
 export default adminSlice;

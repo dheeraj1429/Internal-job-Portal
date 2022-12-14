@@ -1,21 +1,21 @@
-const { catchAsync } = require('../helpers/helper');
-const jobPostModel = require('../model/schema/jobSchema');
-const { httpStatusCodes } = require('../helpers/helper');
-const authModel = require('../model/schema/authSchema');
-const jwt = require('jsonwebtoken');
-const sharp = require('sharp');
-const path = require('path');
+const { catchAsync } = require("../helpers/helper");
+const jobPostModel = require("../model/schema/jobSchema");
+const { httpStatusCodes } = require("../helpers/helper");
+const authModel = require("../model/schema/authSchema");
+const jwt = require("jsonwebtoken");
+const sharp = require("sharp");
+const path = require("path");
 const SECRET_KEY = process.env.SECRET_KEY;
-const jobAppliedModel = require('../model/schema/jobAppliedSchema');
+const jobAppliedModel = require("../model/schema/jobAppliedSchema");
 
 const getAllJobPosts = catchAsync(async function (req, res, next) {
    const allJobs = await jobPostModel.find(
       {},
       {
          metaData: 0,
-         'userApplied.reference': 0,
-         'userApplied.notes': 0,
-         'userApplied.referenceResume': 0,
+         "userApplied.reference": 0,
+         "userApplied.notes": 0,
+         "userApplied.referenceResume": 0,
       }
    );
    const documentCount = await jobPostModel.countDocuments();
@@ -28,7 +28,7 @@ const getAllJobPosts = catchAsync(async function (req, res, next) {
    } else {
       return res.status(httpStatusCodes.INTERNAL_SERVER).json({
          success: false,
-         message: 'Internal server error',
+         message: "Internal server error",
       });
    }
 });
@@ -37,7 +37,7 @@ const getSingleJobPostDetail = catchAsync(async function (req, res, next) {
    const { id } = req.params;
    const singleJobPost = await jobPostModel.findOne(
       { _id: id },
-      { 'userApplied.reference': 0, 'userApplied.notes': 0, 'userApplied.referenceResume': 0 }
+      { "userApplied.reference": 0, "userApplied.notes": 0, "userApplied.referenceResume": 0 }
    );
    if (singleJobPost) {
       return res.status(httpStatusCodes.OK).json({
@@ -47,7 +47,7 @@ const getSingleJobPostDetail = catchAsync(async function (req, res, next) {
    } else {
       return res.status(httpStatusCodes.INTERNAL_SERVER).json({
          success: false,
-         message: 'Internal server error',
+         message: "Internal server error",
       });
    }
 });
@@ -66,11 +66,11 @@ const sendUserContactRespone = async function (updateUserContact, res, _id, upda
       };
 
       // set the user updated value into the cookie
-      res.cookie('user', userObject);
+      res.cookie("_ijp_at_user", userObject);
 
       return res.status(httpStatusCodes.CREATED).json({
          success: true,
-         message: 'User information updated',
+         message: "User information updated",
          updatedData: {
             name: updateObject.name,
             profilePic: userInfo.userProfile,
@@ -79,7 +79,7 @@ const sendUserContactRespone = async function (updateUserContact, res, _id, upda
    } else {
       return res.status(httpStatusCodes.OK).json({
          success: true,
-         message: 'User information already updated',
+         message: "User information already updated",
       });
    }
 };
@@ -102,7 +102,7 @@ const saveUserContactInfo = catchAsync(async function (req, res, next) {
             width: 100,
             height: 100,
          })
-         .toFile(path.join(__dirname, '..', 'upload', 'usersProfileCompress', originalname));
+         .toFile(path.join(__dirname, "..", "upload", "usersProfileCompress", originalname));
 
       updateObject.userProfile = originalname;
 
@@ -131,7 +131,7 @@ const getUserContactInfo = catchAsync(async function (req, res, next) {
    } else {
       return res.status(httpStatusCodes.INTERNAL_SERVER).json({
          success: false,
-         message: 'Internal server error',
+         message: "Internal server error",
       });
    }
 });
@@ -142,12 +142,12 @@ const sendResumeUploadResponse = async function (_id, userPostedData, res) {
    if (!!updateUserInfo.modifiedCount) {
       return res.status(httpStatusCodes.CREATED).json({
          success: true,
-         message: 'Information saved',
+         message: "Information saved",
       });
    } else {
       return res.status(httpStatusCodes.OK).json({
          success: true,
-         message: 'information is already saved',
+         message: "information is already saved",
       });
    }
 };
@@ -206,7 +206,7 @@ const fetchUserResumeInformation = catchAsync(async function (req, res, next) {
    } else {
       return res.status(httpStatusCodes.INTERNAL_SERVER).json({
          success: false,
-         message: 'Internal server error',
+         message: "Internal server error",
       });
    }
 });
@@ -237,7 +237,7 @@ const fetchUserResumeContactInformation = catchAsync(async function (req, res, n
    } else {
       return res.status(httpStatusCodes.INTERNAL_SERVER).json({
          success: false,
-         message: 'Internal server error',
+         message: "Internal server error",
       });
    }
 });
@@ -258,13 +258,13 @@ const submitUserJobApplication = async function (data, jobId, userData, res) {
       if (!!insertUserSubmition.modifiedCount) {
          return res.status(httpStatusCodes.CREATED).json({
             success: true,
-            message: 'Job apply successful',
+            message: "Job apply successful",
          });
       }
    } else {
       return res.status(httpStatusCodes.INTERNAL_SERVER).json({
          success: false,
-         message: 'Internal server error',
+         message: "Internal server error",
       });
    }
 };

@@ -1,7 +1,7 @@
-import React from 'react';
-import * as styled from './DashboardPage.style';
-import DashboardSideBarComponent from '../../Components/DashboardSideBarComponent/DashboardSideBarComponent';
-import { Outlet } from 'react-router';
+import React, { useEffect } from "react";
+import * as styled from "./DashboardPage.style";
+import DashboardSideBarComponent from "../../Components/DashboardSideBarComponent/DashboardSideBarComponent";
+import { Outlet } from "react-router";
 
 function DashboardPage() {
    return (

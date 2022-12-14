@@ -49,7 +49,7 @@ code {
    --spec-error-background: #f4f4f4;
    --spec-text-primary: #fff;
    --spec-text-secondary: rgb(192, 192, 192);
-   --spec-text-disabled: #b7b7b7;
+   --spec-text-disabled: #d5d5d5;
    --spec-text-primary-inverse: #030303;
    --spec-call-to-action: #3ea6ff;
    --spec-call-to-action-inverse: #065fd4;
@@ -91,7 +91,7 @@ code {
 }
 
 .sidePaddingOne {
-   width: 60%;
+   width: 70%;
    margin: auto;
 }
 
@@ -117,4 +117,11 @@ code {
 
 .css-dev-only-do-not-override-1e67qka:nth-child(2) {
    background-color: var(--dark-blue-cl);
+}
+
+.center_div {
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
 }
