@@ -19,7 +19,6 @@ export const div = styled.div`
    }
 
    svg {
-      fill: var(--main-cl);
       font-size: 15px !important;
    }
 

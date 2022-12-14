@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import * as styled from "./CreateEmployeesGroupComponent.style";
 import HeadingComponent from "../../HelperComponents/HeadingComponent/HeadingComponent";
 import Box from "@mui/material/Box";
@@ -9,18 +9,16 @@ import { getAllLoginUsers } from "../../App/Features/Admin/adminSlice";
 import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import UserListComponent from "../UserListComponent/UserListComponent";
-import socketIOClient from "socket.io-client";
 import { message } from "antd";
 import {
    createEmployeesGroup,
    createEmployeesGroupLoading,
-} from "../../App/Features/Admin/adminSlice";
-import { ENDPOINT } from "../Helper/helper";
-
-// connection socket
-const socket = socketIOClient(ENDPOINT, { transports: ["websocket"] });
+} from "../../App/Features/Group/groupSlice";
+import { SocketContext } from "../../Context/socket";
 
 function CreateEmployeesGroupComponent() {
+   const socket = useContext(SocketContext);
+
    const [GroupInfo, setGroupInfo] = useState({
       groupName: "",
       employees: [],
@@ -28,7 +26,7 @@ function CreateEmployeesGroupComponent() {
    const [ShowPopUp, setShowPopUp] = useState(false);
    const [cookie] = useCookies(["_ijp_at_user"]);
    const dispatch = useDispatch();
-   const { employeesCreateGroupLoading, employeesGroup } = useSelector((state) => state.admin);
+   const { employeesCreateGroupLoading, employeesGroup } = useSelector((state) => state.group);
 
    const ShowAndHidHandler = function (data) {
       setShowPopUp(data);

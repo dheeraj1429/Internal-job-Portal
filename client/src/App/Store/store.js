@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "../Features/Auth/AuthSlice";
 import adminSlice from "../Features/Admin/adminSlice";
 import indexSlice from "../Features/index/indexSlice";
+import groupSlice from "../Features/Group/groupSlice";
 import logger from "redux-logger";
 
 const store = configureStore({
@@ -9,6 +10,7 @@ const store = configureStore({
       auth: authSlice.reducer,
       admin: adminSlice.reducer,
       index: indexSlice.reducer,
+      group: groupSlice.reducer,
    },
    middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
@@ -26,7 +28,9 @@ const store = configureStore({
                "admin/getAllJobApplications/fulfilled",
                "auth/signIn/fulfilled",
                "admin/getAllLoginUsers/fulfilled",
-               "admin/getUserGroups/fulfilled",
+               "group/getUserGroups/fulfilled",
+               "index/getUserIncludeGroups/fulfilled",
+               "group/getGroupUserInfo/fulfilled",
             ],
          },
       }),

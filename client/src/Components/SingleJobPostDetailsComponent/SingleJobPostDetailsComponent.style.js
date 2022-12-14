@@ -1,6 +1,7 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
+   padding: 2rem;
    position: relative;
    width: 100%;
    height: 100%;

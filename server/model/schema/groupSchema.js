@@ -5,11 +5,9 @@ const groupSchema = new mongoose.Schema({
    groupUsers: [
       {
          userId: { type: mongoose.Types.ObjectId, ref: "auth" },
-         userName: { type: String },
-         userEmail: { type: String },
-         userProfile: { type: String },
       },
    ],
+   createdAt: { type: Date, default: Date.now },
 });
 
 groupSchema.index({ groupName: 1 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext } from "react";
 import * as styled from "./DashboardSideBarComponent.style";
 import SidebarInnerSmComponent from "../SidebarInnerSmComponent/SidebarInnerSmComponent";
 import { BsBag } from "@react-icons/all-files/bs/BsBag";
@@ -12,22 +12,25 @@ import { RiUserSettingsLine } from "@react-icons/all-files/ri/RiUserSettingsLine
 import SidebarTabComponent from "../SidebarTabComponent/SidebarTabComponent";
 import { DiGhostSmall } from "@react-icons/all-files/di/DiGhostSmall";
 import { MdPlaylistAdd } from "@react-icons/all-files/md/MdPlaylistAdd";
-import { AiOutlineGroup } from "@react-icons/all-files/ai/AiOutlineGroup";
-import { SiGroupon } from "@react-icons/all-files/si/SiGroupon";
-import { getUserGroups } from "../../App/Features/Admin/adminSlice";
-import { ENDPOINT } from "../Helper/helper";
-import socketIOClient from "socket.io-client";
+import {
+   createEmployeesGroup,
+   getUserGroups,
+   getUserIncludeGroups,
+} from "../../App/Features/Group/groupSlice";
 import { message } from "antd";
-
-// connection socket
-const socket = socketIOClient(ENDPOINT, { transports: ["websocket"] });
+import { Link } from "react-router-dom";
+import { BiMessageSquareDetail } from "@react-icons/all-files/bi/BiMessageSquareDetail";
+import { SocketContext } from "../../Context/socket";
+import { TiGroup } from "@react-icons/all-files/ti/TiGroup";
 
 function DashboardSideBarComponent() {
-   const [cookies, setCookie, removeCookie] = useCookies(["_ijp_at_user"]);
+   const socket = useContext(SocketContext);
+
+   const [cookies, _, removeCookie] = useCookies(["_ijp_at_user"]);
    const dispatch = useDispatch();
 
    const { user } = useSelector((state) => state.auth);
-   const { employeesGroup } = useSelector((state) => state.admin);
+   const { employeesGroup } = useSelector((state) => state.group);
 
    const logOutHandler = function () {
       removeCookie("_ijp_at_user");
@@ -38,6 +41,8 @@ function DashboardSideBarComponent() {
       if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
          if (cookies?._ijp_at_user?.role === "admin") {
             dispatch(getUserGroups({ token: cookies?._ijp_at_user?.token }));
+         } else if (cookies?._ijp_at_user?.role === "employee") {
+            dispatch(getUserIncludeGroups({ token: cookies?._ijp_at_user?.token }));
          }
       }
    }, []);
@@ -46,15 +51,21 @@ function DashboardSideBarComponent() {
       if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
          socket.on("_group_created_broadCast", (args) => {
             if (args.groupEmployeesIds.includes(cookies?._ijp_at_user?._id)) {
-               message.success(`${args.groupAdmin} add you in ${args.groupName} group`);
-               socket.emit("_join_group", { groupName: args.groupName });
+               message.success(
+                  `${args.groupAdmin} add you in ${args?.groupInfo?.[0]?.groupData?.groupName} group`
+               );
+               socket.emit("_join_group", {
+                  groupName: args?.groupInfo?.[0]?.groupData?.groupName,
+               });
+               dispatch(createEmployeesGroup(args));
+               console.log(args);
             }
          });
       }
    }, [socket]);
 
    return (
-      <styled.div className="bg-dark">
+      <styled.div>
          <UserProfileComponent />
          <SidebarTabComponent icon={<DiGhostSmall />} heading={"Dashboard"} dropIcon={true}>
             <SidebarInnerSmComponent icon={<BsBag />} active={false} link={"/"} heading={"job"} />
@@ -87,25 +98,23 @@ function DashboardSideBarComponent() {
             ) : null}
          </SidebarTabComponent>
          {!!employeesGroup && employeesGroup?.success ? (
-            <SidebarTabComponent icon={<AiOutlineGroup />} heading={"Groups"} dropIcon={true}>
+            <SidebarTabComponent icon={<TiGroup />} heading={"Groups"} dropIcon={true}>
                {!!employeesGroup?.groupInfo &&
                   employeesGroup?.groupInfo.map((el) => (
-                     <SidebarTabComponent
-                        dropIcon={false}
-                        icon={<SiGroupon />}
-                        heading={el.groupData?.groupName}
-                     >
-                        {/* {!!el?.groupData?.groupUsers && el?.groupData?.groupUsers.length
-                           ? el?.groupData?.groupUsers.map((elm) => (
-                                <SidebarInnerSmComponent
-                                   profileDiv={true}
-                                   key={elm._id}
-                                   data={elm}
-                                   heading={elm.userName}
-                                />
-                             ))
-                           : null} */}
-                     </SidebarTabComponent>
+                     <div key={el?.groupData?._id || el?._id}>
+                        <Link
+                           to={`/groups/${
+                              el?.groupData?.groupName.replaceAll(" ", "-") ||
+                              el?.groupName.replaceAll(" ", "-")
+                           }/${el.groupData?._id || el?._id}`}
+                        >
+                           <SidebarTabComponent
+                              dropIcon={false}
+                              icon={<BiMessageSquareDetail />}
+                              heading={el.groupData?.groupName || el?.groupName}
+                           />
+                        </Link>
+                     </div>
                   ))}
             </SidebarTabComponent>
          ) : null}

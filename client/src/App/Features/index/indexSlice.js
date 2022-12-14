@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { headers, multipartData } from '../../../axiosConfig';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { headers, multipartData } from "../../../axiosConfig";
 
 const INITAL_STATE = {
    singleJobPost: null,
@@ -25,7 +25,7 @@ const INITAL_STATE = {
 };
 
 const indexSlice = createSlice({
-   name: 'index',
+   name: "index",
    initialState: INITAL_STATE,
    reducers: {
       removeContactUpdateInformation: (state, action) => {
@@ -165,7 +165,7 @@ const indexSlice = createSlice({
 });
 
 export const getSingleJobPost = createAsyncThunk(
-   'index/getSingleJobPostDetail',
+   "index/getSingleJobPostDetail",
    async (data, { rejectWithValue }) => {
       try {
          const postResponse = await axios.get(
@@ -183,7 +183,7 @@ export const getSingleJobPost = createAsyncThunk(
 );
 
 export const getUserContactInfo = createAsyncThunk(
-   'index/getUserContactInfo',
+   "index/getUserContactInfo",
    async (data, { rejectWithValue }) => {
       try {
          const contactInfo = await axios.get(`/index/get-user-contact-info/${data.token}`, headers);
@@ -198,7 +198,7 @@ export const getUserContactInfo = createAsyncThunk(
 );
 
 export const saveUserContactInfo = createAsyncThunk(
-   'index/saveUserContactInfo',
+   "index/saveUserContactInfo",
    async ({ token, formData }, { rejectWithValue }) => {
       try {
          const contactInfoResponse = await axios.post(
@@ -217,7 +217,7 @@ export const saveUserContactInfo = createAsyncThunk(
 );
 
 export const saveUserResumeInformation = createAsyncThunk(
-   'index/saveUserResumeData',
+   "index/saveUserResumeData",
    async ({ formData, token }, { rejectWithValue }) => {
       try {
          const resumeResponse = await axios.post(
@@ -237,7 +237,7 @@ export const saveUserResumeInformation = createAsyncThunk(
 );
 
 export const fetchUserResumeInformation = createAsyncThunk(
-   'index/getUserResumeInformation',
+   "index/getUserResumeInformation",
    async (token, { rejectWithValue }) => {
       try {
          const resumeResponse = await axios.get(
@@ -255,7 +255,7 @@ export const fetchUserResumeInformation = createAsyncThunk(
 );
 
 export const fetchUserResumeContactInformation = createAsyncThunk(
-   'index/getUserResumeContantInformation',
+   "index/getUserResumeContantInformation",
    async (token, { rejectWithValue }) => {
       try {
          const userInformation = await axios.get(
@@ -273,7 +273,7 @@ export const fetchUserResumeContactInformation = createAsyncThunk(
 );
 
 export const jobSubmition = createAsyncThunk(
-   'index/submitUserInformation',
+   "index/submitUserInformation",
    async ({ token, formData }, { rejectWithValue }) => {
       try {
          const submitionResponse = await axios.post(

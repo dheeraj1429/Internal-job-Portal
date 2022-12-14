@@ -22,6 +22,7 @@ route.get(
 route.get("/downloadUserResume/:token", checkIsUserValid, adminController.downloadUserResume);
 route.get("/get-all-login-users/:token", checkIsUserValid, adminController.getAllLoginUsers);
 route.get("/get-all-groups/:token", checkIsUserValid, adminController.getAllGroups);
+route.get("/get-group-users-infomation/:token", checkIsUserValid, adminController.getGroupUserInfo);
 
 // API => POST
 route.post("/inert-new-job-post/:token", checkIsUserValid, adminController.postNewjob);

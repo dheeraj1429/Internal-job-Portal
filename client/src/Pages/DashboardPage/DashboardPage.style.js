@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div``;
 
@@ -7,5 +7,5 @@ export const renderDiv = styled.div`
    height: 100vh;
    overflow-x: hidden;
    background-color: var(--main-cl);
-   padding: 2rem;
+   /* padding: 2rem; */
 `;

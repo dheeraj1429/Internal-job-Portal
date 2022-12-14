@@ -27,9 +27,6 @@ const socketIoConnection = function (io) {
                   for (let i = 0; i < employees.length; i++) {
                      employeesAr.push({
                         userId: employees[i]._id,
-                        userName: employees[i].name,
-                        userEmail: employees[i].email,
-                        userProfile: employees[i].userProfile,
                      });
                   }
                }
@@ -49,9 +46,17 @@ const socketIoConnection = function (io) {
                if (createGroup) {
                   // send the broad cast toe every online users. and then check if the user is is match so user can join the room.
                   socket.broadcast.emit("_group_created_broadCast", {
-                     groupName,
                      groupAdmin,
                      groupEmployeesIds,
+                     success: true,
+                     groupInfo: [
+                        {
+                           groupData: {
+                              groupName,
+                              _id: createGroup._id,
+                           },
+                        },
+                     ],
                   });
 
                   // join the admin in the group
@@ -60,10 +65,15 @@ const socketIoConnection = function (io) {
                   socket.emit("_group_created", {
                      success: true,
                      message: "Group created",
-                     groupInfo: [{ groupData: createGroup }],
+                     groupInfo: [
+                        {
+                           groupData: {
+                              groupName,
+                              _id: createGroup._id,
+                           },
+                        },
+                     ],
                   });
-
-                  socket.broadcast.emit("_group_created_notification", createGroup);
                }
             }
          } else {
@@ -79,6 +89,10 @@ const socketIoConnection = function (io) {
       socket.on("_join_group", (data) => {
          socket.join(data.groupName);
          console.log(data);
+      });
+
+      socket.on("_group_data", (args) => {
+         console.log(args);
       });
 
       io.on("disconnect", (reason) => {

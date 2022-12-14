@@ -14,7 +14,7 @@ function SidebarTabComponent({ children, icon, heading, dropIcon }) {
          <div className="flex items-center justify-between px-3 py-2" onClick={ShowHandler}>
             <div className="flex items-center">
                {icon}
-               <p className="text-white ms-2 text-sm">{heading}</p>
+               <p className="ms-2 text-sm text-gray-700">{heading}</p>
             </div>
             {!dropIcon ? null : (
                <IoMdArrowDropright className={ShowSubVariation ? "rotate_cl" : null} />

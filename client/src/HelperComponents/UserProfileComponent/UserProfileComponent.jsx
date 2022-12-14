@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import * as styled from './UserProfileComponent.style';
-import { useSelector } from 'react-redux';
-import UserProfileOptionComponent from '../../Components/UserProfileOptionComponent/UserProfileOptionComponent';
+import React, { useState } from "react";
+import * as styled from "./UserProfileComponent.style";
+import { useSelector } from "react-redux";
+import UserProfileOptionComponent from "../../Components/UserProfileOptionComponent/UserProfileOptionComponent";
 
 function UserProfileComponent() {
    const [ShowOptions, setShowOptions] = useState(false);
@@ -21,10 +21,7 @@ function UserProfileComponent() {
          {!!user && !!user && user?.userObject && user?.userObject?.token ? (
             <styled.div className="p-3 flex items-center justify-content-lg-start justify-center">
                <div>
-                  <div
-                     className="userProfileDiv"
-                     onClick={() => ShowAndHideHandler()}
-                  >
+                  <div className="userProfileDiv" onClick={() => ShowAndHideHandler()}>
                      <img
                         src={`/usersProfileCompress/${
                            !!userContactSaveInfo?.updatedData?.profilePic
@@ -35,21 +32,18 @@ function UserProfileComponent() {
                   </div>
                </div>
                <div
-                  className={ShowOptions ? 'overLayDiv' : 'overLayDiv d-none'}
+                  className={ShowOptions ? "overLayDiv" : "overLayDiv d-none"}
                   onClick={hideShowHandler}
                ></div>
                <div className="userProfileInfo ms-3">
-                  <h5 className="text-white mb-1">
+                  <h5 className="mb-1">
                      {!!userContactSaveInfo?.updatedData?.name
                         ? userContactSaveInfo.updatedData?.name
                         : user.userObject.name}
                   </h5>
-                  <p className=" text-gray-400">{user.userObject.email}</p>
+                  <p className=" text-gray-900">{user.userObject.email}</p>
                </div>
-               <UserProfileOptionComponent
-                  onClick={hideShowHandler}
-                  show={ShowOptions}
-               />
+               <UserProfileOptionComponent onClick={hideShowHandler} show={ShowOptions} />
             </styled.div>
          ) : null}
       </>

@@ -31,8 +31,6 @@ const INITAL_STATE = {
    userAccountDeleteInfo: null,
    userAccountDeleteLoading: false,
    userAccountDeleteError: null,
-   employeesGroup: null,
-   employeesCreateGroupLoading: false,
 };
 
 const adminSlice = createSlice({
@@ -51,25 +49,6 @@ const adminSlice = createSlice({
       },
       removeAccountInfo: (state) => {
          state.userAccountDeleteInfo = null;
-      },
-      createEmployeesGroup: (state, action) => {
-         state.employeesGroup =
-            action?.payload?.success && state?.employeesGroup?.groupInfo
-               ? {
-                    ...state.employeesGroup,
-                    groupInfo: state.employeesGroup?.groupInfo.concat(action.payload?.groupInfo),
-                    error: null,
-                 }
-               : action?.payload?.success
-               ? action.payload
-               : {
-                    ...state.employeesGroup,
-                    error: action.payload,
-                 };
-         state.employeesCreateGroupLoading = false;
-      },
-      createEmployeesGroupLoading: (state, action) => {
-         state.employeesCreateGroupLoading = action.payload.data;
       },
    },
    extraReducers: (bulder) => {
@@ -241,8 +220,6 @@ const adminSlice = createSlice({
             state.updateUserRoleError = action.error.message;
          })
          .addCase(updateUserRole.fulfilled, (state, action) => {
-            console.log(action.payload);
-
             state.updateUserRolePending = false;
             state.updateUserRoleError = null;
             state.allUsers.users = state.allUsers?.users.map((el) =>
@@ -270,17 +247,6 @@ const adminSlice = createSlice({
             state.allUsers.users = state.allUsers.users.filter(
                (el) => el._id !== action.payload.data.userId
             );
-         });
-
-      bulder
-         .addCase(getUserGroups.pending, (state) => {})
-         .addCase(getUserGroups.rejected, (state, action) => {
-            state.employeesGroup = {
-               error: action.error.message,
-            };
-         })
-         .addCase(getUserGroups.fulfilled, (state, action) => {
-            state.employeesGroup = action.payload.data;
          });
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
@@ -488,27 +454,11 @@ export const deleteUserAccount = createAsyncThunk(
    }
 );
 
-export const getUserGroups = createAsyncThunk(
-   "admin/getUserGroups",
-   async ({ token }, { rejectWithValue }) => {
-      try {
-         const getAllGroups = await axios.get(`/admin/get-all-groups/${token}`, headers);
-         return getAllGroups;
-      } catch (err) {
-         if (err) {
-            throw err;
-         }
-         return rejectWithValue(err.response.data);
-      }
-   }
-);
-
 export const {
    removeJobPostInfo,
    removeSingleJobPostInfo,
    removeAccountInfo,
    createEmployeesGroup,
-   createEmployeesGroupLoading,
 } = adminSlice.actions;
 
 export default adminSlice;

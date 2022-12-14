@@ -323,31 +323,15 @@ const deleteUserAccount = catchAsync(async function (req, res, next) {
 
 const getAllGroups = catchAsync(async function (req, res, next) {
    const findAllGroupData = await groupModel.aggregate([
-      { $unwind: "$groupUsers" },
-      {
-         $lookup: {
-            from: "auths",
-            localField: "groupUsers.userId",
-            foreignField: "_id",
-            as: "groupUsers.user",
-         },
-      },
-      { $unwind: "$groupUsers.user" },
       {
          $project: {
             _id: 1,
             groupName: 1,
-            "groupUsers.userId": 1,
-            "groupUsers.userName": "$groupUsers.user.name",
-            "groupUsers.userEmail": "$groupUsers.user.email",
-            "groupUsers.userProfile": "$groupUsers.user.userProfile",
-            "groupUsers._id": 1,
          },
       },
       {
          $group: {
             _id: { _id: "$_id", groupName: "$groupName" },
-            groupUsers: { $push: "$groupUsers" },
          },
       },
       {
@@ -355,7 +339,6 @@ const getAllGroups = catchAsync(async function (req, res, next) {
             groupData: {
                groupName: "$_id.groupName",
                _id: "$_id._id",
-               groupUsers: "$groupUsers",
             },
          },
       },
@@ -375,6 +358,57 @@ const getAllGroups = catchAsync(async function (req, res, next) {
    }
 });
 
+const getGroupUserInfo = catchAsync(async function (req, res, next) {
+   const { groupId } = req.query;
+
+   const groupWithUserInfo = await groupModel.aggregate([
+      { $match: { _id: mongoose.Types.ObjectId(groupId) } },
+      { $unwind: "$groupUsers" },
+      {
+         $lookup: {
+            from: "auths",
+            localField: "groupUsers.userId",
+            foreignField: "_id",
+            as: "groupUsers.user",
+         },
+      },
+      { $unwind: "$groupUsers.user" },
+      {
+         $group: {
+            _id: {
+               _id: "$_id",
+               groupName: "$groupName",
+            },
+            groupUsers: { $push: "$groupUsers" },
+         },
+      },
+      {
+         $project: {
+            _id: "$_id._id",
+            groupName: "$_id.groupName",
+            "groupUsers.userId": 1,
+            "groupUsers._id": 1,
+            "groupUsers.user.name": 1,
+            "groupUsers.user.email": 1,
+            "groupUsers.user.role": 1,
+            "groupUsers.user.userProfile": 1,
+         },
+      },
+   ]);
+
+   if (groupWithUserInfo) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         data: groupWithUserInfo[0],
+      });
+   } else {
+      return res.status(httpStatusCodes.OK).json({
+         success: false,
+         message: "Group is not exists",
+      });
+   }
+});
+
 module.exports = {
    postNewjob,
    getSingleJobPostDetails,
@@ -387,4 +421,5 @@ module.exports = {
    updateUserRole,
    deleteUserAccount,
    getAllGroups,
+   getGroupUserInfo,
 };

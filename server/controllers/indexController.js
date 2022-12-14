@@ -7,6 +7,7 @@ const sharp = require("sharp");
 const path = require("path");
 const SECRET_KEY = process.env.SECRET_KEY;
 const jobAppliedModel = require("../model/schema/jobAppliedSchema");
+const groupModel = require("../model/schema/groupSchema");
 
 const getAllJobPosts = catchAsync(async function (req, res, next) {
    const allJobs = await jobPostModel.find(
@@ -304,6 +305,31 @@ const jobSubmition = catchAsync(async function (req, res, next) {
    }
 });
 
+const getUserIncludeGroups = catchAsync(async function (req, res, next) {
+   const { token } = req.params;
+   const varifyToken = await jwt.verify(token, SECRET_KEY);
+   const { _id } = varifyToken;
+
+   const findUserGroups = await groupModel.find(
+      {
+         groupUsers: { $elemMatch: { userId: _id } },
+      },
+      { groupUsers: 0 }
+   );
+
+   if (findUserGroups) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         groupInfo: findUserGroups,
+      });
+   } else {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         groupInfo: [],
+      });
+   }
+});
+
 module.exports = {
    getAllJobPosts,
    getSingleJobPostDetail,
@@ -313,4 +339,5 @@ module.exports = {
    fetchUserResumeInformation,
    fetchUserResumeContactInformation,
    jobSubmition,
+   getUserIncludeGroups,
 };

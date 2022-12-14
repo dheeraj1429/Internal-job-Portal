@@ -1,6 +1,8 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
+   padding: 2rem;
+
    h1 {
       font-size: 40px;
       font-weight: 700;
