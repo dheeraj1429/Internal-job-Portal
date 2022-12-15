@@ -31,6 +31,9 @@ const INITAL_STATE = {
    userAccountDeleteInfo: null,
    userAccountDeleteLoading: false,
    userAccountDeleteError: null,
+   singleUserDetails: null,
+   singleUserDetailsLoading: false,
+   singleUserDetailsFetchError: null,
 };
 
 const adminSlice = createSlice({
@@ -212,7 +215,7 @@ const adminSlice = createSlice({
 
       bulder
          .addCase(updateUserRole.pending, (state) => {
-            state.updateUserRolePending = false;
+            state.updateUserRolePending = true;
             state.updateUserRoleError = null;
          })
          .addCase(updateUserRole.rejected, (state, action) => {
@@ -247,6 +250,23 @@ const adminSlice = createSlice({
             state.allUsers.users = state.allUsers.users.filter(
                (el) => el._id !== action.payload.data.userId
             );
+         });
+
+      bulder
+         .addCase(getUserDetails.pending, (state) => {
+            state.singleUserDetails = null;
+            state.singleUserDetailsLoading = true;
+            state.singleUserDetailsFetchError = null;
+         })
+         .addCase(getUserDetails.rejected, (state, action) => {
+            state.singleUserDetails = null;
+            state.singleUserDetailsLoading = false;
+            state.singleUserDetailsFetchError = action.error.message;
+         })
+         .addCase(getUserDetails.fulfilled, (state, action) => {
+            state.singleUserDetails = action.payload.data;
+            state.singleUserDetailsLoading = false;
+            state.singleUserDetailsFetchError = null;
          });
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
@@ -445,6 +465,24 @@ export const deleteUserAccount = createAsyncThunk(
             headers
          );
          return deleteResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const getUserDetails = createAsyncThunk(
+   "admin/getUserDetails",
+   async ({ token, userId }, { rejectWithValue }) => {
+      try {
+         const userResponse = await axios.get(
+            `/admin/get-user-details/${token}?userId=${userId}`,
+            headers
+         );
+         return userResponse;
       } catch (err) {
          if (err) {
             throw err;

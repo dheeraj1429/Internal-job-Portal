@@ -13,6 +13,7 @@ export const div = styled.div`
    transition: all 0.3s ease;
    visibility: ${(props) => (props.show ? "visible" : "hidden")};
    opacity: ${(props) => (props.show ? 1 : 0)};
+   z-index: 100;
 
    /* .overFlow_div {
       position: fixed;

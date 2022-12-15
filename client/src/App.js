@@ -17,6 +17,8 @@ import ForgetPasswordChangeComponent from "./Components/ForgetPasswordChangeComp
 import EmployeesGroupComponent from "./Components/EmployeesGroupComponent/EmployeesGroupComponent";
 import CreateEmployeesGroupComponent from "./Components/CreateEmployeesGroupComponent/CreateEmployeesGroupComponent";
 import GroupContainerComponent from "./Components/GroupContainerComponent/GroupContainerComponent";
+import ChatPreviewComponent from "./Components/ChatPreviewComponent/ChatPreviewComponent";
+import ShowUserDetailsComponent from "./Components/ShowUserDetailsComponent/ShowUserDetailsComponent";
 
 // pages
 import SignInAndLoginPage from "./Pages/SignInAndLoginPage/SignInAndLoginPage";
@@ -57,7 +59,10 @@ function App() {
                <Route path="all-users" element={<AllUserComponent />} />
                <Route path="groups" element={<EmployeesGroupComponent />} />
                <Route path="groups/create" element={<CreateEmployeesGroupComponent />} />
-               <Route path="groups/:name/:id" element={<GroupContainerComponent />} />
+               <Route path="groups/:name/:id" element={<GroupContainerComponent />}>
+                  <Route path="" element={<ChatPreviewComponent />} />
+                  <Route path=":userId" element={<ShowUserDetailsComponent />} />
+               </Route>
             </Route>
             <Route path="/beta/form" element={<JobApplyFormPage />}>
                <Route path="resume/:id" element={<JobApplyResumeComponent />} />

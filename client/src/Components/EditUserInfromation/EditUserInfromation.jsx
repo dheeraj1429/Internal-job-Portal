@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import * as styled from './EditUserInfromation.style';
-import { VscChromeClose } from '@react-icons/all-files/vsc/VscChromeClose';
-import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import { updateUserRole } from '../../App/Features/Admin/adminSlice';
-import { useDispatch } from 'react-redux';
-import { useCookies } from 'react-cookie';
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
+import * as styled from "./EditUserInfromation.style";
+import { VscChromeClose } from "@react-icons/all-files/vsc/VscChromeClose";
+import CustomButtonComponent from "../../HelperComponents/CustomButtonComponent/CustomButtonComponent";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import { updateUserRole } from "../../App/Features/Admin/adminSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
 
-const UserRole = [{ value: 'admin' }, { value: 'subAdmin' }, { value: 'employee' }];
+const UserRole = [{ value: "admin" }, { value: "subAdmin" }, { value: "employee" }];
 
 function EditUserInfromation({ show, eventClick, user }) {
-   const [UserRoleInfo, setUserRoleInfo] = useState('');
+   const [UserRoleInfo, setUserRoleInfo] = useState("");
    const dispatch = useDispatch();
-   const [cookie] = useCookies(['_ijp_at_user']);
+   const [cookie] = useCookies(["_ijp_at_user"]);
+
+   const { updateUserRolePending } = useSelector((state) => state.admin);
 
    const ChangeHandler = (event) => {
       setUserRoleInfo(event.target.value);
@@ -24,7 +26,13 @@ function EditUserInfromation({ show, eventClick, user }) {
    const updateUserHandler = function (e) {
       e.preventDefault();
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
-         dispatch(updateUserRole({ token: cookie?._ijp_at_user?.token, role: UserRoleInfo, userId: user._id }));
+         dispatch(
+            updateUserRole({
+               token: cookie?._ijp_at_user?.token,
+               role: UserRoleInfo,
+               userId: user._id,
+            })
+         );
       }
    };
 
@@ -43,14 +51,21 @@ function EditUserInfromation({ show, eventClick, user }) {
             <Box
                component="form"
                sx={{
-                  '& > :not(style)': { my: 1, width: '100%' },
+                  "& > :not(style)": { my: 1, width: "100%" },
                }}
                noValidate
                autoComplete="off"
             >
                <TextField id="outlined-basic" value={user.name} variant="outlined" />
                <TextField id="outlined-basic" value={user.email} variant="outlined" />
-               <TextField id="outlined-select-currency" select label="Select" value={UserRoleInfo} onChange={ChangeHandler} helperText="Change user role">
+               <TextField
+                  id="outlined-select-currency"
+                  select
+                  label="Select"
+                  value={UserRoleInfo}
+                  onChange={ChangeHandler}
+                  helperText="Change user role"
+               >
                   {UserRole.map((option) => (
                      <MenuItem key={option.value} value={option.value}>
                         {option.value}
@@ -60,12 +75,13 @@ function EditUserInfromation({ show, eventClick, user }) {
             </Box>
             <CustomButtonComponent
                onClick={user.role === UserRoleInfo ? null : (e) => updateUserHandler(e)}
-               innerText={user.role === UserRoleInfo ? 'No changes' : 'Update'}
-               btnCl={'category_upload'}
+               innerText={user.role === UserRoleInfo ? "No changes" : "Update"}
+               btnCl={"category_upload"}
+               isLaoding={updateUserRolePending}
             />
          </div>
       </styled.div>,
-      document.getElementById('userEditPopUp')
+      document.getElementById("userEditPopUp")
    );
 }
 

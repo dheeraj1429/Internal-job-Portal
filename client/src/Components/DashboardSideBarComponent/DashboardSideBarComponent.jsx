@@ -16,6 +16,7 @@ import {
    createEmployeesGroup,
    getUserGroups,
    getUserIncludeGroups,
+   removeUserFromGroup,
 } from "../../App/Features/Group/groupSlice";
 import { message } from "antd";
 import { Link } from "react-router-dom";
@@ -39,7 +40,10 @@ function DashboardSideBarComponent() {
 
    useEffect(() => {
       if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
-         if (cookies?._ijp_at_user?.role === "admin") {
+         if (
+            cookies?._ijp_at_user?.role === "admin" ||
+            cookies?._ijp_at_user?.role === "subAdmin"
+         ) {
             dispatch(getUserGroups({ token: cookies?._ijp_at_user?.token }));
          } else if (cookies?._ijp_at_user?.role === "employee") {
             dispatch(getUserIncludeGroups({ token: cookies?._ijp_at_user?.token }));
@@ -59,6 +63,24 @@ function DashboardSideBarComponent() {
                });
                dispatch(createEmployeesGroup(args));
                console.log(args);
+            }
+            if (cookies?._ijp_at_user?.role === "subAdmin") {
+               message.success(
+                  `${args.groupAdmin} create a new ${args?.groupInfo?.[0]?.groupData?.groupName} group`
+               );
+               dispatch(createEmployeesGroup(args));
+            }
+         });
+
+         socket.on("_user_remove_response", (args) => {
+            if (args.success) {
+               if (args?._id === cookies?._ijp_at_user?._id) {
+                  message.success(args.message);
+                  dispatch(removeUserFromGroup(args));
+               } else if (args?.userId === cookies?._ijp_at_user?._id) {
+                  message.success(args.message);
+                  dispatch(removeUserFromGroup(args));
+               }
             }
          });
       }
@@ -97,7 +119,7 @@ function DashboardSideBarComponent() {
                />
             ) : null}
          </SidebarTabComponent>
-         {!!employeesGroup && employeesGroup?.success ? (
+         {!!employeesGroup && employeesGroup?.success && !!employeesGroup?.groupInfo ? (
             <SidebarTabComponent icon={<TiGroup />} heading={"Groups"} dropIcon={true}>
                {!!employeesGroup?.groupInfo &&
                   employeesGroup?.groupInfo.map((el) => (
@@ -111,7 +133,10 @@ function DashboardSideBarComponent() {
                            <SidebarTabComponent
                               dropIcon={false}
                               icon={<BiMessageSquareDetail />}
-                              heading={el.groupData?.groupName || el?.groupName}
+                              heading={
+                                 el.groupData?.groupName.replaceAll("-", " ") ||
+                                 el?.groupName.replaceAll("-", " ")
+                              }
                            />
                         </Link>
                      </div>

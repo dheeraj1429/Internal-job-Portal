@@ -320,12 +320,12 @@ const getUserIncludeGroups = catchAsync(async function (req, res, next) {
    if (findUserGroups) {
       return res.status(httpStatusCodes.OK).json({
          success: true,
-         groupInfo: findUserGroups,
+         groupInfo: findUserGroups.length ? findUserGroups : null,
       });
    } else {
       return res.status(httpStatusCodes.OK).json({
          success: true,
-         groupInfo: [],
+         groupInfo: null,
       });
    }
 });

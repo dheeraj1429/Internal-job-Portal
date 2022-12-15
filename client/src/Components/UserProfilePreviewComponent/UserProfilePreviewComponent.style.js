@@ -9,6 +9,7 @@ export const div = styled.div`
       height: 45px;
       border-radius: 50%;
       overflow: hidden;
+      cursor: pointer;
 
       img {
          width: 100%;
@@ -20,6 +21,49 @@ export const div = styled.div`
    .user_content_info_div {
       p {
          font-size: 12px;
+      }
+   }
+
+   .close_button_div {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+
+      .hover_div {
+         width: max-content;
+         position: absolute;
+         background-color: var(--dark-cl);
+         padding: 0.2rem;
+         border-radius: 3px;
+         top: -40px;
+         visibility: hidden;
+         opacity: 0;
+         transition: all 0.2s ease;
+
+         p {
+            color: var(--main-cl);
+            font-size: 10px;
+         }
+      }
+
+      &:hover {
+         background-color: var(--spec-call-to-action);
+
+         .hover_div {
+            top: -30px;
+            visibility: visible;
+            opacity: 1;
+         }
+
+         svg {
+            color: var(--main-cl);
+         }
       }
    }
 `;

@@ -33,6 +33,27 @@ const groupSlice = createSlice({
       createEmployeesGroupLoading: (state, action) => {
          state.employeesCreateGroupLoading = action.payload.data;
       },
+      removeUserFromGroup: (state, action) => {
+         state.groupInfo = {
+            ...state.groupInfo,
+            data: {
+               ...state.groupInfo,
+               groupUsers: action.payload?._id
+                  ? state.groupInfo?.data?.groupUsers.filter(
+                       (el) => el?.userId !== action?.payload?.userId
+                    )
+                  : state.groupInfo,
+            },
+         };
+         state.employeesGroup = !action.payload?._id
+            ? {
+                 ...state.employeesGroup,
+                 groupInfo: state.employeesGroup.groupInfo.filter(
+                    (el) => el.groupData?._id !== action.payload?.groupId
+                 ),
+              }
+            : state.employeesGroup;
+      },
    },
    extraReducers: (bulder) => {
       bulder
@@ -130,5 +151,6 @@ export const getGroupUserInfo = createAsyncThunk(
    }
 );
 
-export const { createEmployeesGroup, createEmployeesGroupLoading } = groupSlice.actions;
+export const { createEmployeesGroup, createEmployeesGroupLoading, removeUserFromGroup } =
+   groupSlice.actions;
 export default groupSlice;

@@ -31,6 +31,8 @@ const store = configureStore({
                "group/getUserGroups/fulfilled",
                "index/getUserIncludeGroups/fulfilled",
                "group/getGroupUserInfo/fulfilled",
+               "group/getUserIncludeGroups/fulfilled",
+               "admin/getUserDetails/fulfilled",
             ],
          },
       }),

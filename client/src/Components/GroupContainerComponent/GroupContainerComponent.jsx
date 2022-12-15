@@ -7,6 +7,7 @@ import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { getGroupUserInfo } from "../../App/Features/Group/groupSlice";
 import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
+import { Outlet } from "react-router";
 
 function GroupContainerComponent() {
    const [cookie] = useCookies(["_ijp_at_user"]);
@@ -17,7 +18,7 @@ function GroupContainerComponent() {
 
    useEffect(() => {
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
-         if (cookie?._ijp_at_user?.role === "admin") {
+         if (cookie?._ijp_at_user?.role === "admin" || cookie?._ijp_at_user?.role === "subAdmin") {
             dispatch(getGroupUserInfo({ token: cookie?._ijp_at_user?.token, groupId: param.id }));
          }
       }
@@ -33,6 +34,9 @@ function GroupContainerComponent() {
                         <SearchBoxComponent />
                      </div>
                      <div className="p-3 scroll_div relative">
+                        <h1 className="mb-3 text-3xl text-gray-700">
+                           {param?.name.replaceAll("-", " ")}
+                        </h1>
                         {!!groupInfoLoading ? <SpennerComponent center={true} /> : null}
                         {!!groupInfoFetchError ? (
                            <p className="error_text">{groupInfoFetchError}</p>
@@ -42,13 +46,19 @@ function GroupContainerComponent() {
                         groupInfo?.data &&
                         groupInfo.data?.groupUsers.length
                            ? groupInfo.data?.groupUsers.map((el) => (
-                                <UserProfilePreviewComponent key={el._id} data={el} />
+                                <UserProfilePreviewComponent
+                                   key={el._id}
+                                   data={el}
+                                   groupId={groupInfo.data?._id}
+                                />
                              ))
                            : null}
                      </div>
                   </div>
                </div>
-               <div className="col-9"></div>
+               <div className="col-9">
+                  <Outlet />
+               </div>
             </div>
          </div>
       </styled.div>

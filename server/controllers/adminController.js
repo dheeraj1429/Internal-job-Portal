@@ -268,7 +268,7 @@ const getAllLoginUsers = catchAsync(async function (req, res, next) {
       DOCUMENT_LIMIT,
       res,
       "users",
-      { role: { $ne: "admin" } },
+      { $and: [{ role: { $ne: "admin" } }, { role: { $ne: "subAdmin" } }] },
       { name: 1, email: 1, role: 1, userProfile: 1 }
    );
 });
@@ -347,8 +347,8 @@ const getAllGroups = catchAsync(async function (req, res, next) {
    if (findAllGroupData) {
       return res.status(httpStatusCodes.OK).json({
          success: true,
-         message: "ALl groups",
-         groupInfo: findAllGroupData,
+         message: "All groups",
+         groupInfo: findAllGroupData.length ? findAllGroupData : null,
       });
    } else {
       return res.status(httpStatusCodes.OK).json({
@@ -409,6 +409,22 @@ const getGroupUserInfo = catchAsync(async function (req, res, next) {
    }
 });
 
+const getUserDetails = catchAsync(async function (req, res, next) {
+   const { userId } = req.query;
+   const findUserInfo = await authModel.findOne({ _id: userId }, { password: 0, tokens: 0 });
+   if (findUserInfo) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         userInfo: findUserInfo,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: "Internal server error",
+      });
+   }
+});
+
 module.exports = {
    postNewjob,
    getSingleJobPostDetails,
@@ -422,4 +438,5 @@ module.exports = {
    deleteUserAccount,
    getAllGroups,
    getGroupUserInfo,
+   getUserDetails,
 };

@@ -1,4 +1,6 @@
 const groupModel = require("../model/schema/groupSchema");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = process.env.SECRET_KEY;
 
 const socketIoConnection = function (io) {
    // socket connection
@@ -9,10 +11,11 @@ const socketIoConnection = function (io) {
       // create a user group
       socket.on("_create_group", async (args) => {
          const { groupName, employees, groupAdmin } = args;
+         const spaceRemove = groupName.trim().replaceAll(" ", "-");
 
          if (!!groupName) {
             // check is group already exists or not.
-            const checkGroupIsExists = await groupModel.findOne({ groupName });
+            const checkGroupIsExists = await groupModel.findOne({ groupName: spaceRemove });
 
             if (checkGroupIsExists) {
                socket.emit("_group_created", {
@@ -39,7 +42,7 @@ const socketIoConnection = function (io) {
 
                // insert new group into the database.
                const createGroup = await groupModel({
-                  groupName,
+                  groupName: spaceRemove,
                   groupUsers: employeesAr,
                }).save();
 
@@ -60,7 +63,7 @@ const socketIoConnection = function (io) {
                   });
 
                   // join the admin in the group
-                  socket.join(groupName);
+                  socket.join(spaceRemove);
 
                   socket.emit("_group_created", {
                      success: true,
@@ -68,7 +71,7 @@ const socketIoConnection = function (io) {
                      groupInfo: [
                         {
                            groupData: {
-                              groupName,
+                              groupName: spaceRemove,
                               _id: createGroup._id,
                            },
                         },
@@ -87,15 +90,65 @@ const socketIoConnection = function (io) {
 
       // joining the room.
       socket.on("_join_group", (data) => {
-         socket.join(data.groupName);
-         console.log(data);
+         const replaceSpace = data.groupName.trim().replaceAll(" ", "-");
+         socket.join(replaceSpace);
+         console.log(replaceSpace);
       });
 
       socket.on("_group_data", (args) => {
          console.log(args);
       });
 
-      io.on("disconnect", (reason) => {
+      socket.on("_remove_group_users", async (args) => {
+         const { token, groupName, groupId, userId } = args;
+         const varifyToken = await jwt.verify(token, SECRET_KEY);
+
+         if (varifyToken) {
+            /**
+             * if token is valid then share the data with admin and also group user
+             * to keep track which user is removed.
+             * if token is not valid then only send back response with admin.
+             * @findAndRemoveUserFromGroup find and remove users from group model.
+             * keep checking user is removed or not.
+             * if the user is removed from the admin dashboard group then also remove user from the user dashboard.
+             */
+            const { _id } = varifyToken;
+
+            const findAndRemoveUserFromGroup = await groupModel.updateOne(
+               {
+                  _id: groupId,
+               },
+               { $pull: { groupUsers: { userId } } }
+            );
+
+            if (!!findAndRemoveUserFromGroup?.modifiedCount) {
+               // send response to the group users
+               socket.to(groupName.trim().replaceAll(" ", "-")).emit("_user_remove_response", {
+                  success: true,
+                  message: `${varifyToken.name} removed you from ${groupName.replaceAll(
+                     "-",
+                     " "
+                  )} group.`,
+                  groupId,
+                  userId,
+               });
+
+               // send back the response to the admin.
+               socket.emit("_user_remove_response", {
+                  success: true,
+                  message: `user is removed from ${groupName.replaceAll("-", " ")}`,
+                  groupId,
+                  userId,
+                  _id,
+               });
+            }
+         } else {
+            socket.emit("_user_remove_response", { success: false, message: "Invalid token" });
+         }
+      });
+
+      socket.on("disconnect", (reason) => {
+         // handle offline status
          console.log("User is disconnect the room");
          console.log(reason);
       });
