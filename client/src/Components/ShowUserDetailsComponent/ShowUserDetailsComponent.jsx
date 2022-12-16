@@ -40,10 +40,10 @@ function ShowUserDetailsComponent() {
                singleUserDetails?.userInfo?.skills.length ? (
                   <div className=" px-4 mt-4">
                      <h5 className="mb-3 text-2xl text-gray-600">My Skills</h5>
-                     <div className="flex items-center">
+                     <div className="userSkillsDiv">
                         {singleUserDetails?.userInfo?.skills.map((el) => (
                            <div
-                              className=" px-2 py-1 rounded shadow me-3 relative pr_div"
+                              className="px-2 py-1 rounded shadow me-3 relative pr_div mb-3"
                               key={el._id}
                            >
                               <div className="hover_div bg-black">

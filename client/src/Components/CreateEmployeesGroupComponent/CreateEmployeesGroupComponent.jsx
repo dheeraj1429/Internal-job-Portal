@@ -79,7 +79,9 @@ function CreateEmployeesGroupComponent() {
    }, []);
 
    useEffect(() => {
+      console.log("create employess group component render");
       socket.on("_group_created", (args) => {
+         console.log(args);
          dispatch(createEmployeesGroup(args));
       });
    }, [socket]);

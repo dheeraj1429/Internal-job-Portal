@@ -16,4 +16,13 @@ export const div = styled.div`
          object-fit: cover;
       }
    }
+
+   @media (max-width: 1600px) {
+      .user_profile_div {
+         width: 140px;
+         height: 140px;
+         position: relative;
+         top: 0;
+      }
+   }
 `;

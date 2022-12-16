@@ -10,7 +10,7 @@ function UserProfileDetailsComponent() {
    return (
       <styled.div>
          <div className="row align-items-center justify-content-center relative">
-            <div className="col-3 flex justify-center">
+            <div className="col-3 flex justify-center ps-3">
                <div className="user_profile_div shadow">
                   <img src={`/usersProfile/${singleUserDetails?.userInfo?.userProfile}`} alt="" />
                </div>

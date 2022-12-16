@@ -49,9 +49,6 @@ function DashboardSideBarComponent() {
             dispatch(getUserIncludeGroups({ token: cookies?._ijp_at_user?.token }));
          }
       }
-   }, []);
-
-   useEffect(() => {
       if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
          socket.on("_group_created_broadCast", (args) => {
             if (args.groupEmployeesIds.includes(cookies?._ijp_at_user?._id)) {
@@ -60,6 +57,7 @@ function DashboardSideBarComponent() {
                );
                socket.emit("_join_group", {
                   groupName: args?.groupInfo?.[0]?.groupData?.groupName,
+                  user: cookies?._ijp_at_user,
                });
                dispatch(createEmployeesGroup(args));
                console.log(args);
@@ -68,6 +66,11 @@ function DashboardSideBarComponent() {
                message.success(
                   `${args.groupAdmin} create a new ${args?.groupInfo?.[0]?.groupData?.groupName} group`
                );
+               socket.emit("_join_group", {
+                  groupName: args?.groupInfo?.[0]?.groupData?.groupName,
+                  user: cookies?._ijp_at_user,
+               });
+               console.log(args);
                dispatch(createEmployeesGroup(args));
             }
          });
@@ -84,7 +87,7 @@ function DashboardSideBarComponent() {
             }
          });
       }
-   }, [socket]);
+   }, []);
 
    return (
       <styled.div>
@@ -128,7 +131,9 @@ function DashboardSideBarComponent() {
                            to={`/groups/${
                               el?.groupData?.groupName.replaceAll(" ", "-") ||
                               el?.groupName.replaceAll(" ", "-")
-                           }/${el.groupData?._id || el?._id}`}
+                           }/${el.groupData?._id || el?._id}/${
+                              cookies?._ijp_at_user?.role === "admin" ? "" : "chat"
+                           }`}
                         >
                            <SidebarTabComponent
                               dropIcon={false}

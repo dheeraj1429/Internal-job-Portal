@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 export const div = styled.div`
+   margin-bottom: 5rem;
+
    .user_profile_bg_div {
       width: 100%;
       height: 300px;
@@ -34,5 +36,11 @@ export const div = styled.div`
             opacity: 1;
          }
       }
+   }
+
+   .userSkillsDiv {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
    }
 `;

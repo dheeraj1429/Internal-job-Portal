@@ -1,6 +1,7 @@
 const groupModel = require("../model/schema/groupSchema");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = process.env.SECRET_KEY;
+const { v4: uuidv4 } = require("uuid");
 
 const socketIoConnection = function (io) {
    // socket connection
@@ -92,13 +93,10 @@ const socketIoConnection = function (io) {
       socket.on("_join_group", (data) => {
          const replaceSpace = data.groupName.trim().replaceAll(" ", "-");
          socket.join(replaceSpace);
-         console.log(replaceSpace);
+         console.log(data);
       });
 
-      socket.on("_group_data", (args) => {
-         console.log(args);
-      });
-
+      // remove user from groups
       socket.on("_remove_group_users", async (args) => {
          const { token, groupName, groupId, userId } = args;
          const varifyToken = await jwt.verify(token, SECRET_KEY);
@@ -145,6 +143,26 @@ const socketIoConnection = function (io) {
          } else {
             socket.emit("_user_remove_response", { success: false, message: "Invalid token" });
          }
+      });
+
+      socket.on("_send_group_message", async (args) => {
+         const { groupName, groupId, userInfo, message } = args;
+         const _reciver_message_id = uuidv4();
+         const _sender_message_id = uuidv4();
+
+         socket.emit("_receive_message", {
+            groupId,
+            userInfo,
+            message,
+            _reciver_message_id,
+         });
+         // send back the massage to the all group users.
+         socket.to(groupName).emit("_receive_message", {
+            groupId,
+            userInfo,
+            message,
+            _sender_message_id,
+         });
       });
 
       socket.on("disconnect", (reason) => {
