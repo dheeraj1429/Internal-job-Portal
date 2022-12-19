@@ -7,6 +7,13 @@ const groupSchema = new mongoose.Schema({
          userId: { type: mongoose.Types.ObjectId, ref: "auth" },
       },
    ],
+   groupMessages: [
+      {
+         userId: { type: mongoose.Types.ObjectId, ref: "auth" },
+         message: { type: String, required: [true, "message is required"] },
+         createdAt: { type: Date, default: Date.now },
+      },
+   ],
    createdAt: { type: Date, default: Date.now },
 });
 

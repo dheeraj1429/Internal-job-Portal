@@ -2,8 +2,39 @@ import styled from "styled-components";
 
 export const div = styled.div`
    padding: 1rem;
-   max-width: 50%;
+   max-width: 70%;
    margin: auto;
+   position: relative;
+
+   .show_div {
+      visibility: visible;
+      opacity: 1;
+   }
+
+   .hide_div {
+      visibility: hidden;
+      opacity: 0;
+   }
+
+   .icon_div {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--main-cl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+         width: 26px;
+         height: auto;
+      }
+   }
+
+   .picker {
+      position: absolute !important;
+      bottom: 90%;
+   }
 
    .input_div_div {
       width: 100%;

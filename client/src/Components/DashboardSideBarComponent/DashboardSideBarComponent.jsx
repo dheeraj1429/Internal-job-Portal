@@ -12,12 +12,7 @@ import { RiUserSettingsLine } from "@react-icons/all-files/ri/RiUserSettingsLine
 import SidebarTabComponent from "../SidebarTabComponent/SidebarTabComponent";
 import { DiGhostSmall } from "@react-icons/all-files/di/DiGhostSmall";
 import { MdPlaylistAdd } from "@react-icons/all-files/md/MdPlaylistAdd";
-import {
-   createEmployeesGroup,
-   getUserGroups,
-   getUserIncludeGroups,
-   removeUserFromGroup,
-} from "../../App/Features/Group/groupSlice";
+import { createEmployeesGroup, getUserGroups, getUserIncludeGroups, removeUserFromGroup } from "../../App/Features/Group/groupSlice";
 import { message } from "antd";
 import { Link } from "react-router-dom";
 import { BiMessageSquareDetail } from "@react-icons/all-files/bi/BiMessageSquareDetail";
@@ -39,54 +34,54 @@ function DashboardSideBarComponent() {
    };
 
    useEffect(() => {
+      const CreateBroadCastLstener = function (args) {
+         if (args.groupEmployeesIds.includes(cookies?._ijp_at_user?._id)) {
+            message.success(`${args.groupAdmin} add you in ${args?.groupInfo?.[0]?.groupData?.groupName} group`);
+            socket.emit("_join_group", {
+               groupId: args?.groupInfo?.[0]?.groupData?._id,
+               user: cookies?._ijp_at_user,
+            });
+            dispatch(createEmployeesGroup(args));
+         }
+         if (cookies?._ijp_at_user?.role === "subAdmin") {
+            message.success(`${args.groupAdmin} create a new ${args?.groupInfo?.[0]?.groupData?.groupName} group`);
+            socket.emit("_join_group", {
+               groupId: args?.groupInfo?.[0]?.groupData?._id,
+               user: cookies?._ijp_at_user,
+            });
+            dispatch(createEmployeesGroup(args));
+         }
+      };
+
+      const UserRemoveListner = function (args) {
+         if (args.success) {
+            if (args?._id === cookies?._ijp_at_user?._id) {
+               message.success(args.message);
+               dispatch(removeUserFromGroup(args));
+            } else if (args?.userId === cookies?._ijp_at_user?._id) {
+               message.success(args.message);
+               dispatch(removeUserFromGroup(args));
+            }
+         }
+      };
+
       if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
-         if (
-            cookies?._ijp_at_user?.role === "admin" ||
-            cookies?._ijp_at_user?.role === "subAdmin"
-         ) {
+         if (cookies?._ijp_at_user?.role === "admin" || cookies?._ijp_at_user?.role === "subAdmin") {
             dispatch(getUserGroups({ token: cookies?._ijp_at_user?.token }));
          } else if (cookies?._ijp_at_user?.role === "employee") {
             dispatch(getUserIncludeGroups({ token: cookies?._ijp_at_user?.token }));
          }
       }
-      if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
-         socket.on("_group_created_broadCast", (args) => {
-            if (args.groupEmployeesIds.includes(cookies?._ijp_at_user?._id)) {
-               message.success(
-                  `${args.groupAdmin} add you in ${args?.groupInfo?.[0]?.groupData?.groupName} group`
-               );
-               socket.emit("_join_group", {
-                  groupName: args?.groupInfo?.[0]?.groupData?.groupName,
-                  user: cookies?._ijp_at_user,
-               });
-               dispatch(createEmployeesGroup(args));
-               console.log(args);
-            }
-            if (cookies?._ijp_at_user?.role === "subAdmin") {
-               message.success(
-                  `${args.groupAdmin} create a new ${args?.groupInfo?.[0]?.groupData?.groupName} group`
-               );
-               socket.emit("_join_group", {
-                  groupName: args?.groupInfo?.[0]?.groupData?.groupName,
-                  user: cookies?._ijp_at_user,
-               });
-               console.log(args);
-               dispatch(createEmployeesGroup(args));
-            }
-         });
 
-         socket.on("_user_remove_response", (args) => {
-            if (args.success) {
-               if (args?._id === cookies?._ijp_at_user?._id) {
-                  message.success(args.message);
-                  dispatch(removeUserFromGroup(args));
-               } else if (args?.userId === cookies?._ijp_at_user?._id) {
-                  message.success(args.message);
-                  dispatch(removeUserFromGroup(args));
-               }
-            }
-         });
+      if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
+         socket.on("_group_created_broadCast", CreateBroadCastLstener);
+         socket.on("_user_remove_response", UserRemoveListner);
       }
+
+      return () => {
+         socket.off("_group_created_broadCast", CreateBroadCastLstener);
+         socket.off("_user_remove_response", UserRemoveListner);
+      };
    }, []);
 
    return (
@@ -96,31 +91,12 @@ function DashboardSideBarComponent() {
             <SidebarInnerSmComponent icon={<BsBag />} active={false} link={"/"} heading={"job"} />
             {!!user && user?.userObject && user?.userObject?.role === "admin" ? (
                <>
-                  <SidebarInnerSmComponent
-                     icon={<AiOutlineFileZip />}
-                     link={"/applications"}
-                     heading={"Applications"}
-                  />
-                  <SidebarInnerSmComponent
-                     icon={<RiUserSettingsLine />}
-                     link={"/all-users"}
-                     heading={"All users"}
-                  />
-                  <SidebarInnerSmComponent
-                     icon={<MdPlaylistAdd />}
-                     link={"/groups"}
-                     heading={"Groups"}
-                  />
+                  <SidebarInnerSmComponent icon={<AiOutlineFileZip />} link={"/applications"} heading={"Applications"} />
+                  <SidebarInnerSmComponent icon={<RiUserSettingsLine />} link={"/all-users"} heading={"All users"} />
+                  <SidebarInnerSmComponent icon={<MdPlaylistAdd />} link={"/groups"} heading={"Groups"} />
                </>
             ) : null}
-            {!!user ? (
-               <SidebarInnerSmComponent
-                  icon={<IoIosLogOut />}
-                  heading={"log out"}
-                  onClick={logOutHandler}
-                  link={"/portal/signin"}
-               />
-            ) : null}
+            {!!user ? <SidebarInnerSmComponent icon={<IoIosLogOut />} heading={"log out"} onClick={logOutHandler} link={"/portal/signin"} /> : null}
          </SidebarTabComponent>
          {!!employeesGroup && employeesGroup?.success && !!employeesGroup?.groupInfo ? (
             <SidebarTabComponent icon={<TiGroup />} heading={"Groups"} dropIcon={true}>
@@ -128,20 +104,14 @@ function DashboardSideBarComponent() {
                   employeesGroup?.groupInfo.map((el) => (
                      <div key={el?.groupData?._id || el?._id}>
                         <Link
-                           to={`/groups/${
-                              el?.groupData?.groupName.replaceAll(" ", "-") ||
-                              el?.groupName.replaceAll(" ", "-")
-                           }/${el.groupData?._id || el?._id}/${
-                              cookies?._ijp_at_user?.role === "admin" ? "" : "chat"
+                           to={`/groups/${el?.groupData?.groupName.replaceAll(" ", "-") || el?.groupName.replaceAll(" ", "-")}/${
+                              el.groupData?._id || el?._id
                            }`}
                         >
                            <SidebarTabComponent
                               dropIcon={false}
                               icon={<BiMessageSquareDetail />}
-                              heading={
-                                 el.groupData?.groupName.replaceAll("-", " ") ||
-                                 el?.groupName.replaceAll("-", " ")
-                              }
+                              heading={el.groupData?.groupName.replaceAll("-", " ") || el?.groupName.replaceAll("-", " ")}
                            />
                         </Link>
                      </div>

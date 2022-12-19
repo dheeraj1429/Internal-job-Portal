@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
-export const div = styled.div``;
+export const div = styled.div`
+   padding: 0 1rem;
+`;
 
 export const userProfileDiv = styled.div`
    .profile {
@@ -26,6 +28,13 @@ export const chatMessageDiv = styled.div`
    max-width: 500px;
    margin-top: 1rem;
    border-radius: 5px;
+   position: relative;
+
+   .options_div {
+      position: absolute;
+      /* right: -50px; */
+      top: 10px;
+   }
 
    p {
       font-size: 14px;

@@ -8,13 +8,23 @@ export const div = styled.div`
       width: 45px;
       height: 45px;
       border-radius: 50%;
-      overflow: hidden;
       cursor: pointer;
+      position: relative;
+
+      .online_status {
+         width: 10px;
+         height: 10px;
+         position: absolute;
+         bottom: 0;
+         right: 0;
+         border-radius: 50%;
+      }
 
       img {
          width: 100%;
          height: 100%;
          object-fit: cover;
+         border-radius: 50%;
       }
    }
 

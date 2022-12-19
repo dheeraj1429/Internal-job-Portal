@@ -28,6 +28,14 @@ function UserProfilePreviewComponent({ data, groupId }) {
             <div>
                <Link to={`/groups/${param.name.replaceAll(" ", "-")}/${groupId}/${data?.userId}`}>
                   <div className="user_profile_div">
+                     {/* <div
+                        className={
+                           online?.current?._id === cookie?._ijp_at_user?._id &&
+                           online?.current.online
+                              ? "online_status bg-green-500"
+                              : "online_status bg-gray-500"
+                        }
+                     ></div> */}
                      <img src={`/usersProfileCompress/${data?.user?.userProfile}`} alt="" />
                   </div>
                </Link>

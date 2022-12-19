@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const mongodbURI = process.env.MONGODB;
+
 const databaseConnection = function (callback) {
    mongoose
       .connect(mongodbURI, {
@@ -8,7 +9,7 @@ const databaseConnection = function (callback) {
       })
       .then((res) => {
          callback();
-         console.log('database connected');
+         console.log("database connected");
       })
       .catch((err) => console.log(err));
 };

@@ -1,11 +1,9 @@
-import React from 'react';
-import * as styled from './SpennerComponent.style';
+import React from "react";
+import * as styled from "./SpennerComponent.style";
 
-function SpennerComponent({ center }) {
+function SpennerComponent({ center, type }) {
    return (
-      <styled.div center={center}>
-         <img src="/images/spenner.svg" alt="" />
-      </styled.div>
+      <styled.div center={center}>{!!type ? <img src="/images/speener-white.svg" alt="" /> : <img src="/images/spenner.svg" alt="" />}</styled.div>
    );
 }
 

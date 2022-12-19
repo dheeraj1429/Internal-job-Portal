@@ -11,9 +11,7 @@ import { Outlet } from "react-router";
 
 function GroupChatComponent() {
    const [OptionTabShow, setOptionTabShow] = useState(null);
-
    const open = Boolean(OptionTabShow);
-
    const params = useParams();
 
    const handleClick = (event) => {

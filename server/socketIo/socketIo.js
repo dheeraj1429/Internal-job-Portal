@@ -6,6 +6,14 @@ const { v4: uuidv4 } = require("uuid");
 const socketIoConnection = function (io) {
    // socket connection
    io.on("connection", (socket) => {
+      // capture user is online or offline
+      socket.on("_live", (args) => {
+         // event single user to see the online status
+         socket.broadcast.emit("_online", { ...args, online: true });
+         // send back the user also see his own online status
+         socket.emit("_online", { ...args, online: true });
+      });
+
       // listing socket connection...
       console.log("socket connected", socket.id);
 
@@ -64,7 +72,7 @@ const socketIoConnection = function (io) {
                   });
 
                   // join the admin in the group
-                  socket.join(spaceRemove);
+                  socket.join(createGroup._id);
 
                   socket.emit("_group_created", {
                      success: true,
@@ -91,9 +99,7 @@ const socketIoConnection = function (io) {
 
       // joining the room.
       socket.on("_join_group", (data) => {
-         const replaceSpace = data.groupName.trim().replaceAll(" ", "-");
-         socket.join(replaceSpace);
-         console.log(data);
+         socket.join(data.groupId);
       });
 
       // remove user from groups
@@ -121,17 +127,14 @@ const socketIoConnection = function (io) {
 
             if (!!findAndRemoveUserFromGroup?.modifiedCount) {
                // send response to the group users
-               socket.to(groupName.trim().replaceAll(" ", "-")).emit("_user_remove_response", {
+               socket.to(groupId).emit("_user_remove_response", {
                   success: true,
-                  message: `${varifyToken.name} removed you from ${groupName.replaceAll(
-                     "-",
-                     " "
-                  )} group.`,
+                  message: `${varifyToken.name} removed you from ${groupName.replaceAll("-", " ")} group.`,
                   groupId,
                   userId,
                });
 
-               // send back the response to the admin.
+               // send back the response to the message sender.
                socket.emit("_user_remove_response", {
                   success: true,
                   message: `user is removed from ${groupName.replaceAll("-", " ")}`,
@@ -146,18 +149,29 @@ const socketIoConnection = function (io) {
       });
 
       socket.on("_send_group_message", async (args) => {
-         const { groupName, groupId, userInfo, message } = args;
+         /**
+          * grab all the details to find which user is send the message, and the group id.
+          * find the group and insert all the messages the collections.
+          * always genrate the unique id for the sender and the recever massage. to check message only send
+          * on time.
+          * when evern the message is send then always send back the data and time.
+          */
+         const { groupId, userInfo, message } = args;
          const _reciver_message_id = uuidv4();
          const _sender_message_id = uuidv4();
 
+         // store data inside the database.
+         await groupModel.updateOne({ _id: groupId }, { $push: { groupMessages: { userId: userInfo._id, message } } });
+
+         // send back the sender message.
          socket.emit("_receive_message", {
             groupId,
             userInfo,
             message,
-            _reciver_message_id,
+            _sender_message_id,
          });
          // send back the massage to the all group users.
-         socket.to(groupName).emit("_receive_message", {
+         socket.to(groupId).emit("_receive_message", {
             groupId,
             userInfo,
             message,
@@ -167,7 +181,7 @@ const socketIoConnection = function (io) {
 
       socket.on("disconnect", (reason) => {
          // handle offline status
-         console.log("User is disconnect the room");
+         console.log("User is disconnect ", socket.id);
          console.log(reason);
       });
    });

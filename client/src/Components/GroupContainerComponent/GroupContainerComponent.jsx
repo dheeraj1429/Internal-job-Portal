@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import * as styled from "./GroupContainerComponent.style";
 import SearchBoxComponent from "../SearchBoxComponent/SearchBoxComponent";
 import UserProfilePreviewComponent from "../UserProfilePreviewComponent/UserProfilePreviewComponent";
@@ -9,8 +9,10 @@ import { getGroupUserInfo } from "../../App/Features/Group/groupSlice";
 import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
 import { Outlet } from "react-router";
 import GroupChatComponent from "../GroupChatComponent/GroupChatComponent";
+import { SocketContext } from "../../Context/socket";
 
 function GroupContainerComponent() {
+   const socket = useContext(SocketContext);
    const [cookie] = useCookies(["_ijp_at_user"]);
    const param = useParams();
    const dispatch = useDispatch();
@@ -25,12 +27,20 @@ function GroupContainerComponent() {
       }
    }, [param?.id]);
 
+   useEffect(() => {
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         socket.emit("_live", {
+            _id: cookie?._ijp_at_user?._id,
+            userName: cookie?._ijp_at_user?.name,
+         });
+      }
+   }, []);
+
    return (
       <styled.div>
          <div className="container-fluid p-0 h-100">
             {!!cookie && cookie?._ijp_at_user ? (
-               cookie?._ijp_at_user?.role === "admin" ||
-               cookie?._ijp_at_user?.role === "subAdmin" ? (
+               cookie?._ijp_at_user?.role === "admin" || cookie?._ijp_at_user?.role === "subAdmin" ? (
                   <div className="row gx-0 h-100">
                      <div className="col-6 col-md-5 col-lg-4 bg-gray-100">
                         <div className="user_list_div border">
@@ -38,23 +48,12 @@ function GroupContainerComponent() {
                               <SearchBoxComponent />
                            </div>
                            <div className="p-3 scroll_div relative">
-                              <h1 className="mb-3 text-3xl text-gray-700 lg:text-2xl">
-                                 {param?.name.replaceAll("-", " ")}
-                              </h1>
+                              <h1 className="mb-3 text-3xl text-gray-700 lg:text-2xl">{param?.name.replaceAll("-", " ")}</h1>
                               {!!groupInfoLoading ? <SpennerComponent center={true} /> : null}
-                              {!!groupInfoFetchError ? (
-                                 <p className="error_text">{groupInfoFetchError}</p>
-                              ) : null}
-                              {!!groupInfo &&
-                              groupInfo?.success &&
-                              groupInfo?.data &&
-                              groupInfo.data?.groupUsers.length
+                              {!!groupInfoFetchError ? <p className="error_text">{groupInfoFetchError}</p> : null}
+                              {!!groupInfo && groupInfo?.success && groupInfo?.data && groupInfo.data?.groupUsers.length
                                  ? groupInfo.data?.groupUsers.map((el) => (
-                                      <UserProfilePreviewComponent
-                                         key={el._id}
-                                         data={el}
-                                         groupId={groupInfo.data?._id}
-                                      />
+                                      <UserProfilePreviewComponent key={el._id} data={el} groupId={groupInfo.data?._id} />
                                    ))
                                  : null}
                            </div>

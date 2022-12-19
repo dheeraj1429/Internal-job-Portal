@@ -8,6 +8,9 @@ const INITIAL_STATE = {
    groupInfo: null,
    groupInfoLoading: false,
    groupInfoFetchError: null,
+   groupChats: null,
+   groupChatsFetchLoading: false,
+   groupChatsFetchError: null,
 };
 
 const groupSlice = createSlice({
@@ -39,18 +42,14 @@ const groupSlice = createSlice({
             data: {
                ...state.groupInfo,
                groupUsers: action.payload?._id
-                  ? state.groupInfo?.data?.groupUsers.filter(
-                       (el) => el?.userId !== action?.payload?.userId
-                    )
+                  ? state.groupInfo?.data?.groupUsers.filter((el) => el?.userId !== action?.payload?.userId)
                   : state.groupInfo,
             },
          };
          state.employeesGroup = !action.payload?._id
             ? {
                  ...state.employeesGroup,
-                 groupInfo: state.employeesGroup.groupInfo.filter(
-                    (el) => el.groupData?._id !== action.payload?.groupId
-                 ),
+                 groupInfo: state.employeesGroup.groupInfo.filter((el) => el.groupData?._id !== action.payload?.groupId),
               }
             : state.employeesGroup;
       },
@@ -97,60 +96,73 @@ const groupSlice = createSlice({
             state.groupInfoLoading = false;
             state.groupInfoFetchError = null;
          });
+
+      bulder
+         .addCase(fetchGroupChats.pending, (state) => {
+            state.groupChats = null;
+            state.groupChatsFetchLoading = true;
+            state.groupChatsFetchError = null;
+         })
+         .addCase(fetchGroupChats.rejected, (state, action) => {
+            state.groupChats = null;
+            state.groupChatsFetchLoading = false;
+            state.groupChatsFetchError = action.error.message;
+         })
+         .addCase(fetchGroupChats.fulfilled, (state, action) => {
+            state.groupChats = action.payload?.data;
+            state.groupChatsFetchLoading = false;
+            state.groupChatsFetchError = null;
+         });
    },
 });
 
-export const getUserGroups = createAsyncThunk(
-   "group/getUserGroups",
-   async ({ token }, { rejectWithValue }) => {
-      try {
-         const getAllGroups = await axios.get(`/admin/get-all-groups/${token}`, headers);
-         return getAllGroups;
-      } catch (err) {
-         if (err) {
-            throw err;
-         }
-         return rejectWithValue(err.response.data);
+export const getUserGroups = createAsyncThunk("group/getUserGroups", async ({ token }, { rejectWithValue }) => {
+   try {
+      const getAllGroups = await axios.get(`/admin/get-all-groups/${token}`, headers);
+      return getAllGroups;
+   } catch (err) {
+      if (err) {
+         throw err;
       }
+      return rejectWithValue(err.response.data);
    }
-);
+});
 
-export const getUserIncludeGroups = createAsyncThunk(
-   "group/getUserIncludeGroups",
-   async ({ token }, { rejectWithValue }) => {
-      try {
-         const userGroupsResponse = await axios.get(
-            `/index/get-user-includes-groups-info/${token}`,
-            headers
-         );
-         return userGroupsResponse;
-      } catch (err) {
-         if (err) {
-            throw err;
-         }
-         return rejectWithValue(err.response.data);
+export const getUserIncludeGroups = createAsyncThunk("group/getUserIncludeGroups", async ({ token }, { rejectWithValue }) => {
+   try {
+      const userGroupsResponse = await axios.get(`/index/get-user-includes-groups-info/${token}`, headers);
+      return userGroupsResponse;
+   } catch (err) {
+      if (err) {
+         throw err;
       }
+      return rejectWithValue(err.response.data);
    }
-);
+});
 
-export const getGroupUserInfo = createAsyncThunk(
-   "group/getGroupUserInfo",
-   async ({ token, groupId }, { rejectWithValue }) => {
-      try {
-         const userInfoResponse = await axios.get(
-            `/admin/get-group-users-infomation/:${token}?groupId=${groupId}`,
-            headers
-         );
-         return userInfoResponse;
-      } catch (err) {
-         if (err) {
-            throw err;
-         }
-         return rejectWithValue(err.response.data);
+export const getGroupUserInfo = createAsyncThunk("group/getGroupUserInfo", async ({ token, groupId }, { rejectWithValue }) => {
+   try {
+      const userInfoResponse = await axios.get(`/admin/get-group-users-infomation/:${token}?groupId=${groupId}`, headers);
+      return userInfoResponse;
+   } catch (err) {
+      if (err) {
+         throw err;
       }
+      return rejectWithValue(err.response.data);
    }
-);
+});
 
-export const { createEmployeesGroup, createEmployeesGroupLoading, removeUserFromGroup } =
-   groupSlice.actions;
+export const fetchGroupChats = createAsyncThunk("group/fetchGroupChats", async ({ token, groupId, page }, { rejectWithValue }) => {
+   try {
+      const groupChatsResponse = await axios.get(`/index/get-group-chats/${token}?groupId=${groupId}&page=${page}`);
+      return groupChatsResponse;
+   } catch (err) {
+      if (err) {
+         throw err;
+      }
+      return rejectWithValue(err.response.data);
+   }
+});
+
+export const { createEmployeesGroup, createEmployeesGroupLoading, removeUserFromGroup } = groupSlice.actions;
 export default groupSlice;

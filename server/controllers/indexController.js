@@ -8,6 +8,7 @@ const path = require("path");
 const SECRET_KEY = process.env.SECRET_KEY;
 const jobAppliedModel = require("../model/schema/jobAppliedSchema");
 const groupModel = require("../model/schema/groupSchema");
+const { default: mongoose } = require("mongoose");
 
 const getAllJobPosts = catchAsync(async function (req, res, next) {
    const allJobs = await jobPostModel.find(
@@ -119,10 +120,7 @@ const getUserContactInfo = catchAsync(async function (req, res, next) {
    const { token } = req.params;
    const varifyToken = await jwt.verify(token, SECRET_KEY);
    const { _id } = varifyToken;
-   const findUserInfo = await authModel.findOne(
-      { _id },
-      { password: 0, role: 0, createdAt: 0, tokens: 0 }
-   );
+   const findUserInfo = await authModel.findOne({ _id }, { password: 0, role: 0, createdAt: 0, tokens: 0 });
 
    if (findUserInfo) {
       return res.status(httpStatusCodes.OK).json({
@@ -330,6 +328,86 @@ const getUserIncludeGroups = catchAsync(async function (req, res, next) {
    }
 });
 
+const fetchGroupChats = catchAsync(async function (req, res, next) {
+   const { groupId, page } = req.query;
+
+   // total document / document limit  => 8 / 4 => 2 pages.
+
+   const DOCUMENT_LIMIT = 7;
+   const groupMessagesDoc = await groupModel.aggregate([
+      {
+         $match: { _id: mongoose.Types.ObjectId(groupId) },
+      },
+      {
+         $project: {
+            _id: 1,
+            groupName: 1,
+            groupMessages: 1,
+            totalMessagesDocuments: { $size: "$groupMessages" },
+         },
+      },
+      { $unwind: "$groupMessages" },
+      {
+         $lookup: {
+            from: "auths",
+            localField: "groupMessages.userId",
+            foreignField: "_id",
+            as: "groupMessages.userInfo",
+         },
+      },
+      {
+         $project: {
+            _id: 1,
+            groupName: 1,
+            totalMessagesDocuments: 1,
+            "groupMessages.userId": 1,
+            "groupMessages.message": 1,
+            "groupMessages._id": 1,
+            "groupMessages.createdAt": 1,
+            "groupMessages.userInfo._id": 1,
+            "groupMessages.userInfo.name": 1,
+            "groupMessages.userInfo.profilePic": "$groupMessages.userInfo.userProfile",
+            totalPages: { $abs: { $ceil: { $divide: ["$totalMessagesDocuments", DOCUMENT_LIMIT] } } },
+         },
+      },
+      {
+         $project: {
+            _id: 1,
+            groupName: 1,
+            totalMessagesDocuments: 1,
+            totalPages: 1,
+            "groupMessages.userId": 1,
+            "groupMessages.message": 1,
+            "groupMessages._id": 1,
+            "groupMessages.createdAt": 1,
+            "groupMessages.userInfo": { $arrayElemAt: ["$groupMessages.userInfo", 0] },
+         },
+      },
+      { $sort: { "groupMessages.createdAt": -1 } },
+      { $skip: page * DOCUMENT_LIMIT },
+      { $limit: DOCUMENT_LIMIT },
+      { $sort: { "groupMessages.createdAt": 1 } },
+      {
+         $group: {
+            _id: {
+               _id: "$_id",
+               groupName: "$groupName",
+               totalMessagesDocuments: "$totalMessagesDocuments",
+               totalPages: "$totalPages",
+            },
+            groupMessages: { $push: "$groupMessages" },
+         },
+      },
+   ]);
+
+   if (groupMessagesDoc) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         messages: groupMessagesDoc,
+      });
+   }
+});
+
 module.exports = {
    getAllJobPosts,
    getSingleJobPostDetail,
@@ -340,4 +418,5 @@ module.exports = {
    fetchUserResumeContactInformation,
    jobSubmition,
    getUserIncludeGroups,
+   fetchGroupChats,
 };
