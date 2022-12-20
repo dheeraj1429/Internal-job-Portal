@@ -6,6 +6,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { AiFillPushpin } from "@react-icons/all-files/ai/AiFillPushpin";
 import { useCookies } from "react-cookie";
+import dayjs from "dayjs";
 
 function UserProfileAndMessageComponent({ pos, messageCl, data }) {
    const [anchorEl, setAnchorEl] = useState(null);
@@ -22,19 +23,19 @@ function UserProfileAndMessageComponent({ pos, messageCl, data }) {
 
    return (
       <styled.div className={`mb-4 w-100 flex justify-${pos}`}>
-         <div>
+         <div className={data?.userRemoved ? "userRemove_notification_div" : null}>
             <styled.userProfileDiv className={`flex items-center `}>
                <div className="profile">
                   <img src={`/usersProfileCompress/${data?.userInfo?.profilePic}`} alt="" />
                </div>
                <p className="ms-2">
                   <strong className="text-gray-100">{data?.userInfo?.name}</strong>
-                  <span className="text-gray-100 ms-1">3:10 AM</span>
+                  <span className="text-gray-100 ms-1">{dayjs(data?.createdAt).format("HH:ss A")}</span>
                </p>
             </styled.userProfileDiv>
             <div>
-               <styled.chatMessageDiv className={messageCl ? messageCl : `bg-gray-200 shadow`}>
-                  {!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.role === "subAdmin" ? (
+               <styled.chatMessageDiv className={messageCl ? `messageChat_div ${messageCl}` : `messageChat_div bg-gray-200 shadow`}>
+                  {/* {!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.role === "subAdmin" ? (
                      <div
                         className="options_div"
                         style={
@@ -75,7 +76,7 @@ function UserProfileAndMessageComponent({ pos, messageCl, data }) {
                            </Menu>
                         </div>
                      </div>
-                  ) : null}
+                  ) : null} */}
                   <p className={messageCl ? "text-white" : " text-gray-800"}>{data?.message}</p>
                </styled.chatMessageDiv>
             </div>

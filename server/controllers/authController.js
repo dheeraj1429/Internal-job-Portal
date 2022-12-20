@@ -1,10 +1,9 @@
-const authModel = require('../model/schema/authSchema');
-const { catchAsync, httpStatusCodes } = require('../helpers/helper');
-const bcryptjs = require('bcryptjs');
-const nodemailer = require('nodemailer');
-const ejs = require('ejs');
-const path = require('path');
-const fs = require('fs');
+const authModel = require("../model/schema/authSchema");
+const { catchAsync, httpStatusCodes } = require("../helpers/helper");
+const bcryptjs = require("bcryptjs");
+const nodemailer = require("nodemailer");
+const ejs = require("ejs");
+const path = require("path");
 
 const userSignIn = catchAsync(async function (req, res, next) {
    const { name, email, password } = req.body;
@@ -14,7 +13,7 @@ const userSignIn = catchAsync(async function (req, res, next) {
    if (findUserEmail) {
       return res.status(httpStatusCodes.OK).json({
          success: false,
-         message: 'email is already used',
+         message: "email is already used",
       });
    } else {
       const newUserSignIn = await authModel({
@@ -35,11 +34,11 @@ const userSignIn = catchAsync(async function (req, res, next) {
          token,
       };
 
-      res.cookie('_ijp_at_user', userObject);
+      res.cookie("_ijp_at_user", userObject);
 
       return res.status(httpStatusCodes.CREATED).json({
          success: true,
-         message: 'User account created',
+         message: "User account created",
          userObject,
       });
    }
@@ -52,20 +51,17 @@ const userLogin = catchAsync(async function (req, res, next) {
    if (!findUserAccount) {
       return res.status(httpStatusCodes.OK).json({
          success: false,
-         message: 'No account find',
+         message: "No account find",
       });
    }
 
    // varify the user password is match or not.
-   const varifyPassword = await bcryptjs.compare(
-      password,
-      findUserAccount.password
-   );
+   const varifyPassword = await bcryptjs.compare(password, findUserAccount.password);
 
    if (!varifyPassword) {
       return res.status(httpStatusCodes.OK).json({
          success: false,
-         message: 'Account password is not match',
+         message: "Account password is not match",
       });
    }
 
@@ -82,7 +78,7 @@ const userLogin = catchAsync(async function (req, res, next) {
    };
 
    // set the user into the browser cookie
-   res.cookie('_ijp_at_user', userObject);
+   res.cookie("_ijp_at_user", userObject);
 
    return res.status(httpStatusCodes.OK).json({
       success: true,
@@ -99,18 +95,12 @@ const forgetPassword = catchAsync(async function (req, res, next) {
    if (!findEmail) {
       return res.status(httpStatusCodes.OK).json({
          success: false,
-         message: 'No email address found',
+         message: "No email address found",
       });
    }
 
    // forget password template path
-   const filePath = path.join(
-      __dirname,
-      '..',
-      'views',
-      'templates',
-      'forgetPassword.ejs'
-   );
+   const filePath = path.join(__dirname, "..", "views", "templates", "forgetPassword.ejs");
 
    ejs.renderFile(filePath, (err, data) => {
       if (err) {
@@ -124,7 +114,7 @@ const forgetPassword = catchAsync(async function (req, res, next) {
       );
 
       const mail = nodemailer.createTransport({
-         service: 'gmail',
+         service: "gmail",
          auth: {
             user: process.env.EMAIL,
             pass: process.env.APPPASSWORD,
@@ -135,7 +125,7 @@ const forgetPassword = catchAsync(async function (req, res, next) {
          {
             from: process.env.EMAIL,
             to: email,
-            subject: 'forget password request',
+            subject: "forget password request",
             html: output,
          },
          function (err, info) {
@@ -144,12 +134,12 @@ const forgetPassword = catchAsync(async function (req, res, next) {
             }
 
             // set access cookie
-            res.cookie('_jp_froget_pwd_rq', true, { maxAge: 50000 });
-            res.cookie('_jp_froget_pwd_rq_access', true, { maxAge: 90000 });
+            res.cookie("_jp_froget_pwd_rq", true, { maxAge: 50000 });
+            res.cookie("_jp_froget_pwd_rq_access", true, { maxAge: 90000 });
 
             return res.status(httpStatusCodes.OK).json({
                success: true,
-               message: 'Please check your email',
+               message: "Please check your email",
             });
          }
       );
@@ -162,35 +152,29 @@ const changeUserPassword = catchAsync(async function (req, res, next) {
 
    // check the preview password is same or not.
    const checkPrevPwd = await authModel.findOne({ _id: userId });
-   const checkPassword = await bcryptjs.compare(
-      password,
-      checkPrevPwd.password
-   );
+   const checkPassword = await bcryptjs.compare(password, checkPrevPwd.password);
 
    if (checkPassword) {
       return res.status(httpStatusCodes.OK).json({
          success: true,
-         message: 'Old password and new password are same!',
+         message: "Old password and new password are same!",
       });
    } else {
       // hash user password
       const hashPassword = await bcryptjs.hash(password, 11);
 
       // update the user information
-      const updateUser = await authModel.updateOne(
-         { _id: userId },
-         { $set: { password: hashPassword } }
-      );
+      const updateUser = await authModel.updateOne({ _id: userId }, { $set: { password: hashPassword } });
 
       if (!!updateUser.modifiedCount) {
          return res.status(httpStatusCodes.OK).json({
             success: true,
-            message: 'Password changed',
+            message: "Password changed",
          });
       } else {
          return res.status(httpStatusCodes.INTERNAL_SERVER).json({
             success: false,
-            message: 'Internal server error',
+            message: "Internal server error",
          });
       }
    }

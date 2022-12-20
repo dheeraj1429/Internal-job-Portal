@@ -6,6 +6,12 @@ export const div = styled.div`
    margin: auto;
    position: relative;
 
+   .react-input-emoji--button {
+      svg {
+         fill: var(--main-cl);
+      }
+   }
+
    .show_div {
       visibility: visible;
       opacity: 1;

@@ -13,6 +13,7 @@ import { useParams } from "react-router";
 function ChatBoxComponent() {
    const [cookies] = useCookies(["_ijp_at_user"]);
    const [UserReciveMessage, setUserReciveMessage] = useState([]);
+   const [UserInGroup, setUserInGroup] = useState(true);
    const socket = useContext(SocketContext);
    const [Page, setPage] = useState(0);
 
@@ -23,10 +24,6 @@ function ChatBoxComponent() {
    const PreviewMessagesHandler = function () {
       setPage((prevState) => prevState + 1);
    };
-
-   useEffect(() => {
-      console.log(params.id);
-   }, []);
 
    useEffect(() => {
       if (groupChats && groupChats?.messages && groupChats?.messages.length && groupChats?.messages[0]?.groupMessages) {
@@ -45,27 +42,51 @@ function ChatBoxComponent() {
    useEffect(() => {
       const listener = function (args) {
          if (args.groupId === params.id) {
-            console.log(args);
-            console.log(params.id);
             setUserReciveMessage((prevState) => [...prevState, args]);
             Screen.current?.scrollIntoView({ behavior: "smooth" });
          }
       };
 
-      if (params?.id) {
-         if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
+      const UserGroupChatAccessHandler = function (args) {
+         if (args?.success && args?.type === "_user_removed") {
+            setUserInGroup(false);
+         } else if (args?.success && args?.type === "_user_exists") {
             setUserReciveMessage([]);
             dispatch(fetchGroupChats({ token: cookies?._ijp_at_user?.token, groupId: params?.id, page: Page }));
-
             socket.on("_receive_message", listener);
+         }
+      };
+
+      if (params?.id) {
+         if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
+            socket.emit("_user_is_exist_in_group", { groupId: params.id, token: cookies?._ijp_at_user?.token, role: cookies?._ijp_at_user?.role });
+
+            socket.on("_user_group_response", UserGroupChatAccessHandler);
          }
       }
 
       return () => {
          socket.off("_receive_message", listener);
-         console.log("stop listingin");
+         socket.off("_user_group_response", UserGroupChatAccessHandler);
       };
    }, [params?.id]);
+
+   useEffect(() => {
+      const UserRemoveListner = function (args) {
+         if (args.success) {
+            if (args?.userId === cookies?._ijp_at_user?._id) {
+               setUserInGroup(false);
+               socket.emit("_leave_room", { groupId: params.id });
+            }
+
+            setUserReciveMessage((prevState) => [...prevState, args]);
+         }
+      };
+
+      socket.on("_user_remove_response", UserRemoveListner);
+
+      return () => socket.off("_user_remove_response", UserRemoveListner);
+   }, []);
 
    return (
       <styled.div className="bg-gray-100">
@@ -95,7 +116,7 @@ function ChatBoxComponent() {
                   : null}
             </ScrollToBottom>
          </div>
-         <SendMessageComponent />
+         {UserInGroup ? <SendMessageComponent /> : null}
       </styled.div>
    );
 }

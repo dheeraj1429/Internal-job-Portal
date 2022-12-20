@@ -17,6 +17,7 @@ function UserProfilePreviewComponent({ data, groupId }) {
             groupName: param?.name,
             token: cookie?._ijp_at_user?.token,
             groupId: param.id,
+            profilePic: cookie?._ijp_at_user?.profilePic,
             userId,
          });
       }
@@ -46,10 +47,7 @@ function UserProfilePreviewComponent({ data, groupId }) {
             </div>
          </div>
          {!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.role === "admin" ? (
-            <div
-               className="close_button_div shadow"
-               onClick={() => RemoveUserFromGroup(data?.userId)}
-            >
+            <div className="close_button_div shadow" onClick={() => RemoveUserFromGroup(data?.userId)}>
                <div className="hover_div">
                   <p>Remove</p>
                </div>

@@ -2,6 +2,25 @@ import styled from "styled-components";
 
 export const div = styled.div`
    padding: 0 1rem;
+
+   .userRemove_notification_div {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .messageChat_div {
+         background-color: transparent;
+         box-shadow: none !important;
+         padding: 0;
+         margin: 0;
+         margin-left: 1rem;
+
+         p {
+            color: var(--main-cl);
+         }
+      }
+   }
 `;
 
 export const userProfileDiv = styled.div`
