@@ -45,16 +45,7 @@ const getSingleJobPostDetails = catchAsync(async function (req, res, next) {
 });
 
 const updateJobPost = catchAsync(async function (req, res, next) {
-   const {
-      postId,
-      jobTitle,
-      salaryRangeStart,
-      salaryRangeEnd,
-      jobType,
-      jobCategory,
-      positionDescription,
-      metaData,
-   } = req.body;
+   const { postId, jobTitle, salaryRangeStart, salaryRangeEnd, jobType, jobCategory, positionDescription, metaData } = req.body;
 
    if (!postId) {
       throw new Error("job post id is required!");
@@ -110,7 +101,7 @@ const deleteSingleJobPost = catchAsync(async function (req, res, next) {
 
 const getAllJobApplications = catchAsync(async function (req, res, next) {
    // pagination effect
-   const { page } = req.query;
+   // const { page } = req.query;
 
    const jobResponse = await jobAppliedModel.aggregate([
       {
@@ -260,7 +251,7 @@ const downloadUserResume = catchAsync(async function (req, res, next) {
 const getAllLoginUsers = catchAsync(async function (req, res, next) {
    const { page } = req.query;
 
-   const DOCUMENT_LIMIT = 10;
+   const DOCUMENT_LIMIT = 5;
 
    fetchPaginationData(
       authModel,
@@ -396,16 +387,31 @@ const getGroupUserInfo = catchAsync(async function (req, res, next) {
       },
    ]);
 
-   if (groupWithUserInfo) {
-      return res.status(httpStatusCodes.OK).json({
-         success: true,
-         data: groupWithUserInfo[0],
-      });
+   if (groupWithUserInfo.length) {
+      if (groupWithUserInfo) {
+         return res.status(httpStatusCodes.OK).json({
+            success: true,
+            data: groupWithUserInfo[0],
+         });
+      } else {
+         return res.status(httpStatusCodes.OK).json({
+            success: false,
+            message: "Group is not exists",
+         });
+      }
    } else {
-      return res.status(httpStatusCodes.OK).json({
-         success: false,
-         message: "Group is not exists",
-      });
+      const findGroupInfo = await groupModel.findOne({ _id: groupId });
+
+      if (findGroupInfo) {
+         return res.status(httpStatusCodes.OK).json({
+            success: true,
+            data: {
+               groupName: findGroupInfo?.groupName,
+               _id: groupId,
+               groupUsers: [],
+            },
+         });
+      }
    }
 });
 

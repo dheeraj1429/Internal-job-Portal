@@ -23,14 +23,7 @@ const httpStatusCodes = {
    INTERNAL_SERVER: 500,
 };
 
-const fetchPaginationData = async function (
-   collection,
-   page,
-   documentLimit,
-   res,
-   filed,
-   ...queryObject
-) {
+const fetchPaginationData = async function (collection, page, documentLimit, res, filed, ...queryObject) {
    /**
     * @collection where we want to fetch the data.
     * @page which page data we want to access. like page 1, page 2, .... etc.
@@ -46,36 +39,32 @@ const fetchPaginationData = async function (
 
    const document = await collection.find(...queryObject);
 
-   if (totalDocuments >= 10) {
-      if (document) {
-         const cursorDocument = await collection
-            .find(...queryObject)
-            .limit(documentLimit)
-            .skip(page * documentLimit);
+   const cursorDocument = await collection
+      .find(...queryObject)
+      .skip(page * documentLimit)
+      .limit(documentLimit);
 
-         if (document) {
-            return res.status(httpStatusCodes.OK).json({
-               success: true,
-               totalPages: Math.ceil(totalDocuments / documentLimit - 1),
-               totalDocuments,
-               [filed]: cursorDocument,
-            });
-         } else {
-            return res.status(httpStatusCodes.OK).json({
-               success: true,
-               totalPages: Math.ceil(totalDocuments / documentLimit - 1),
-               totalDocuments,
-               [filed]: cursorDocument,
-            });
-         }
+   if (cursorDocument) {
+      const cursorDocument = await collection
+         .find(...queryObject)
+         .limit(documentLimit)
+         .skip(page * documentLimit);
+
+      if (document) {
+         return res.status(httpStatusCodes.OK).json({
+            success: true,
+            totalPages: Math.ceil(totalDocuments / documentLimit - 1),
+            totalDocuments,
+            [filed]: cursorDocument,
+         });
+      } else {
+         return res.status(httpStatusCodes.OK).json({
+            success: true,
+            totalPages: Math.ceil(totalDocuments / documentLimit - 1),
+            totalDocuments,
+            [filed]: cursorDocument,
+         });
       }
-   } else {
-      return res.status(httpStatusCodes.OK).json({
-         success: true,
-         totalPages: Math.ceil(totalDocuments / documentLimit - 1),
-         totalDocuments,
-         [filed]: document,
-      });
    }
 };
 

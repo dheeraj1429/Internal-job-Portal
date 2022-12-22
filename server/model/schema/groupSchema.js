@@ -12,6 +12,7 @@ const groupSchema = new mongoose.Schema({
          userId: { type: mongoose.Types.ObjectId, ref: "auth" },
          message: { type: String, required: [true, "message is required"] },
          userRemoved: { type: Boolean, default: false },
+         userAdded: { type: Boolean, default: false },
          createdAt: { type: Date, default: Date.now },
       },
    ],

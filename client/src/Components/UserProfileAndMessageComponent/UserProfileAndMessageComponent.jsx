@@ -23,18 +23,26 @@ function UserProfileAndMessageComponent({ pos, messageCl, data }) {
 
    return (
       <styled.div className={`mb-4 w-100 flex justify-${pos}`}>
-         <div className={data?.userRemoved ? "userRemove_notification_div" : null}>
+         <div className={data?.userRemoved || data?.userAdded ? "user_notification_div" : null}>
             <styled.userProfileDiv className={`flex items-center `}>
                <div className="profile">
                   <img src={`/usersProfileCompress/${data?.userInfo?.profilePic}`} alt="" />
                </div>
                <p className="ms-2">
                   <strong className="text-gray-100">{data?.userInfo?.name}</strong>
-                  <span className="text-gray-100 ms-1">{dayjs(data?.createdAt).format("HH:ss A")}</span>
+                  <span className="text-gray-100 ms-1">
+                     {dayjs(data?.createdAt).format("HH:ss A")}
+                  </span>
                </p>
             </styled.userProfileDiv>
             <div>
-               <styled.chatMessageDiv className={messageCl ? `messageChat_div ${messageCl}` : `messageChat_div bg-gray-200 shadow`}>
+               <styled.chatMessageDiv
+                  className={
+                     messageCl
+                        ? `messageChat_div ${messageCl}`
+                        : `messageChat_div bg-gray-200 shadow`
+                  }
+               >
                   {/* {!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.role === "subAdmin" ? (
                      <div
                         className="options_div"

@@ -7,7 +7,7 @@ import { useCookies } from "react-cookie";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useDispatch, useSelector } from "react-redux";
 import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
-import { fetchGroupChats } from "../../App/Features/Group/groupSlice";
+import { fetchGroupChats, groupUserHandler } from "../../App/Features/Group/groupSlice";
 import { useParams } from "react-router";
 
 function ChatBoxComponent() {
@@ -17,7 +17,9 @@ function ChatBoxComponent() {
    const socket = useContext(SocketContext);
    const [Page, setPage] = useState(0);
 
-   const { groupChats, groupChatsFetchError, groupChatsFetchLoading } = useSelector((state) => state.group);
+   const { groupChats, groupChatsFetchError, groupChatsFetchLoading } = useSelector(
+      (state) => state.group
+   );
    const dispatch = useDispatch();
    const params = useParams();
 
@@ -26,15 +28,29 @@ function ChatBoxComponent() {
    };
 
    useEffect(() => {
-      if (groupChats && groupChats?.messages && groupChats?.messages.length && groupChats?.messages[0]?.groupMessages) {
-         setUserReciveMessage((prevState) => [...groupChats.messages[0].groupMessages, ...prevState]);
+      if (
+         groupChats &&
+         groupChats?.messages &&
+         groupChats?.messages.length &&
+         groupChats?.messages[0]?.groupMessages
+      ) {
+         setUserReciveMessage((prevState) => [
+            ...groupChats.messages[0].groupMessages,
+            ...prevState,
+         ]);
       }
    }, [groupChats]);
 
    useEffect(() => {
       if (Page) {
          if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
-            dispatch(fetchGroupChats({ token: cookies?._ijp_at_user?.token, groupId: params?.id, page: Page }));
+            dispatch(
+               fetchGroupChats({
+                  token: cookies?._ijp_at_user?.token,
+                  groupId: params?.id,
+                  page: Page,
+               })
+            );
          }
       }
    }, [Page]);
@@ -52,14 +68,24 @@ function ChatBoxComponent() {
             setUserInGroup(false);
          } else if (args?.success && args?.type === "_user_exists") {
             setUserReciveMessage([]);
-            dispatch(fetchGroupChats({ token: cookies?._ijp_at_user?.token, groupId: params?.id, page: Page }));
+            dispatch(
+               fetchGroupChats({
+                  token: cookies?._ijp_at_user?.token,
+                  groupId: params?.id,
+                  page: Page,
+               })
+            );
             socket.on("_receive_message", listener);
          }
       };
 
       if (params?.id) {
          if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
-            socket.emit("_user_is_exist_in_group", { groupId: params.id, token: cookies?._ijp_at_user?.token, role: cookies?._ijp_at_user?.role });
+            socket.emit("_user_is_exist_in_group", {
+               groupId: params.id,
+               token: cookies?._ijp_at_user?.token,
+               role: cookies?._ijp_at_user?.role,
+            });
 
             socket.on("_user_group_response", UserGroupChatAccessHandler);
          }
@@ -72,44 +98,58 @@ function ChatBoxComponent() {
    }, [params?.id]);
 
    useEffect(() => {
-      const UserRemoveListner = function (args) {
+      const UserGroupActivityHandler = function (args) {
          if (args.success) {
             if (args?.userId === cookies?._ijp_at_user?._id) {
                setUserInGroup(false);
                socket.emit("_leave_room", { groupId: params.id });
+            } else if (args?.userRemoved) {
+               dispatch(groupUserHandler(args));
             }
 
             setUserReciveMessage((prevState) => [...prevState, args]);
          }
       };
 
-      socket.on("_user_remove_response", UserRemoveListner);
+      socket.on("_user_group_activity_response", UserGroupActivityHandler);
 
-      return () => socket.off("_user_remove_response", UserRemoveListner);
+      return () => socket.off("_user_group_activity_response", UserGroupActivityHandler);
    }, []);
 
    return (
       <styled.div className="bg-gray-100">
          <div className="chatBox">
             <ScrollToBottom className="scroll">
-               {!!groupChats && groupChats?.messages && groupChats?.messages[0]?._id?.totalPages === Page + 1 ? null : groupChats?.messages.length ? (
+               {!!groupChats &&
+               groupChats?.messages &&
+               groupChats?.messages[0]?._id?.totalPages === Page + 1 ? null : groupChats?.messages
+                    .length ? (
                   <div className="flex items-center justify-center mb-3">
                      {groupChatsFetchLoading ? (
                         <SpennerComponent type={"white"} />
                      ) : (
-                        <div className="olderMessage_div bg-sky-600 shadow" onClick={PreviewMessagesHandler}>
+                        <div
+                           className="olderMessage_div bg-sky-600 shadow"
+                           onClick={PreviewMessagesHandler}
+                        >
                            <p>Load older messages</p>
                         </div>
                      )}
                   </div>
                ) : null}
-               {!!groupChatsFetchError ? <p className="text-sm error_text">{groupChatsFetchError}</p> : null}
+               {!!groupChatsFetchError ? (
+                  <p className="text-sm error_text">{groupChatsFetchError}</p>
+               ) : null}
                {!!cookies && cookies?._ijp_at_user && UserReciveMessage.length
                   ? UserReciveMessage.map((el) => (
                        <UserProfileAndMessageComponent
                           pos={cookies?._ijp_at_user?._id === el?.userInfo?._id ? "end" : "start"}
                           key={el?._sender_message_id || el?._id}
-                          messageCl={cookies?._ijp_at_user?._id === el?.userInfo?._id ? "bg-sky-400 shadow" : null}
+                          messageCl={
+                             cookies?._ijp_at_user?._id === el?.userInfo?._id
+                                ? "bg-sky-400 shadow"
+                                : null
+                          }
                           data={el}
                        />
                     ))

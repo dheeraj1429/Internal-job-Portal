@@ -46,14 +46,19 @@ function UserProfilePreviewComponent({ data, groupId }) {
                <p className="mt-1 text-gray-600">{data?.user?.email}</p>
             </div>
          </div>
-         {!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.role === "admin" ? (
-            <div className="close_button_div shadow" onClick={() => RemoveUserFromGroup(data?.userId)}>
-               <div className="hover_div">
-                  <p>Remove</p>
+         <div>
+            {!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.role === "admin" ? (
+               <div
+                  className="close_button_div shadow"
+                  onClick={() => RemoveUserFromGroup(data?.userId)}
+               >
+                  <div className="hover_div">
+                     <p>Remove</p>
+                  </div>
+                  <VscChromeClose />
                </div>
-               <VscChromeClose />
-            </div>
-         ) : null}
+            ) : null}
+         </div>
       </styled.div>
    );
 }

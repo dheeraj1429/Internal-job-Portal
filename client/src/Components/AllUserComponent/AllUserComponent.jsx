@@ -2,11 +2,7 @@ import React, { useEffect, useState } from "react";
 import HeadingComponent from "../../HelperComponents/HeadingComponent/HeadingComponent";
 import * as styled from "./AllUserComponent.style";
 import { useDispatch, useSelector } from "react-redux";
-import {
-   getAllLoginUsers,
-   deleteUserAccount,
-   removeAccountInfo,
-} from "../../App/Features/Admin/adminSlice";
+import { getAllLoginUsers, deleteUserAccount, removeAccountInfo } from "../../App/Features/Admin/adminSlice";
 import { useCookies } from "react-cookie";
 import { row } from "./TableData";
 import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
@@ -28,14 +24,8 @@ function AllUserComponent() {
       setShowInfoPopup(event);
    };
 
-   const {
-      allUsers,
-      allUsersFetchLoading,
-      allUsersFetchError,
-      userAccountDeleteInfo,
-      userAccountDeleteLoading,
-      userAccountDeleteError,
-   } = useSelector((state) => state.admin);
+   const { allUsers, allUsersFetchLoading, allUsersFetchError, userAccountDeleteInfo, userAccountDeleteLoading, userAccountDeleteError } =
+      useSelector((state) => state.admin);
 
    const confirm = (id) => {
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
@@ -57,8 +47,9 @@ function AllUserComponent() {
    }, [userAccountDeleteInfo]);
 
    useEffect(() => {
+      console.log("fetch request from all user component");
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
-         dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token }));
+         dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token, page: 0 }));
       }
       return () => {
          dispatch(removeAccountInfo());
@@ -67,11 +58,7 @@ function AllUserComponent() {
 
    return (
       <styled.div className="sidePaddingOne">
-         <EditUserInfromation
-            show={ShowInfoPopup}
-            eventClick={ShowPopUpHandler}
-            user={SelectedUser}
-         />
+         <EditUserInfromation show={ShowInfoPopup} eventClick={ShowPopUpHandler} user={SelectedUser} />
          <HeadingComponent
             heading={"All Users"}
             subHeading={`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`}
@@ -101,9 +88,7 @@ function AllUserComponent() {
                         <td className=" text-sky-600">{el.email}</td>
                         <td className=" text-sm text-gray-500">{el.role}</td>
                         <td className=" text-sm text-gray-500">{el.showNumber ? "Yes" : "No"}</td>
-                        <td className=" text-sm text-gray-500">
-                           {dayjs(el.createdAt).format("YY/MM/DD h:m:s A")}
-                        </td>
+                        <td className=" text-sm text-gray-500">{dayjs(el.createdAt).format("YY/MM/DD h:m:s A")}</td>
                         <td>
                            <div className=" flex items-center">
                               <AiOutlineEye
@@ -113,12 +98,7 @@ function AllUserComponent() {
                                     setSelectedUser(el);
                                  }}
                               />
-                              <Popconfirm
-                                 title="Are you sure to delete this account"
-                                 onConfirm={() => confirm(el._id)}
-                                 okText="Yes"
-                                 cancelText="No"
-                              >
+                              <Popconfirm title="Are you sure to delete this account" onConfirm={() => confirm(el._id)} okText="Yes" cancelText="No">
                                  <MdDelete className=" cursor-pointer" />
                               </Popconfirm>
                            </div>

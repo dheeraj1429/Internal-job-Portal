@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const div = styled.div`
    padding: 0 1rem;
 
-   .userRemove_notification_div {
+   .user_notification_div {
       width: 100%;
       display: flex;
       align-items: center;
