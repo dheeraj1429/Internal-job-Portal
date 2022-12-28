@@ -65,4 +65,8 @@ export const div = styled.div`
          outline: none;
       }
    }
+
+   @media (max-width: 600px) {
+      max-width: 96%;
+   }
 `;

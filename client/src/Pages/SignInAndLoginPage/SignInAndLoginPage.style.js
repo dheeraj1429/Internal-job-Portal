@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    width: 100%;
@@ -23,4 +23,8 @@ export const formDiv = styled.div`
    border-radius: 8px;
    border-radius: 8px;
    overflow: hidden;
+
+   @media (max-width: 500px) {
+      width: 90%;
+   }
 `;

@@ -6,7 +6,7 @@ export const div = styled.div`
    padding-top: 1rem;
    transition: all 0.3s ease;
 
-   .bar_div {
+   .sidebarToggleButton {
       width: 30px;
       height: 30px;
       border-radius: 50%;
@@ -15,12 +15,26 @@ export const div = styled.div`
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      position: fixed;
+      right: 10px;
+      top: 10px;
+      z-index: 200;
+      visibility: hidden;
+      opacity: 0;
    }
 
    @media (max-width: 1000px) {
-      width: 15%;
+      width: 30%;
    }
-   @media (max-width: 400px) {
-      width: 14%;
+   @media (max-width: 500px) {
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      .sidebarToggleButton {
+         opacity: 1;
+         visibility: visible;
+      }
    }
 `;

@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 
 function DashboardPagesOutlatComponent() {
    return (
-      <div>
+      <div className="h-100">
          <Outlet />
       </div>
    );

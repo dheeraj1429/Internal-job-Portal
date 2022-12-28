@@ -61,4 +61,8 @@ export const mainDiv = styled.div`
       cursor: pointer;
       background-color: var(--main-cl);
    }
+
+   @media (max-width: 500px) {
+      width: 90%;
+   }
 `;

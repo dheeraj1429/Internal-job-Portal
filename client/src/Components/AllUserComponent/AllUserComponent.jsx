@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import HeadingComponent from "../../HelperComponents/HeadingComponent/HeadingComponent";
 import * as styled from "./AllUserComponent.style";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllLoginUsers, deleteUserAccount, removeAccountInfo } from "../../App/Features/Admin/adminSlice";
+import {
+   getAllLoginUsers,
+   deleteUserAccount,
+   removeAccountInfo,
+} from "../../App/Features/Admin/adminSlice";
 import { useCookies } from "react-cookie";
 import { row } from "./TableData";
 import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
@@ -24,8 +28,14 @@ function AllUserComponent() {
       setShowInfoPopup(event);
    };
 
-   const { allUsers, allUsersFetchLoading, allUsersFetchError, userAccountDeleteInfo, userAccountDeleteLoading, userAccountDeleteError } =
-      useSelector((state) => state.admin);
+   const {
+      allUsers,
+      allUsersFetchLoading,
+      allUsersFetchError,
+      userAccountDeleteInfo,
+      userAccountDeleteLoading,
+      userAccountDeleteError,
+   } = useSelector((state) => state.admin);
 
    const confirm = (id) => {
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
@@ -58,7 +68,11 @@ function AllUserComponent() {
 
    return (
       <styled.div className="sidePaddingOne">
-         <EditUserInfromation show={ShowInfoPopup} eventClick={ShowPopUpHandler} user={SelectedUser} />
+         <EditUserInfromation
+            show={ShowInfoPopup}
+            eventClick={ShowPopUpHandler}
+            user={SelectedUser}
+         />
          <HeadingComponent
             heading={"All Users"}
             subHeading={`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.`}
@@ -68,42 +82,55 @@ function AllUserComponent() {
                <SpennerComponent />
             </div>
          ) : !allUsersFetchLoading && !!allUsers && allUsers?.success && allUsers?.users?.length ? (
-            <div className="mt-5">
+            <div className="mt-5 table_parent_div">
                <table>
-                  <tr>
-                     {row.map((el) => (
-                        <th className=" text-gray-600" key={el.value.replaceAll(" ", "-")}>
-                           {el.value}
-                        </th>
-                     ))}
-                  </tr>
-                  {allUsers?.users.map((el) => (
-                     <tr className=" shadow-sm" key={el._id}>
-                        <td>
-                           <div className="user_images">
-                              <img src={`/usersProfileCompress/${el.userProfile}`} alt="" />
-                           </div>
-                        </td>
-                        <td className=" text-sm text-gray-500">{el.name}</td>
-                        <td className=" text-sky-600">{el.email}</td>
-                        <td className=" text-sm text-gray-500">{el.role}</td>
-                        <td className=" text-sm text-gray-500">{el.showNumber ? "Yes" : "No"}</td>
-                        <td className=" text-sm text-gray-500">{dayjs(el.createdAt).format("YY/MM/DD h:m:s A")}</td>
-                        <td>
-                           <div className=" flex items-center">
-                              <AiOutlineEye
-                                 className=" cursor-pointer me-2"
-                                 onClick={() => {
-                                    ShowPopUpHandler(true);
-                                    setSelectedUser(el);
-                                 }}
-                              />
-                              <Popconfirm title="Are you sure to delete this account" onConfirm={() => confirm(el._id)} okText="Yes" cancelText="No">
-                                 <MdDelete className=" cursor-pointer" />
-                              </Popconfirm>
-                           </div>
-                        </td>
+                  <thead>
+                     <tr>
+                        {row.map((el) => (
+                           <th className=" text-gray-600" key={el.value.replaceAll(" ", "-")}>
+                              {el.value}
+                           </th>
+                        ))}
                      </tr>
+                  </thead>
+                  {allUsers?.users.map((el) => (
+                     <tbody className=" shadow-sm" key={el._id}>
+                        <tr>
+                           <td>
+                              <div className="user_images">
+                                 <img src={`/usersProfileCompress/${el.userProfile}`} alt="" />
+                              </div>
+                           </td>
+                           <td className=" text-sm text-gray-500">{el.name}</td>
+                           <td className=" text-sky-600">{el.email}</td>
+                           <td className=" text-sm text-gray-500">{el.role}</td>
+                           <td className=" text-sm text-gray-500">
+                              {el.showNumber ? "Yes" : "No"}
+                           </td>
+                           <td className=" text-sm text-gray-500">
+                              {dayjs(el.createdAt).format("YY/MM/DD h:m:s A")}
+                           </td>
+                           <td>
+                              <div className=" flex items-center">
+                                 <AiOutlineEye
+                                    className=" cursor-pointer me-2"
+                                    onClick={() => {
+                                       ShowPopUpHandler(true);
+                                       setSelectedUser(el);
+                                    }}
+                                 />
+                                 <Popconfirm
+                                    title="Are you sure to delete this account"
+                                    onConfirm={() => confirm(el._id)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                 >
+                                    <MdDelete className=" cursor-pointer" />
+                                 </Popconfirm>
+                              </div>
+                           </td>
+                        </tr>
+                     </tbody>
                   ))}
                </table>
             </div>

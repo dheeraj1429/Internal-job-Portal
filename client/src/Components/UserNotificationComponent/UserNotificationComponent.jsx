@@ -11,8 +11,8 @@ function UserNotificationComponent({ data }) {
                   <img src={`/usersProfileCompress/${data?.pinnedUserProfile}`} alt="" />
                </div>
             </div>
-            <div className="notification_content">
-               <div className="flex items-center">
+            <div className="notification_content mt-0 mt-md-3">
+               <div className="sm:block md:flex items-center">
                   <div className="nf_div bg-gray-200">
                      <h5>
                         <strong>{data?.pinnedUserName}</strong>{" "}
@@ -20,7 +20,7 @@ function UserNotificationComponent({ data }) {
                         <strong>{data?.groupName.replaceAll("-", " ")}</strong>
                      </h5>
                   </div>
-                  <div className="time_div">
+                  <div className="time_div mt-3 mt-md-0">
                      <span className="ms-2 text-gray-500 text-sm">
                         {dayjs(data?.createdAt).format("DD/MMMM hh:mm:ss A")}
                      </span>

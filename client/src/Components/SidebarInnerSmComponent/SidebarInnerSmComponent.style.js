@@ -20,6 +20,7 @@ export const div = styled.div`
 
    svg {
       font-size: 20px;
+      color: var(--main-cl);
    }
 
    .user_Profile {
@@ -32,6 +33,12 @@ export const div = styled.div`
          width: 100%;
          height: 100%;
          object-fit: cover;
+      }
+   }
+
+   @media (max-width: 1100px) {
+      svg {
+         font-size: 14px;
       }
    }
 `;

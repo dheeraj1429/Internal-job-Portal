@@ -1,7 +1,10 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    position: relative;
+   visibility: visible;
+   opacity: 1;
+   transition: all 0.3s ease;
 
    .overLayDiv {
       position: fixed;
@@ -36,8 +39,8 @@ export const div = styled.div`
          width: 40px;
          height: 40px;
       }
-      .userProfileInfo {
+      /* .userProfileInfo {
          display: none;
-      }
+      } */
    }
 `;

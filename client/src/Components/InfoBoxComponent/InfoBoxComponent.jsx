@@ -1,7 +1,7 @@
-import React from 'react';
-import * as styled from './InfoBoxComponent.style';
-import InfoCartComponent from '../InfoCartComponent/InfoCartComponent';
-import { useSelector } from 'react-redux';
+import React from "react";
+import * as styled from "./InfoBoxComponent.style";
+import InfoCartComponent from "../InfoCartComponent/InfoCartComponent";
+import { useSelector } from "react-redux";
 
 function InfoBoxComponent() {
    const { allJobs } = useSelector((state) => state.admin);
@@ -12,25 +12,25 @@ function InfoBoxComponent() {
             <div className="row">
                <div
                   className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3 mb-4"
-                  key={'/images/layers.svg'}
+                  key={"/images/layers.svg"}
                >
                   <InfoCartComponent
-                     imgSrc={'/images/layers.svg'}
-                     smHeading={'Welcome to'}
-                     secondHeading={'Mighty Warners pvt.ltd'}
+                     imgSrc={"/images/layers.svg"}
+                     smHeading={"Welcome to"}
+                     secondHeading={"Mighty Warners pvt.ltd"}
                      active={true}
                   />
                </div>
                <div
                   className="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3 mb-4"
-                  key={'/images/add.svg'}
+                  key={"/images/add.svg"}
                >
                   <InfoCartComponent
-                     imgSrc={'/images/add.svg'}
+                     imgSrc={"/images/add.svg"}
                      smHeading={allJobs?.documents}
-                     secondHeading={'Job Posted'}
+                     secondHeading={"Job Posted"}
                      active={false}
-                     color={'--smooth-yellow-cl'}
+                     color={"--smooth-yellow-cl"}
                   />
                </div>
             </div>

@@ -42,4 +42,15 @@ export const div = styled.div`
    .four_zero_four_bg h3 {
       font-size: 80px;
    }
+
+   @media (max-width: 500px) {
+      .four_zero_four_bg {
+         h1 {
+            font-size: 30px;
+         }
+         h3 {
+            font-size: 40px;
+         }
+      }
+   }
 `;

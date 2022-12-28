@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as styled from "./SidebarTabComponent.style";
 import { IoMdArrowDropright } from "@react-icons/all-files/io/IoMdArrowDropright";
 
-function SidebarTabComponent({ children, icon, heading, dropIcon }) {
+function SidebarTabComponent({ children, icon, heading, dropIcon, HideAndShowMiniSidebar }) {
    const [ShowSubVariation, setShowSubVariation] = useState(false);
 
    const ShowHandler = function () {
@@ -11,16 +11,26 @@ function SidebarTabComponent({ children, icon, heading, dropIcon }) {
 
    return (
       <styled.div show={ShowSubVariation}>
-         <div className="flex items-center justify-between px-3 py-2" onClick={ShowHandler}>
-            <div className="flex items-center">
+         <div
+            className="flex items-center justify-between px-3 py-2"
+            onClick={
+               HideAndShowMiniSidebar
+                  ? () => {
+                       ShowHandler();
+                       HideAndShowMiniSidebar();
+                    }
+                  : () => ShowHandler()
+            }
+         >
+            <div className="flex items-center tab_icons">
                {icon}
-               <p className="ms-2 text-sm text-gray-700">{heading}</p>
+               <p className="ms-2 text-sm text-gray-100">{heading}</p>
             </div>
             {!dropIcon ? null : (
                <IoMdArrowDropright className={ShowSubVariation ? "rotate_cl" : null} />
             )}
          </div>
-         <div className="padding_side_bar">{children}</div>
+         <div className="padding_side_bar inner_hidden_bar">{children}</div>
       </styled.div>
    );
 }

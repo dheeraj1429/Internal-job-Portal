@@ -47,7 +47,11 @@ function DashboardSideBarComponent() {
    };
 
    const SidebarToggleHandler = function () {
-      SidebarRef.current.classList.toggle("Mini_sidebar");
+      if (window.innerWidth >= 600) {
+         return;
+      } else {
+         SidebarRef.current.classList.toggle("Mini_sidebar");
+      }
    };
 
    const GroupCreateHandler = function (messageInfo, args) {
@@ -137,29 +141,38 @@ function DashboardSideBarComponent() {
    }, [params]);
 
    return (
-      <styled.div ref={SidebarRef}>
-         <div className="ms-3 bar_div shadow" onClick={SidebarToggleHandler}>
+      <styled.div ref={SidebarRef} className="bg-gray-900">
+         <div className="ms-3 sidebarToggleButton shadow" onClick={SidebarToggleHandler}>
             <AiOutlineBars />
          </div>
          <UserProfileComponent />
          <SidebarTabComponent icon={<DiGhostSmall />} heading={"Dashboard"} dropIcon={true}>
-            <SidebarInnerSmComponent icon={<BsBag />} active={false} link={"/"} heading={"job"} />
+            <SidebarInnerSmComponent
+               icon={<BsBag />}
+               active={false}
+               link={"/"}
+               heading={"job"}
+               HideAndShowMiniSidebar={SidebarToggleHandler}
+            />
             {!!user && user?.userObject && user?.userObject?.role === "admin" ? (
                <>
                   <SidebarInnerSmComponent
                      icon={<AiOutlineFileZip />}
                      link={"/applications"}
                      heading={"Applications"}
+                     HideAndShowMiniSidebar={SidebarToggleHandler}
                   />
                   <SidebarInnerSmComponent
                      icon={<RiUserSettingsLine />}
                      link={"/all-users"}
                      heading={"All users"}
+                     HideAndShowMiniSidebar={SidebarToggleHandler}
                   />
                   <SidebarInnerSmComponent
                      icon={<MdPlaylistAdd />}
                      link={"/groups"}
                      heading={"Groups"}
+                     HideAndShowMiniSidebar={SidebarToggleHandler}
                   />
                </>
             ) : null}
@@ -169,6 +182,7 @@ function DashboardSideBarComponent() {
                   heading={"log out"}
                   onClick={logOutHandler}
                   link={"/portal/signin"}
+                  HideAndShowMiniSidebar={SidebarToggleHandler}
                />
             ) : null}
          </SidebarTabComponent>
@@ -184,6 +198,7 @@ function DashboardSideBarComponent() {
                            }/${el.groupData?._id || el?._id}`}
                         >
                            <SidebarTabComponent
+                              HideAndShowMiniSidebar={SidebarToggleHandler}
                               dropIcon={false}
                               icon={<BiMessageSquareDetail />}
                               heading={
@@ -202,6 +217,7 @@ function DashboardSideBarComponent() {
                   icon={<VscGroupByRefType />}
                   link={"/groups-notifications"}
                   heading={"Group notification"}
+                  HideAndShowMiniSidebar={SidebarToggleHandler}
                />
             </SidebarTabComponent>
          ) : null}

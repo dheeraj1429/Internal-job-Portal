@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    h1 {
@@ -7,5 +7,14 @@ export const div = styled.div`
    }
    p {
       font-size: 13px;
+   }
+
+   @media (max-width: 500px) {
+      h1 {
+         font-size: 25px;
+      }
+      p {
+         font-size: 12px;
+      }
    }
 `;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    .jobPostCart {
@@ -23,5 +23,13 @@ export const div = styled.div`
    .css-1e6y48t-MuiButtonBase-root-MuiButton-root {
       display: flex;
       justify-content: end;
+   }
+
+   @media (max-width: 500px) {
+      .jobPostCart {
+         h5 {
+            font-size: 18px;
+         }
+      }
    }
 `;

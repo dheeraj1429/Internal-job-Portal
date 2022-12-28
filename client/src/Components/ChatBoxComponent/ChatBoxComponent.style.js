@@ -6,7 +6,7 @@ export const div = styled.div`
    background-position: center;
    background-size: contain;
    width: 100%;
-   height: 100%;
+   height: 100vh;
    overflow: hidden;
    padding-bottom: 1rem;
 

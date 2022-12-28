@@ -1,39 +1,51 @@
-import React, { useState, useRef, useEffect } from 'react';
-import * as styled from './PostJobComponent.style';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import { MenuItem } from '@mui/material';
-import JoditEditor from 'jodit-react';
-import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Navigate } from 'react-router';
-import { message } from 'antd';
-import { postNewJob, removeJobPostInfo, getSingleJobPostDetails, removeSingleJobPostInfo, updateJobPost } from '../../App/Features/Admin/adminSlice';
-import HeadingComponent from '../../HelperComponents/HeadingComponent/HeadingComponent';
-import { useParams } from 'react-router';
-import { Cookies, useCookies } from 'react-cookie';
+import React, { useState, useRef, useEffect } from "react";
+import * as styled from "./PostJobComponent.style";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import { MenuItem } from "@mui/material";
+import JoditEditor from "jodit-react";
+import CustomButtonComponent from "../../HelperComponents/CustomButtonComponent/CustomButtonComponent";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Navigate } from "react-router";
+import { message } from "antd";
+import {
+   postNewJob,
+   removeJobPostInfo,
+   getSingleJobPostDetails,
+   removeSingleJobPostInfo,
+   updateJobPost,
+} from "../../App/Features/Admin/adminSlice";
+import HeadingComponent from "../../HelperComponents/HeadingComponent/HeadingComponent";
+import { useParams } from "react-router";
+import { Cookies, useCookies } from "react-cookie";
 
-const jobTypeObAr = [{ value: 'Full-Time' }, { value: 'Part-Time' }];
-const jobCategoryObAr = [{ value: 'Exempt' }, { value: 'Non-Exempt' }];
+const jobTypeObAr = [{ value: "Full-Time" }, { value: "Part-Time" }];
+const jobCategoryObAr = [{ value: "Exempt" }, { value: "Non-Exempt" }];
 
 function PostJobComponent() {
    const [JobDetails, setJobDetails] = useState({
-      jobTitle: '',
-      salaryRangeStart: '',
-      salaryRangeEnd: '',
-      jobType: '',
-      jobCategory: '',
-      positionDescription: '',
+      jobTitle: "",
+      salaryRangeStart: "",
+      salaryRangeEnd: "",
+      jobType: "",
+      jobCategory: "",
+      positionDescription: "",
    });
    const editor = useRef(null);
-   const [content, setContent] = useState('');
-   const [Coookie] = useCookies(['_ijp_at_user']);
+   const [content, setContent] = useState("");
+   const [Coookie] = useCookies(["_ijp_at_user"]);
 
    const navigation = useNavigate();
    const dispatch = useDispatch();
    const params = useParams();
 
-   const { insertNewJobPostLoading, insertNewJobPostError, insertNewJobPost, singleJobPost, singleJobPostFetchError } = useSelector((state) => state.admin);
+   const {
+      insertNewJobPostLoading,
+      insertNewJobPostError,
+      insertNewJobPost,
+      singleJobPost,
+      singleJobPostFetchError,
+   } = useSelector((state) => state.admin);
    const { user } = useSelector((state) => state.auth);
 
    const ChangeHandler = function (event) {
@@ -45,9 +57,14 @@ function PostJobComponent() {
       event.preventDefault();
 
       if (user && user?.userObject && user?.userObject?.token) {
-         if (JobDetails.jobTitle && JobDetails.salaryRangeStart && JobDetails.salaryRangeEnd && JobDetails.jobType) {
+         if (
+            JobDetails.jobTitle &&
+            JobDetails.salaryRangeStart &&
+            JobDetails.salaryRangeEnd &&
+            JobDetails.jobType
+         ) {
             if (Number(JobDetails.salaryRangeStart) > Number(JobDetails.salaryRangeEnd)) {
-               return message.info('Start salary is grater then end salary');
+               return message.info("Start salary is grater then end salary");
             }
 
             if (params?.id) {
@@ -71,10 +88,10 @@ function PostJobComponent() {
                );
             }
          } else {
-            message.info('Please fill the required fileds!');
+            message.info("Please fill the required fileds!");
          }
       } else {
-         navigation('/portal/signin');
+         navigation("/portal/signin");
       }
    };
 
@@ -92,8 +109,18 @@ function PostJobComponent() {
    }, []);
 
    useEffect(() => {
-      if (params && !!params?.id && !!user && user?.userObject && !!Coookie && Coookie?._ijp_at_user && Coookie?._ijp_at_user?.token) {
-         dispatch(getSingleJobPostDetails({ token: Coookie?._ijp_at_user?.token, jobId: params.id }));
+      if (
+         params &&
+         !!params?.id &&
+         !!user &&
+         user?.userObject &&
+         !!Coookie &&
+         Coookie?._ijp_at_user &&
+         Coookie?._ijp_at_user?.token
+      ) {
+         dispatch(
+            getSingleJobPostDetails({ token: Coookie?._ijp_at_user?.token, jobId: params.id })
+         );
       }
    }, [params]);
 
@@ -112,29 +139,39 @@ function PostJobComponent() {
    }, [singleJobPost]);
 
    if (!user) {
-      return <Navigate to={'/portal/signin'} />;
+      return <Navigate to={"/portal/signin"} />;
    }
 
    return (
       <styled.div>
          <HeadingComponent
-            heading={params?.id ? 'Update job post' : 'Post new job'}
+            heading={params?.id ? "Update job post" : "Post new job"}
             subHeading={`Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.`}
          />
          <div className="mt-5">
             <Box
                component="form"
                sx={{
-                  '& > :not(style)': { my: 3, width: '100%' },
+                  "& > :not(style)": { my: 2, width: "100%" },
                }}
                noValidate
                autoComplete="off"
             >
                <div className="w-100">
-                  <TextField id="outlined-basic" required onChange={ChangeHandler} value={JobDetails.jobTitle} type="text" name="jobTitle" className="w-100" label="Job title" variant="outlined" />
+                  <TextField
+                     id="outlined-basic"
+                     required
+                     onChange={ChangeHandler}
+                     value={JobDetails.jobTitle}
+                     type="text"
+                     name="jobTitle"
+                     className="w-100"
+                     label="Job title"
+                     variant="outlined"
+                  />
                </div>
-               <div className="flex items-center">
-                  <div className="w-100 pe-2">
+               <div className="d-block d-md-flex align-items-center">
+                  <div className="w-100 pe-0 pe-md-2 mb-3 mb-md-0">
                      <TextField
                         required
                         id="outlined-basic"
@@ -147,7 +184,7 @@ function PostJobComponent() {
                         variant="outlined"
                      />
                   </div>
-                  <div className="w-100 pe-2">
+                  <div className="w-100 pe-0 pe-md-2 mb-3 mb-md-0">
                      <TextField
                         required
                         id="outlined-basic"
@@ -160,8 +197,17 @@ function PostJobComponent() {
                         variant="outlined"
                      />
                   </div>
-                  <div className="w-100 pe-2">
-                     <TextField id="outlined-select-currency" required onChange={ChangeHandler} value={JobDetails.jobType} className="w-100" select label="Job type" name="jobType">
+                  <div className="w-100 pe-0 pe-md-2 mb-3 mb-md-0">
+                     <TextField
+                        id="outlined-select-currency"
+                        required
+                        onChange={ChangeHandler}
+                        value={JobDetails.jobType}
+                        className="w-100"
+                        select
+                        label="Job type"
+                        name="jobType"
+                     >
                         {jobTypeObAr.map((option) => (
                            <MenuItem key={option.value} value={option.value}>
                               {option.value}
@@ -170,7 +216,15 @@ function PostJobComponent() {
                      </TextField>
                   </div>
                   <div className="w-100">
-                     <TextField id="outlined-select-currency" onChange={ChangeHandler} value={JobDetails.jobCategory} className="w-100" select name="jobCategory" label="Category">
+                     <TextField
+                        id="outlined-select-currency"
+                        onChange={ChangeHandler}
+                        value={JobDetails.jobCategory}
+                        className="w-100"
+                        select
+                        name="jobCategory"
+                        label="Category"
+                     >
                         {jobCategoryObAr.map((option) => (
                            <MenuItem key={option.value} value={option.value}>
                               {option.value}
@@ -195,15 +249,30 @@ function PostJobComponent() {
                   <label className="mb-1">Job description</label>
                   <div className="mb-3">
                      <span className=" text-gray-500">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo aliquam accusamus, excepturi rerum hic assumenda saepe earum animi quasi ipsam, aspernatur porro nobis, odio illum
-                        iste ex veniam aut ratione!
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo aliquam
+                        accusamus, excepturi rerum hic assumenda saepe earum animi quasi ipsam,
+                        aspernatur porro nobis, odio illum iste ex veniam aut ratione!
                      </span>
                   </div>
-                  <JoditEditor ref={editor} value={content} onChange={(newContent) => setContent(newContent)} />
+                  <JoditEditor
+                     ref={editor}
+                     value={content}
+                     onChange={(newContent) => setContent(newContent)}
+                  />
                </div>
-               <CustomButtonComponent onClick={sendHandler} type="submit" isLaoding={insertNewJobPostLoading} innerText={params?.id ? 'Update' : 'Post'} btnCl={'category_upload'} />
-               {!!insertNewJobPostError ? <p className=" text-red-400">{insertNewJobPostError}</p> : null}
-               {!!singleJobPostFetchError ? <p className=" text-red-400">{singleJobPostFetchError}</p> : null}
+               <CustomButtonComponent
+                  onClick={sendHandler}
+                  type="submit"
+                  isLaoding={insertNewJobPostLoading}
+                  innerText={params?.id ? "Update" : "Post"}
+                  btnCl={"category_upload"}
+               />
+               {!!insertNewJobPostError ? (
+                  <p className=" text-red-400">{insertNewJobPostError}</p>
+               ) : null}
+               {!!singleJobPostFetchError ? (
+                  <p className=" text-red-400">{singleJobPostFetchError}</p>
+               ) : null}
             </Box>
          </div>
       </styled.div>

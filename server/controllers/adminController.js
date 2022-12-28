@@ -270,7 +270,7 @@ const getAllLoginUsers = catchAsync(async function (req, res, next) {
       res,
       "users",
       { $and: [{ role: { $ne: "admin" } }, { role: { $ne: "subAdmin" } }] },
-      { name: 1, email: 1, role: 1, userProfile: 1 }
+      { name: 1, email: 1, role: 1, userProfile: 1, createdAt: 1 }
    );
 });
 

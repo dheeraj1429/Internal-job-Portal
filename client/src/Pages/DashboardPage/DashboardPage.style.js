@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const div = styled.div`
    .Mini_sidebar {
-      width: 6%;
+      width: 0%;
 
       p {
          display: none;
@@ -14,6 +14,17 @@ export const div = styled.div`
 
       .padding_side_bar {
          padding: 0;
+      }
+
+      .profile_div {
+         opacity: 0;
+         visibility: hidden;
+      }
+   }
+
+   @media (min-width: 600px) {
+      .Mini_sidebar {
+         width: 30%;
       }
    }
 `;

@@ -15,4 +15,11 @@ export const div = styled.div`
    p {
       font-size: 14px;
    }
+
+   @media (max-width: 500px) {
+      padding: 1rem;
+      h1 {
+         font-size: 27px;
+      }
+   }
 `;

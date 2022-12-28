@@ -4,7 +4,6 @@ import HeadingComponent from "../../HelperComponents/HeadingComponent/HeadingCom
 import JobPostsCartListComponent from "../JobPostsCartListComponent/JobPostsCartListComponent";
 import InfoBoxComponent from "../InfoBoxComponent/InfoBoxComponent";
 import { useSelector } from "react-redux";
-import NotificationComponent from "../NotificationComponent/NotificationComponent";
 
 function AllJobsComponent() {
    const { user } = useSelector((state) => state.auth);
@@ -20,7 +19,7 @@ function AllJobsComponent() {
          {!!user && user?.userObject && user?.userObject?.role === "admin" ? (
             <InfoBoxComponent />
          ) : null}
-         <div className="mt-5">
+         <div className="mt-2 mt-md-5">
             <JobPostsCartListComponent />
          </div>
       </styled.div>

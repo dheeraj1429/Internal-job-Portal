@@ -78,14 +78,14 @@ function GroupContainerComponent() {
                cookie?._ijp_at_user?.role === "admin" ||
                cookie?._ijp_at_user?.role === "subAdmin" ? (
                   <div className="row gx-0 h-100">
-                     <div className="col-6 col-md-5 col-lg-4 bg-gray-100">
+                     <div className="col-12 col-md-6 col-lg-4 bg-gray-100">
                         <div className="user_list_div border">
                            <div className="border-bottom p-3">
                               <SearchBoxComponent />
                            </div>
                            <div className="p-3 scroll_div relative">
                               <div className="flex items-center justify-between mb-3">
-                                 <h1 className="text-3xl text-gray-700 lg:text-2xl">
+                                 <h1 className="md:text-lg text-2xl text-gray-700 lg:text-2xl">
                                     {param?.name.replaceAll("-", " ")}
                                  </h1>
                                  {cookie?._ijp_at_user?.role === "admin" ? (
@@ -139,7 +139,7 @@ function GroupContainerComponent() {
                            </div>
                         </div>
                      </div>
-                     <div className="col-6 col-md-7 col-lg-8 renderDiv">
+                     <div className="col-12 col-md-6 col-lg-8 renderDiv">
                         <Outlet />
                      </div>
                   </div>

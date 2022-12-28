@@ -19,7 +19,8 @@ function JobApplicationComponent() {
       jobId: "",
       token: "",
    });
-   const { allJobApplications, allJobApplicationsFetchLoading, allJobApplicationsFetchError } = useSelector((state) => state.admin);
+   const { allJobApplications, allJobApplicationsFetchLoading, allJobApplicationsFetchError } =
+      useSelector((state) => state.admin);
 
    const ViewHandler = function (jobId) {
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
@@ -91,14 +92,18 @@ function JobApplicationComponent() {
                         <td className=" text-sky-600 text-sm">{elm?.jobApplied?.jobTitle}</td>
                         <td className=" text-gray-600 text-sm ">
                            <div className="flex items-center">
-                              <BiRupee /> {elm?.jobApplied.salaryRangeStart} - {elm?.jobApplied?.salaryRangeEnd}
+                              <BiRupee /> {elm?.jobApplied.salaryRangeStart} -{" "}
+                              {elm?.jobApplied?.salaryRangeEnd}
                            </div>
                         </td>
                         <td className=" text-gray-600 text-sm">{elm?.user?.cityState}</td>
                         <td className=" text-gray-600 text-sm">{elm?.user?.phone}</td>
                         <td className=" text-gray-600 text-sm">{elm?.user?.postalCode}</td>
                         <td>
-                           <GrFormView className=" cursor-pointer" onClick={() => ViewHandler(elm._id)} />
+                           <GrFormView
+                              className=" cursor-pointer"
+                              onClick={() => ViewHandler(elm._id)}
+                           />
                         </td>
                      </tr>
                   ))}

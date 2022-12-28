@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import * as styled from './SignInComponent.style';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import CustomButtonComponent from '../CustomButtonComponent/CustomButtonComponent';
-import { signInUser, logInUser } from '../../App/Features/Auth/AuthSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router';
-import { Link, Navigate } from 'react-router-dom';
-import validator from 'validator';
-import { checkPassword } from '../../Components/Helper/helper';
+import React, { useState, useEffect } from "react";
+import * as styled from "./SignInComponent.style";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import CustomButtonComponent from "../CustomButtonComponent/CustomButtonComponent";
+import { signInUser, logInUser } from "../../App/Features/Auth/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router";
+import { Link, Navigate } from "react-router-dom";
+import validator from "validator";
+import { checkPassword } from "../../Components/Helper/helper";
 
 function SignInComponent() {
    const [UserInfo, setUserInfo] = useState({
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
    });
-   const [Error, setError] = useState('');
+   const [Error, setError] = useState("");
    const { userAuthLoading, user } = useSelector((state) => state.auth);
 
    const dispatch = useDispatch();
@@ -33,32 +33,31 @@ function SignInComponent() {
       e.preventDefault();
       const { name, email, password, confirmPassword } = UserInfo;
 
-      if (location.pathname === '/portal/signin') {
+      if (location.pathname === "/portal/signin") {
          if (!name && !email && !password && !confirmPassword)
-            return setError('Please fill all filed');
+            return setError("Please fill all filed");
 
          if (password !== confirmPassword)
             return setError("Password or confirm password is't match");
 
-         if (!validator.isEmail(email))
-            return setError('Please enter valid email address');
+         if (!validator.isEmail(email)) return setError("Please enter valid email address");
 
          const passwordCheck = checkPassword(password);
          if (!passwordCheck)
             return setError(
-               'Password between 8 to 15 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character'
+               "Password between 8 to 15 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character"
             );
 
          dispatch(signInUser({ name, email, password }));
-      } else if (location.pathname === '/portal/login') {
-         if (!email && !password) return setError('Please fill all filed');
+      } else if (location.pathname === "/portal/login") {
+         if (!email && !password) return setError("Please fill all filed");
          dispatch(logInUser({ email, password }));
       }
    };
 
    useEffect(() => {
       if (!!user && user.success) {
-         navigation('/');
+         navigation("/");
       }
    }, [user]);
 
@@ -69,26 +68,23 @@ function SignInComponent() {
    return (
       <styled.div className=" text-center">
          <h1>
-            {location.pathname === '/portal/login'
-               ? 'Login with account'
-               : 'Create an account'}{' '}
+            {location.pathname === "/portal/login" ? "Login with account" : "Create an account"}{" "}
          </h1>
          <p className="mb-3 text-gray-500">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos,
-            dolorum?
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eos, dolorum?
          </p>
          <Box
             component="form"
             sx={{
-               '& > :not(style)': { my: 1, width: '100%' },
+               "& > :not(style)": { my: 1, width: "100%" },
             }}
             noValidate
             autoComplete="off"
          >
-            {location.pathname === '/portal/login' ? null : (
+            {location.pathname === "/portal/login" ? null : (
                <TextField
                   onChange={changeHandler}
-                  type={'text'}
+                  type={"text"}
                   value={UserInfo.name}
                   label="Name"
                   name="name"
@@ -97,7 +93,7 @@ function SignInComponent() {
             )}
             <TextField
                onChange={changeHandler}
-               type={'email'}
+               type={"email"}
                value={UserInfo.email}
                label="Email"
                name="email"
@@ -105,16 +101,16 @@ function SignInComponent() {
             />
             <TextField
                onChange={changeHandler}
-               type={'password'}
+               type={"password"}
                value={UserInfo.password}
                label="Password"
                name="password"
                variant="outlined"
             />
-            {location.pathname === '/portal/login' ? null : (
+            {location.pathname === "/portal/login" ? null : (
                <TextField
                   onChange={changeHandler}
-                  type={'password'}
+                  type={"password"}
                   value={UserInfo.confirmPassword}
                   label="Re-enter password"
                   name="confirmPassword"
@@ -127,44 +123,34 @@ function SignInComponent() {
                onClick={signInHandler}
                type="submit"
                isLaoding={userAuthLoading}
-               innerText={
-                  location.pathname === '/portal/login'
-                     ? 'login'
-                     : 'Create Account'
-               }
-               btnCl={'category_upload mb-2'}
+               innerText={location.pathname === "/portal/login" ? "login" : "Create Account"}
+               btnCl={"category_upload mb-2"}
             />
          </div>
-         {location.pathname === '/portal/login' ? (
+         {location.pathname === "/portal/login" ? (
             <span>
-               Create an account{' '}
+               Create an account{" "}
                {
-                  <Link to={'/portal/signin'} className=" text-sky-500">
+                  <Link to={"/portal/signin"} className=" text-sky-500">
                      Click here
                   </Link>
                }
             </span>
          ) : (
             <span>
-               Already have an account{' '}
+               Already have an account{" "}
                {
-                  <Link
-                     to={'/portal/login'}
-                     className=" text-sky-500"
-                     onClick={() => setError('')}
-                  >
+                  <Link to={"/portal/login"} className=" text-sky-500" onClick={() => setError("")}>
                      Click here
                   </Link>
                }
             </span>
          )}
-         <Link to={'/portal/forget-password'}>
+         <Link to={"/portal/forget-password"}>
             <p className="mt-2">Forget password</p>
          </Link>
          {!!Error ? <p className="error_text mt-2">{Error}</p> : null}
-         {!!user && !user.success ? (
-            <p className="error_text mt-2">{user.message}</p>
-         ) : null}
+         {!!user && !user.success ? <p className="error_text mt-2">{user.message}</p> : null}
       </styled.div>
    );
 }

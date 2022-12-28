@@ -19,4 +19,12 @@ export const div = styled.div`
          overflow-x: hidden;
       }
    }
+
+   @media (max-width: 600px) {
+      height: 100%;
+
+      .renderDiv {
+         height: auto;
+      }
+   }
 `;

@@ -79,8 +79,10 @@ function AddGroupUsersComponent({ event }) {
                            <p className="text-sm text-gray-700 mt-1">{el?.email}</p>
                         </div>
                      </div>
-                     <div className="add_button shadow" onClick={() => GroupUserAddHandler(el)}>
-                        <GrFormAdd />
+                     <div>
+                        <div className="add_button shadow" onClick={() => GroupUserAddHandler(el)}>
+                           <GrFormAdd />
+                        </div>
                      </div>
                   </div>
                ))

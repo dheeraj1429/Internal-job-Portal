@@ -9,7 +9,11 @@ function ChatContainerComponent() {
 
    return (
       <styled.div>
-         {!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.role === "admin" ? <ChatPreviewComponent /> : <ChatBoxComponent />}
+         {!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.role === "admin" ? (
+            <ChatPreviewComponent />
+         ) : (
+            <ChatBoxComponent />
+         )}
       </styled.div>
    );
 }

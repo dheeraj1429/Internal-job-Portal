@@ -9,4 +9,8 @@ export const div = styled.div`
          height: auto;
       }
    }
+
+   @media (max-width: 600px) {
+      padding: 1rem;
+   }
 `;

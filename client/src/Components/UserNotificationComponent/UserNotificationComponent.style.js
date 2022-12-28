@@ -36,4 +36,8 @@ export const div = styled.div`
          font-size: 12px;
       }
    }
+
+   @media (max-width: 600px) {
+      padding: 1rem;
+   }
 `;
