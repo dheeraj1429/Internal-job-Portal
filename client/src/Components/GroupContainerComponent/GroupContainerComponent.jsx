@@ -53,12 +53,17 @@ function GroupContainerComponent() {
    }, [param?.id]);
 
    useEffect(() => {
-      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+      if (
+         !!cookie &&
+         cookie?._ijp_at_user &&
+         cookie?._ijp_at_user?.token &&
+         cookie?._ijp_at_user?.role === "admin"
+      ) {
          socket.emit("_live", {
             _id: cookie?._ijp_at_user?._id,
             userName: cookie?._ijp_at_user?.name,
          });
-         dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.tokenm, page: 0 }));
+         dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token, page: 0 }));
       }
       return () => {
          dispatch(removeAccountInfo());

@@ -1,7 +1,7 @@
 import React from "react";
 import * as styled from "./DashboardPage.style";
 import DashboardSideBarComponent from "../../Components/DashboardSideBarComponent/DashboardSideBarComponent";
-import { Outlet } from "react-router";
+import DashboardPagesOutlatComponent from "../../Components/DashboardPagesOutlatComponent/DashboardPagesOutlatComponent";
 
 function DashboardPage() {
    return (
@@ -11,7 +11,7 @@ function DashboardPage() {
                <div className="d-flex">
                   <DashboardSideBarComponent />
                   <styled.renderDiv>
-                     <Outlet />
+                     <DashboardPagesOutlatComponent />
                   </styled.renderDiv>
                </div>
             </div>

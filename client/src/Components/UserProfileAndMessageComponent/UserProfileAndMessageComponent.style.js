@@ -49,6 +49,12 @@ export const chatMessageDiv = styled.div`
    border-radius: 5px;
    position: relative;
 
+   .message_sus_send {
+      position: absolute;
+      right: -10px;
+      top: -10px;
+   }
+
    .options_div {
       position: absolute;
       /* right: -50px; */

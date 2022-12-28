@@ -18,11 +18,25 @@ const groupSlice = createSlice({
    initialState: INITIAL_STATE,
    reducers: {
       createEmployeesGroup: (state, action) => {
+         const ConcatUserGroups = function (state) {
+            const groupIsAlreadyExists = state.find((el) =>
+               el?.groupData
+                  ? el.groupData._id === action.payload.groupInfo[0]?.groupData?._id
+                  : el._id === action.payload.groupInfo[0]?.groupData?._id
+            );
+
+            if (!groupIsAlreadyExists) {
+               return state.concat(action.payload?.groupInfo);
+            } else {
+               return state;
+            }
+         };
+
          state.employeesGroup =
             action?.payload?.success && state?.employeesGroup?.groupInfo
                ? {
                     ...state.employeesGroup,
-                    groupInfo: state.employeesGroup?.groupInfo.concat(action.payload?.groupInfo),
+                    groupInfo: ConcatUserGroups(state.employeesGroup?.groupInfo),
                     error: null,
                  }
                : action?.payload?.success
@@ -46,21 +60,20 @@ const groupSlice = createSlice({
                ),
             },
          };
-         state.employeesGroup = !action.payload?._id
-            ? {
-                 ...state.employeesGroup,
-                 groupInfo: state.employeesGroup.groupInfo.filter(
-                    (el) => el.groupData?._id !== action.payload?.groupId
-                 ),
-              }
-            : state.employeesGroup;
       },
-      removeUserFromSubAdminGroup: () => {},
+      employeesGroupHandler: (state, action) => {
+         state.employeesGroup = {
+            ...state.employeesGroup,
+            groupInfo: state.employeesGroup.groupInfo.filter(
+               (el) => el.groupData?._id !== action.payload?.groupId
+            ),
+         };
+      },
       addGroupUsers: (state, action) => {
          state.groupInfo = {
             ...state.groupInfo,
             data: {
-               ...state.groupInfo,
+               ...state.groupInfo.data,
                groupUsers: state?.groupInfo?.data?.groupUsers?.concat(action.payload.resposeData),
             },
          };
@@ -201,6 +214,6 @@ export const {
    createEmployeesGroupLoading,
    groupUserHandler,
    addGroupUsers,
-   removeUserFromSubAdminGroup,
+   employeesGroupHandler,
 } = groupSlice.actions;
 export default groupSlice;

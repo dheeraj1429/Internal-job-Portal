@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 export const div = styled.div`
-   background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(/images/chat-bg.jpg);
+   background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+      url(/images/chat-bg.jpg);
    background-position: center;
    background-size: contain;
    width: 100%;
@@ -23,7 +24,7 @@ export const div = styled.div`
    .chatBox {
       padding-top: 1rem;
       position: relative;
-      height: 92%;
+      height: 90%;
       overflow-x: hidden;
       padding-bottom: 2rem;
       overflow-y: hidden;

@@ -4,11 +4,14 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const { v4: uuidv4 } = require("uuid");
 const authModel = require("../model/schema/authSchema");
 const { default: mongoose } = require("mongoose");
+const forwordMessagesModel = require("../model/schema/forwordMessagesSchema");
 
 let roomId;
 
 const socketIoConnection = function (io) {
+   // keep track how many users are online.
    let users = [];
+
    // socket connection
    io.on("connection", (socket) => {
       // capture user is online or offline
@@ -21,13 +24,16 @@ const socketIoConnection = function (io) {
 
       socket.on("_store_user_info", async (args) => {
          const token = args.token;
+         const role = args.role;
 
          if (token) {
             const varifyToken = jwt.verify(token, SECRET_KEY);
             const { _id } = varifyToken;
+
             users.push({
                _id,
                socketId: socket.id,
+               role,
             });
 
             console.log(users);
@@ -118,6 +124,7 @@ const socketIoConnection = function (io) {
       // joining the room.
       socket.on("_join_group", (data) => {
          socket.join(data.groupId);
+         console.log(`${socket.id} join in ${data.groupId} group`);
          roomId = data.groupId;
       });
 
@@ -130,7 +137,7 @@ const socketIoConnection = function (io) {
          roomId = groupId;
 
          // varify user token.
-         const varifyToken = await jwt.verify(token, SECRET_KEY);
+         const varifyToken = jwt.verify(token, SECRET_KEY);
          const { _id } = varifyToken;
 
          if (role === "employee") {
@@ -192,7 +199,7 @@ const socketIoConnection = function (io) {
 
       // remove user from groups
       socket.on("_remove_group_users", async (args) => {
-         const { token, groupName, groupId, userId, profilePic, userName } = args;
+         const { token, groupName, groupId, userId, profilePic } = args;
          const varifyToken = jwt.verify(token, SECRET_KEY);
 
          if (varifyToken) {
@@ -235,11 +242,9 @@ const socketIoConnection = function (io) {
                if (!!removeUserFromGroup.modifiedCount) {
                   // send response to the group users
                   io.in(groupId).emit("_user_group_activity_response", {
-                     success: true,
-                     message: `${varifyToken.name} removed you from ${groupName.replaceAll(
-                        "-",
-                        " "
-                     )} group.`,
+                     message: `${varifyToken.name} removed ${
+                        findRemovedUser.name
+                     } from ${groupName.replaceAll("-", " ")} group.`,
                      groupId,
                      userId,
                      _sender_message_id,
@@ -249,16 +254,6 @@ const socketIoConnection = function (io) {
                         profilePic,
                         _id,
                      },
-                  });
-
-                  // send back the response to the admin.
-                  // just because admin is not join in the room that's why we are using emit function to send back the respose to the admin also.
-                  socket.emit("_user_group_activity_response", {
-                     success: true,
-                     message: `user is removed from ${groupName.replaceAll("-", " ")}`,
-                     groupId,
-                     userId,
-                     _id,
                   });
                }
             }
@@ -279,12 +274,12 @@ const socketIoConnection = function (io) {
           * when evern the message is send then always send back the data and time.
           */
          const { groupId, userInfo, message } = args;
-         const _sender_message_id = uuidv4();
+         const _sender_message_id = mongoose.Types.ObjectId();
 
          // store data inside the database.
          await groupModel.updateOne(
             { _id: groupId },
-            { $push: { groupMessages: { userId: userInfo._id, message } } }
+            { $push: { groupMessages: { userId: userInfo._id, message, _id: _sender_message_id } } }
          );
 
          // send back the massage to the all group users.
@@ -313,6 +308,7 @@ const socketIoConnection = function (io) {
           * share the respose with admin, subadmin, all users which is inside the selected group, and the added user.
           */
 
+         // genrate new _id for the inserted user.
          const _id = mongoose.Types.ObjectId();
 
          // find and update the user group.
@@ -341,59 +337,114 @@ const socketIoConnection = function (io) {
                }
             );
 
-            // send the added user information inside the all users which is exits inside the selected
+            // send the added user information inside the all users which is exits inside the selected group include the sender
             io.in(groupId).emit("_user_add_response", {
-               resposeData: {
+               userGroupData: {
+                  resposeData: {
+                     groupId,
+                     _id,
+                     userId: data._id,
+                     user: data,
+                  },
                   groupId,
-                  _id,
-                  userId: data._id,
-                  user: data,
                },
-               groupId,
-            });
-
-            // send response to the group users
-            socket.to(groupId).emit("_user_group_activity_response", {
-               success: true,
-               message: `${varifyToken.name} added ${findAddedUser.name} in ${groupName.replaceAll(
-                  "-",
-                  " "
-               )} group.`,
-               groupId,
-               userId: data._id,
-               _sender_message_id,
-               userAdded: true,
-               userInfo: {
-                  name: varifyToken?.name,
-                  profilePic: profilePic,
-                  _id: varifyToken?._id,
+               insertedUserData: {
+                  message: `${varifyToken.name} added ${
+                     findAddedUser.name
+                  } in ${groupName.replaceAll("-", " ")} group.`,
+                  groupId,
+                  userId: data._id,
+                  _sender_message_id,
+                  userAdded: true,
+                  userInfo: {
+                     name: varifyToken?.name,
+                     profilePic: profilePic,
+                     _id: varifyToken?._id,
+                  },
                },
             });
 
             // send notification with added user.
-
             const findUserInArray = users.find((el) => el._id === data._id);
 
-            socket.to(findUserInArray.socketId).emit("_user_added_in_group", {
-               groupData: {
-                  groupName: groupName,
-                  _id: groupId,
-                  message: `${varifyToken.name} added ${
-                     findAddedUser.name
-                  } in ${groupName.replaceAll("-", " ")} group.`,
-               },
+            // join selected user in group.
+            socket.to(findUserInArray?.socketId).emit("_user_added_in_group", {
+               type: "_user_added",
+               success: true,
+               groupAdmin: varifyToken.name,
+               message: `${varifyToken.name} added ${findAddedUser.name} in ${groupName.replaceAll(
+                  "-",
+                  " "
+               )} group.`,
+               groupInfo: [
+                  {
+                     groupData: {
+                        groupName: groupName.replaceAll("-", " "),
+                        _id: groupId,
+                     },
+                  },
+               ],
             });
          }
       });
 
+      socket.on("_pin_messages_loading", (args) => {
+         const findAdminSocketId = users.find((el) => el.role === "admin");
+         socket.to(findAdminSocketId?.socketId).emit("_loading_message", {
+            messageLoading: args.loading,
+         });
+      });
+
+      socket.on("_pin_message_to_admin", async (args) => {
+         const { groupId, messageId } = args.pinnedData;
+
+         /**
+          * find the pinned messages in database.
+          * if the user successfully pin message to admin then update the database value pinned true.
+          * send pinned message data to the admin and also the subadmin.
+          */
+
+         const findPinnedMessage = await groupModel.updateOne(
+            { _id: groupId, groupMessages: { $elemMatch: { _id: messageId } } },
+            {
+               $set: {
+                  "groupMessages.$.pinned": true,
+               },
+            }
+         );
+
+         if (!!findPinnedMessage.modifiedCount) {
+            const storeForwordMessages = await forwordMessagesModel({
+               groupId: args?.pinnedData?.groupId,
+               userId: args?.pinnedData?.pinnedUserId,
+               messageId: args?.pinnedData?.messageId,
+               employee: args?.pinnedData?.userInfo?._id,
+            }).save();
+
+            if (storeForwordMessages) {
+               // send back the respose with pinned value
+               socket.emit("_pinned_message_respose", {
+                  groupId,
+                  messageId,
+                  pinnedMessage: true,
+               });
+
+               // send message to the admin
+               const findAdminSocketId = users.find((el) => el.role === "admin");
+               socket.to(findAdminSocketId?.socketId).emit(
+                  "_pinned_messages",
+                  Object.assign(args?.pinnedData, {
+                     createdAt: storeForwordMessages?.createdAt,
+                  })
+               );
+            }
+         }
+      });
+
       socket.on("disconnect", (reason) => {
-         // handle offline status
          console.log("User is disconnect ", socket.id);
          console.log(reason);
-         socket.leave(roomId);
-         console.log(`${socket.id} user leave from ${roomId} group`);
-         users.splice(1, users.map((el) => el.socketId).indexOf(socket.id));
-         console.log("users leave and removed from the group ", users);
+         users = users.filter((el) => (el.socketId !== socket.id ? el : null));
       });
    });
 };

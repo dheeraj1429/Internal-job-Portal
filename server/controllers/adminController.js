@@ -6,6 +6,7 @@ const { default: mongoose } = require("mongoose");
 const path = require("path");
 const authModel = require("../model/schema/authSchema");
 const groupModel = require("../model/schema/groupSchema");
+const forwordMessagesModel = require("../model/schema/forwordMessagesSchema");
 
 const postNewjob = catchAsync(async function (req, res, next) {
    const insertedObject = { ...req.body };
@@ -45,7 +46,16 @@ const getSingleJobPostDetails = catchAsync(async function (req, res, next) {
 });
 
 const updateJobPost = catchAsync(async function (req, res, next) {
-   const { postId, jobTitle, salaryRangeStart, salaryRangeEnd, jobType, jobCategory, positionDescription, metaData } = req.body;
+   const {
+      postId,
+      jobTitle,
+      salaryRangeStart,
+      salaryRangeEnd,
+      jobType,
+      jobCategory,
+      positionDescription,
+      metaData,
+   } = req.body;
 
    if (!postId) {
       throw new Error("job post id is required!");
@@ -431,6 +441,90 @@ const getUserDetails = catchAsync(async function (req, res, next) {
    }
 });
 
+const getAllNotifications = catchAsync(async function (req, res, next) {
+   const findPinnedMessages = await forwordMessagesModel.aggregate([
+      {
+         $lookup: {
+            from: "groups",
+            localField: "groupId",
+            foreignField: "_id",
+            as: "groupInformation",
+         },
+      },
+      {
+         $lookup: {
+            from: "auths",
+            localField: "userId",
+            foreignField: "_id",
+            as: "userinformation",
+         },
+      },
+      {
+         $lookup: {
+            from: "auths",
+            localField: "employee",
+            foreignField: "_id",
+            as: "employeeInformation",
+         },
+      },
+      { $unwind: "$userinformation" },
+      { $unwind: "$groupInformation" },
+      { $unwind: "$employeeInformation" },
+      {
+         $project: {
+            _id: 1,
+            groupId: 1,
+            userId: 1,
+            messageId: 1,
+            createdAt: 1,
+            message: {
+               $arrayElemAt: [
+                  "$groupInformation.groupMessages",
+                  {
+                     $indexOfArray: ["$groupInformation.groupMessages._id", "$messageId"],
+                  },
+               ],
+            },
+            employee: 1,
+            groupInformation: 1,
+            userinformation: 1,
+            employeeInformation: 1,
+         },
+      },
+      {
+         $project: {
+            _id: 1,
+            createdAt: 1,
+            groupName: "$groupInformation.groupName",
+            groupId: "$groupInformation._id",
+            pinnedUserId: "$userinformation._id",
+            pinnedUserProfile: "$userinformation.userProfile",
+            pinnedUserName: "$userinformation.name",
+            message: "$message.message",
+            messageId: "$messageId",
+            userInfo: {
+               _id: "$employeeInformation._id",
+               name: "$employeeInformation.name",
+               profilePic: "$employeeInformation.userProfile",
+            },
+         },
+      },
+      { $sort: { createdAt: -1 } },
+   ]);
+
+   if (findPinnedMessages) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         notifications: findPinnedMessages,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: "Internal server error",
+      });
+   }
+});
+
 module.exports = {
    postNewjob,
    getSingleJobPostDetails,
@@ -445,4 +539,5 @@ module.exports = {
    getAllGroups,
    getGroupUserInfo,
    getUserDetails,
+   getAllNotifications,
 };

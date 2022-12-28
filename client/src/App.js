@@ -53,6 +53,9 @@ const ContactInfoComponent = lazy(() =>
 );
 const AddYourResume = lazy(() => import("./Pages/AddYourResume/AddYourResume"));
 const JobApplyFormPage = lazy(() => import("./Pages/JobApplyFormPage/JobApplyFormPage"));
+const GroupNotificationComponent = lazy(() =>
+   import("./Components/GroupNotificationComponent/GroupNotificationComponent")
+);
 
 function App() {
    const socket = useContext(SocketContext);
@@ -63,7 +66,10 @@ function App() {
       if (cookie && cookie?._ijp_at_user) {
          dispatch(setUser(cookie._ijp_at_user));
 
-         socket.emit("_store_user_info", { token: cookie?._ijp_at_user?.token });
+         socket.emit("_store_user_info", {
+            token: cookie?._ijp_at_user?.token,
+            role: cookie?._ijp_at_user?.role,
+         });
 
          if (cookie?._ijp_at_user?.role === "admin") {
             socket.emit("_admin_join_groups");
@@ -97,6 +103,7 @@ function App() {
                      <Route path="" element={<ChatContainerComponent />} />
                      <Route path=":userId" element={<ShowUserDetailsComponent />} />
                   </Route>
+                  <Route path="groups-notifications" element={<GroupNotificationComponent />} />
                </Route>
                <Route path="/beta/form" element={<JobApplyFormPage />}>
                   <Route path="resume/:id" element={<JobApplyResumeComponent />} />

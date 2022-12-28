@@ -1,3 +1,6 @@
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = process.env.SECRET_KEY;
+
 const catchAsync = (fn) => {
    /**
     * @fn function which is wrapperd by the catchAsync function to use the DRY method.
@@ -23,7 +26,14 @@ const httpStatusCodes = {
    INTERNAL_SERVER: 500,
 };
 
-const fetchPaginationData = async function (collection, page, documentLimit, res, filed, ...queryObject) {
+const fetchPaginationData = async function (
+   collection,
+   page,
+   documentLimit,
+   res,
+   filed,
+   ...queryObject
+) {
    /**
     * @collection where we want to fetch the data.
     * @page which page data we want to access. like page 1, page 2, .... etc.
@@ -74,8 +84,9 @@ const checkIsUserValid = function (req, res, next) {
     * @return { Response } if the user is not valid then send back the invalid response to the client.
     */
    const { token } = req.params;
+   const varifyToken = jwt.verify(token, SECRET_KEY);
 
-   if (!token) {
+   if (!varifyToken) {
       return res.status(200).json({
          success: false,
          message: "invalid token",

@@ -34,6 +34,9 @@ const INITAL_STATE = {
    singleUserDetails: null,
    singleUserDetailsLoading: false,
    singleUserDetailsFetchError: null,
+   pinnedNotifications: null,
+   pinnedNotificationsFetchLoading: false,
+   pinnedNotificationsFetchError: null,
 };
 
 const adminSlice = createSlice({
@@ -268,6 +271,23 @@ const adminSlice = createSlice({
             state.singleUserDetailsLoading = false;
             state.singleUserDetailsFetchError = null;
          });
+
+      bulder
+         .addCase(getAllNotifications.pending, (state) => {
+            state.pinnedNotifications = null;
+            state.pinnedNotificationsFetchLoading = true;
+            state.pinnedNotificationsFetchError = null;
+         })
+         .addCase(getAllNotifications.rejected, (state, action) => {
+            state.pinnedNotifications = null;
+            state.pinnedNotificationsFetchLoading = false;
+            state.pinnedNotificationsFetchError = action.error.message;
+         })
+         .addCase(getAllNotifications.fulfilled, (state, action) => {
+            state.pinnedNotifications = action.payload.data;
+            state.pinnedNotificationsFetchLoading = false;
+            state.pinnedNotificationsFetchError = null;
+         });
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
@@ -483,6 +503,24 @@ export const getUserDetails = createAsyncThunk(
             headers
          );
          return userResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const getAllNotifications = createAsyncThunk(
+   "admin/getAllNotifications",
+   async ({ token }, { rejectWithValue }) => {
+      try {
+         const notificationsRespose = await axios.get(
+            `/admin/get-all-notifications/${token}`,
+            headers
+         );
+         return notificationsRespose;
       } catch (err) {
          if (err) {
             throw err;

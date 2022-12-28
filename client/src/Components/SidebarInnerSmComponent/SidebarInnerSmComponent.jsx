@@ -20,7 +20,7 @@ function SidebarInnerSmComponent({ icon, cl, link, heading, onClick, profileDiv,
                   </div>
                ) : null}
             </styled.div>
-            <p className="text-gray-700 d-lg-block d-none text-sm">{heading}</p>
+            <p className="text-gray-700">{heading}</p>
          </div>
       </Link>
    );

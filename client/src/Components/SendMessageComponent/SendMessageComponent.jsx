@@ -34,7 +34,13 @@ function SendMessageComponent() {
 
    return (
       <styled.div className="flex items-center">
-         <InputEmoji value={Message} onChange={setMessage} cleanOnEnter onEnter={SendMessageHandler} placeholder="Send message" />
+         <InputEmoji
+            value={Message}
+            onChange={setMessage}
+            cleanOnEnter
+            onEnter={SendMessageHandler}
+            placeholder="Send message"
+         />
       </styled.div>
    );
 }

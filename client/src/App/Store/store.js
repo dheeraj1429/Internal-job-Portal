@@ -34,6 +34,7 @@ const store = configureStore({
                "group/getUserIncludeGroups/fulfilled",
                "admin/getUserDetails/fulfilled",
                "group/fetchGroupChats/fulfilled",
+               "admin/getAllNotifications/fulfilled",
             ],
          },
       }),

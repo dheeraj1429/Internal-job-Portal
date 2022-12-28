@@ -13,6 +13,7 @@ const groupSchema = new mongoose.Schema({
          message: { type: String, required: [true, "message is required"] },
          userRemoved: { type: Boolean, default: false },
          userAdded: { type: Boolean, default: false },
+         pinned: { type: Boolean, default: false },
          createdAt: { type: Date, default: Date.now },
       },
    ],

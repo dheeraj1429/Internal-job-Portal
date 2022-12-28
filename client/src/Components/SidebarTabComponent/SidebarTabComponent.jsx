@@ -20,7 +20,7 @@ function SidebarTabComponent({ children, icon, heading, dropIcon }) {
                <IoMdArrowDropright className={ShowSubVariation ? "rotate_cl" : null} />
             )}
          </div>
-         <div className="px-4">{children}</div>
+         <div className="padding_side_bar">{children}</div>
       </styled.div>
    );
 }

@@ -10,7 +10,10 @@ import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import UserListComponent from "../UserListComponent/UserListComponent";
 import { message } from "antd";
-import { createEmployeesGroup, createEmployeesGroupLoading } from "../../App/Features/Group/groupSlice";
+import {
+   createEmployeesGroup,
+   createEmployeesGroupLoading,
+} from "../../App/Features/Group/groupSlice";
 import { SocketContext } from "../../Context/socket";
 
 function CreateEmployeesGroupComponent() {
@@ -59,7 +62,10 @@ function CreateEmployeesGroupComponent() {
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
          if (GroupInfo.groupName) {
             dispatch(createEmployeesGroupLoading({ data: true }));
-            socket.emit("_create_group", Object.assign(GroupInfo, { groupAdmin: cookie?._ijp_at_user.name }));
+            socket.emit(
+               "_create_group",
+               Object.assign(GroupInfo, { groupAdmin: cookie?._ijp_at_user.name })
+            );
          } else {
             message.info("Group name is required");
          }
@@ -67,18 +73,17 @@ function CreateEmployeesGroupComponent() {
    };
 
    useEffect(() => {
+      const GroupListner = function (args) {
+         dispatch(createEmployeesGroup(args));
+      };
+
       if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
          dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token, page: 0 }));
+         socket.on("_group_created", GroupListner);
       }
-   }, []);
 
-   useEffect(() => {
-      console.log("create employess group component render");
-      socket.on("_group_created", (args) => {
-         console.log(args);
-         dispatch(createEmployeesGroup(args));
-      });
-   }, [socket]);
+      return () => socket.off("_group_created", GroupListner);
+   }, []);
 
    return (
       <styled.div className="sidePaddingOne">
@@ -105,8 +110,17 @@ function CreateEmployeesGroupComponent() {
                />
                <p className="text-gray-700 text-sm">Employees you want to add</p>
                <div className="searchEmployeesDiv">
-                  <input className="searchBoxInput" type="search" placeholder="Search employees" onClick={() => ShowAndHidHandler(true)} />
-                  <EmployeesPopupComponent show={ShowPopUp} hideHandler={ShowAndHidHandler} userHandler={SelecteEmployeesHandler} />
+                  <input
+                     className="searchBoxInput"
+                     type="search"
+                     placeholder="Search employees"
+                     onClick={() => ShowAndHidHandler(true)}
+                  />
+                  <EmployeesPopupComponent
+                     show={ShowPopUp}
+                     hideHandler={ShowAndHidHandler}
+                     userHandler={SelecteEmployeesHandler}
+                  />
                </div>
             </Box>
             <div className="Selected_users mt-3">
@@ -114,13 +128,24 @@ function CreateEmployeesGroupComponent() {
                   <>
                      <p className="mb-4 text-gray-600">Selected group memebers</p>
                      {GroupInfo?.employees.map((el) => (
-                        <UserListComponent key={el._id} data={el} removeHandler={RemoveSelectedUsers} />
+                        <UserListComponent
+                           key={el._id}
+                           data={el}
+                           removeHandler={RemoveSelectedUsers}
+                        />
                      ))}
                   </>
                ) : null}
             </div>
-            <CustomButtonComponent onClick={SaveHandler} isLaoding={employeesCreateGroupLoading} innerText={"Create"} btnCl={"category_upload"} />
-            {!!employeesGroup?.error && !employeesGroup?.error?.success ? <p className="error_text mt-2">{employeesGroup?.error?.message}</p> : null}
+            <CustomButtonComponent
+               onClick={SaveHandler}
+               isLaoding={employeesCreateGroupLoading}
+               innerText={"Create"}
+               btnCl={"category_upload"}
+            />
+            {!!employeesGroup?.error && !employeesGroup?.error?.success ? (
+               <p className="error_text mt-2">{employeesGroup?.error?.message}</p>
+            ) : null}
          </div>
       </styled.div>
    );

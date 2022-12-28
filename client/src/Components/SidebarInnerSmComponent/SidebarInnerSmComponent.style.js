@@ -19,12 +19,7 @@ export const div = styled.div`
    }
 
    svg {
-      font-size: 15px !important;
-   }
-
-   p {
-      color: var(--main-cl);
-      margin: 0;
+      font-size: 20px;
    }
 
    .user_Profile {

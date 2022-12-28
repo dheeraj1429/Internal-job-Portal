@@ -120,7 +120,10 @@ const getUserContactInfo = catchAsync(async function (req, res, next) {
    const { token } = req.params;
    const varifyToken = await jwt.verify(token, SECRET_KEY);
    const { _id } = varifyToken;
-   const findUserInfo = await authModel.findOne({ _id }, { password: 0, role: 0, createdAt: 0, tokens: 0 });
+   const findUserInfo = await authModel.findOne(
+      { _id },
+      { password: 0, role: 0, createdAt: 0, tokens: 0 }
+   );
 
    if (findUserInfo) {
       return res.status(httpStatusCodes.OK).json({
@@ -368,8 +371,11 @@ const fetchGroupChats = catchAsync(async function (req, res, next) {
             "groupMessages.createdAt": 1,
             "groupMessages.userInfo._id": 1,
             "groupMessages.userInfo.name": 1,
+            "groupMessages.pinned": 1,
             "groupMessages.userInfo.profilePic": "$groupMessages.userInfo.userProfile",
-            totalPages: { $abs: { $ceil: { $divide: ["$totalMessagesDocuments", DOCUMENT_LIMIT] } } },
+            totalPages: {
+               $abs: { $ceil: { $divide: ["$totalMessagesDocuments", DOCUMENT_LIMIT] } },
+            },
          },
       },
       {
@@ -384,6 +390,7 @@ const fetchGroupChats = catchAsync(async function (req, res, next) {
             "groupMessages.message": 1,
             "groupMessages._id": 1,
             "groupMessages.createdAt": 1,
+            "groupMessages.pinned": 1,
             "groupMessages.userInfo": { $arrayElemAt: ["$groupMessages.userInfo", 0] },
          },
       },

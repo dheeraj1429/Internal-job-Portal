@@ -7,7 +7,7 @@ import { useCookies } from "react-cookie";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useDispatch, useSelector } from "react-redux";
 import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
-import { fetchGroupChats, groupUserHandler } from "../../App/Features/Group/groupSlice";
+import { fetchGroupChats } from "../../App/Features/Group/groupSlice";
 import { useParams } from "react-router";
 
 function ChatBoxComponent() {
@@ -67,6 +67,7 @@ function ChatBoxComponent() {
          if (args?.success && args?.type === "_user_removed") {
             setUserInGroup(false);
          } else if (args?.success && args?.type === "_user_exists") {
+            setUserInGroup(true);
             setUserReciveMessage([]);
             dispatch(
                fetchGroupChats({
@@ -79,6 +80,47 @@ function ChatBoxComponent() {
          }
       };
 
+      const UserGroupAddHandler = function (args) {
+         if (args.type === "_user_added") {
+            setUserInGroup(true);
+            socket.emit("_join_group", {
+               groupId: args?.groupInfo?.[0]?.groupData?._id,
+               user: cookies?._ijp_at_user,
+            });
+         }
+      };
+
+      const UserAddedInGroupRespose = function (args) {
+         if (args?.userGroupData?.groupId === params?.id) {
+            setUserReciveMessage((prevState) => [
+               ...prevState,
+               {
+                  message: args?.insertedUserData?.message,
+                  groupId: args?.userGroupData?.groupId,
+                  userId: args?.userGroupData?.resposeData?.userId,
+                  _sender_message_id: args?.insertedUserData?._sender_message_id,
+                  userAdded: args?.insertedUserData?.userAdded,
+                  userInfo: {
+                     name: args?.userGroupData?.resposeData?.user?.name,
+                     profilePic: args?.userGroupData?.resposeData?.user?.userProfile,
+                     _id: args?.userGroupData?.resposeData?._id,
+                  },
+               },
+            ]);
+         }
+      };
+
+      const UserGroupActivityHandler = function (args) {
+         if (args?.userId === cookies?._ijp_at_user?._id) {
+            setUserInGroup(false);
+            socket.emit("_leave_room", { groupId: params.id });
+         }
+
+         if (args?.groupId === params?.id) {
+            setUserReciveMessage((prevState) => [...prevState, args]);
+         }
+      };
+
       if (params?.id) {
          if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
             socket.emit("_user_is_exist_in_group", {
@@ -88,33 +130,20 @@ function ChatBoxComponent() {
             });
 
             socket.on("_user_group_response", UserGroupChatAccessHandler);
+            socket.on("_user_added_in_group", UserGroupAddHandler);
+            socket.on("_user_add_response", UserAddedInGroupRespose);
+            socket.on("_user_group_activity_response", UserGroupActivityHandler);
          }
       }
 
       return () => {
          socket.off("_receive_message", listener);
          socket.off("_user_group_response", UserGroupChatAccessHandler);
+         socket.off("_user_added_in_group", UserGroupAddHandler);
+         socket.off("_user_add_response", UserAddedInGroupRespose);
+         socket.off("_user_group_activity_response", UserGroupActivityHandler);
       };
    }, [params?.id]);
-
-   useEffect(() => {
-      const UserGroupActivityHandler = function (args) {
-         if (args.success) {
-            if (args?.userId === cookies?._ijp_at_user?._id) {
-               setUserInGroup(false);
-               socket.emit("_leave_room", { groupId: params.id });
-            } else if (args?.userRemoved) {
-               dispatch(groupUserHandler(args));
-            }
-
-            setUserReciveMessage((prevState) => [...prevState, args]);
-         }
-      };
-
-      socket.on("_user_group_activity_response", UserGroupActivityHandler);
-
-      return () => socket.off("_user_group_activity_response", UserGroupActivityHandler);
-   }, []);
 
    return (
       <styled.div className="bg-gray-100">
