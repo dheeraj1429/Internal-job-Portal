@@ -35,4 +35,13 @@ export const div = styled.div`
          object-fit: contain;
       }
    }
+
+   @media (max-width: 600px) {
+      h1 {
+         font-size: 25px;
+      }
+      p {
+         font-size: 13px;
+      }
+   }
 `;

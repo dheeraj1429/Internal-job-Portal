@@ -20,4 +20,10 @@ export const div = styled.div`
    h5 {
       font-size: 24px;
    }
+
+   @media (max-width: 600px) {
+      .banerHeading {
+         font-size: 30px;
+      }
+   }
 `;

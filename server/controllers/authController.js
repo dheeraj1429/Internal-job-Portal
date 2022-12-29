@@ -164,7 +164,10 @@ const changeUserPassword = catchAsync(async function (req, res, next) {
       const hashPassword = await bcryptjs.hash(password, 11);
 
       // update the user information
-      const updateUser = await authModel.updateOne({ _id: userId }, { $set: { password: hashPassword } });
+      const updateUser = await authModel.updateOne(
+         { _id: userId },
+         { $set: { password: hashPassword } }
+      );
 
       if (!!updateUser.modifiedCount) {
          return res.status(httpStatusCodes.OK).json({

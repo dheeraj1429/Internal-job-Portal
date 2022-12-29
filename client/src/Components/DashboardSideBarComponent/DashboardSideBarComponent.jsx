@@ -141,7 +141,7 @@ function DashboardSideBarComponent() {
    }, [params]);
 
    return (
-      <styled.div ref={SidebarRef} className="bg-gray-900">
+      <styled.div ref={SidebarRef} className="bg-zinc-800 sidebarOverDiv">
          <div className="ms-3 sidebarToggleButton shadow" onClick={SidebarToggleHandler}>
             <AiOutlineBars />
          </div>

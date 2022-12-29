@@ -4,17 +4,17 @@ export const div = styled.div`
    .Mini_sidebar {
       width: 0%;
 
-      p {
+      /* p {
          display: none;
       }
 
       h5 {
          display: none;
-      }
+      } */
 
-      .padding_side_bar {
+      /* .padding_side_bar {
          padding: 0;
-      }
+      } */
 
       .profile_div {
          opacity: 0;
@@ -25,6 +25,10 @@ export const div = styled.div`
    @media (min-width: 600px) {
       .Mini_sidebar {
          width: 30%;
+      }
+      .profile_div {
+         opacity: 1 !important;
+         visibility: visible !important;
       }
    }
 `;

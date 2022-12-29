@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    position: fixed;
@@ -10,9 +10,10 @@ export const div = styled.div`
    justify-content: center;
    align-items: center;
    background-color: var(--spec-brand-background-primary);
-   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+   visibility: ${(props) => (props.show ? "visible" : "hidden")};
    opacity: ${(props) => (props.show ? 1 : 0)};
    transition: all 0.3s ease;
+   z-index: 100;
 `;
 
 export const mainDiv = styled.div`
@@ -22,10 +23,10 @@ export const mainDiv = styled.div`
    display: flex;
    align-items: center;
    justify-content: center;
-   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
+   visibility: ${(props) => (props.show ? "visible" : "hidden")};
    opacity: ${(props) => (props.show ? 1 : 0)};
    transition: all 0.3s ease;
-   transform: ${(props) => (props.show ? 'scale(1)' : 'scale(.5)')};
+   transform: ${(props) => (props.show ? "scale(1)" : "scale(.5)")};
    p {
       /* color: var(--spec-static-brand-black); */
    }

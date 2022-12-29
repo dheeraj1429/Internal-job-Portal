@@ -65,15 +65,9 @@ function App() {
    useEffect(() => {
       if (cookie && cookie?._ijp_at_user) {
          dispatch(setUser(cookie._ijp_at_user));
-
-         socket.emit("_store_user_info", {
-            token: cookie?._ijp_at_user?.token,
-            role: cookie?._ijp_at_user?.role,
-         });
-
-         if (cookie?._ijp_at_user?.role === "admin") {
-            socket.emit("_admin_join_groups");
-         }
+      }
+      if (cookie?._ijp_at_user?.role === "admin") {
+         socket.emit("_admin_join_groups");
       }
    }, []);
 

@@ -73,41 +73,45 @@ function JobApplicationComponent() {
               allJobApplications?.success &&
               allJobApplications?.applications &&
               allJobApplications?.applications.length ? (
-               <table>
-                  <tr>
-                     {Row.map((el) => (
-                        <th key={el.value.replaceAll(" ", "-")}>{el.value}</th>
-                     ))}
-                  </tr>
-
-                  {allJobApplications?.applications.map((elm) => (
-                     <tr key={elm._id} id={elm._id} className=" shadow-sm">
-                        <td className="p-3">
-                           <div className="userProfileDiv">
-                              <img src={`/usersProfileCompress/${elm?.user?.userProfile}`} alt="" />
-                           </div>
-                        </td>
-                        <td className=" text-gray-600 text-sm">{elm?.user?.name}</td>
-                        <td className=" text-sky-600 text-sm">{elm?.user?.email}</td>
-                        <td className=" text-sky-600 text-sm">{elm?.jobApplied?.jobTitle}</td>
-                        <td className=" text-gray-600 text-sm ">
-                           <div className="flex items-center">
-                              <BiRupee /> {elm?.jobApplied.salaryRangeStart} -{" "}
-                              {elm?.jobApplied?.salaryRangeEnd}
-                           </div>
-                        </td>
-                        <td className=" text-gray-600 text-sm">{elm?.user?.cityState}</td>
-                        <td className=" text-gray-600 text-sm">{elm?.user?.phone}</td>
-                        <td className=" text-gray-600 text-sm">{elm?.user?.postalCode}</td>
-                        <td>
-                           <GrFormView
-                              className=" cursor-pointer"
-                              onClick={() => ViewHandler(elm._id)}
-                           />
-                        </td>
+               <div className="upper_table_div">
+                  <table>
+                     <tr>
+                        {Row.map((el) => (
+                           <th key={el.value.replaceAll(" ", "-")}>{el.value}</th>
+                        ))}
                      </tr>
-                  ))}
-               </table>
+                     {allJobApplications?.applications.map((elm) => (
+                        <tr key={elm._id} id={elm._id} className=" shadow-sm">
+                           <td className="p-3">
+                              <div className="userProfileDiv">
+                                 <img
+                                    src={`/usersProfileCompress/${elm?.user?.userProfile}`}
+                                    alt=""
+                                 />
+                              </div>
+                           </td>
+                           <td className=" text-gray-600 text-sm">{elm?.user?.name}</td>
+                           <td className=" text-sky-600 text-sm">{elm?.user?.email}</td>
+                           <td className=" text-sky-600 text-sm">{elm?.jobApplied?.jobTitle}</td>
+                           <td className=" text-gray-600 text-sm ">
+                              <div className="flex items-center">
+                                 <BiRupee /> {elm?.jobApplied.salaryRangeStart} -{" "}
+                                 {elm?.jobApplied?.salaryRangeEnd}
+                              </div>
+                           </td>
+                           <td className=" text-gray-600 text-sm">{elm?.user?.cityState}</td>
+                           <td className=" text-gray-600 text-sm">{elm?.user?.phone}</td>
+                           <td className=" text-gray-600 text-sm">{elm?.user?.postalCode}</td>
+                           <td>
+                              <GrFormView
+                                 className=" cursor-pointer"
+                                 onClick={() => ViewHandler(elm._id)}
+                              />
+                           </td>
+                        </tr>
+                     ))}
+                  </table>
+               </div>
             ) : (
                <div className=" text-center">
                   <div className="four_zero_four_bg">

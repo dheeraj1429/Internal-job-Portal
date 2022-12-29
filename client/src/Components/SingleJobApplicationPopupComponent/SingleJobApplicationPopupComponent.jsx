@@ -71,14 +71,14 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                      icon={<BiRupee />}
                   />
                   <hr className="mt-3 mb-3" />
-                  <div className=" flex mb-3">
+                  <div className="sm:block md:flex mb-3">
                      <div className="user_Profile_div">
                         <img
                            src={`/usersProfileCompress/${singleJobApplication?.applications[0]?.user?.userProfile}`}
                            alt=""
                         />
                      </div>
-                     <div className="ms-2">
+                     <div className="ms-0 ms-md-1 mt-2 mt-md-0">
                         <h5>{singleJobApplication?.applications[0]?.user?.name}</h5>
                         <p className=" text-sm text-sky-500 mt-1">
                            {singleJobApplication?.applications[0]?.user?.email}
@@ -154,7 +154,7 @@ function SingleJobApplicationPopupComponent({ show, CloseHandler }) {
                      {!!singleJobApplication?.applications[0]?.user?.skills &&
                      singleJobApplication?.applications[0]?.user?.skills.length ? (
                         singleJobApplication?.applications[0]?.user?.skills.map((el) => (
-                           <div className="skill_Round_div shadow" key={el._id}>
+                           <div className="skill_Round_div shadow mb-3 mb-md-0" key={el._id}>
                               {el.skill}
                            </div>
                         ))

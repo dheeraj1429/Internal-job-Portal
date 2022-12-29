@@ -42,7 +42,6 @@ function MyAccountPage() {
                      </p>
                   </>
                ) : null}
-
                {userContactInformation?.info?.email &&
                userContactInformation?.info?.phone &&
                userContactInformation?.info?.cityState ? (

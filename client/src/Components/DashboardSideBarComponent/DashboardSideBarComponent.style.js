@@ -26,7 +26,7 @@ export const div = styled.div`
    @media (max-width: 1000px) {
       width: 30%;
    }
-   @media (max-width: 500px) {
+   @media (max-width: 600px) {
       width: 100%;
       position: absolute;
       top: 0;

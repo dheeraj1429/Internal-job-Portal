@@ -2,9 +2,15 @@ import styled from "styled-components";
 
 export const div = styled.div`
    padding: 2rem;
+   width: 100%;
+
+   .upper_table_div {
+      width: 100%;
+      overflow-x: scroll;
+   }
 
    table {
-      width: 100%;
+      width: 1200px;
       tr {
          padding: 0.4rem;
 

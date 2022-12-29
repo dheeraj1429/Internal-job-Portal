@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const div = styled.div`
    position: absolute;
@@ -11,20 +11,19 @@ export const div = styled.div`
    align-items: center;
    justify-content: center;
    transition: all 0.2s ease;
-   visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
-   opacity: ${(props) => (props.show ? '1' : '0')};
+   visibility: ${(props) => (props.show ? "visible" : "hidden")};
+   opacity: ${(props) => (props.show ? "1" : "0")};
    z-index: 10;
 
    .mainDiv {
       width: 80%;
       height: 70%;
       background-color: var(--main-cl);
-      border-radius: 15px;
       position: relative;
       transition: all 0.3s ease;
-      visibility: ${(props) => (props.show ? 'visible' : 'hidden')};
-      opacity: ${(props) => (props.show ? '1' : '0')};
-      transform: ${(props) => (props.show ? 'scale(1)' : 'scale(.6)')};
+      visibility: ${(props) => (props.show ? "visible" : "hidden")};
+      opacity: ${(props) => (props.show ? "1" : "0")};
+      transform: ${(props) => (props.show ? "scale(1)" : "scale(.6)")};
       z-index: 20;
       overflow-x: hidden;
 
@@ -72,6 +71,15 @@ export const div = styled.div`
 
       .sm_downloda {
          width: 10px;
+      }
+   }
+
+   @media (max-width: 600px) {
+      h1 {
+         font-size: 20px !important;
+      }
+      p {
+         font-size: 13px;
       }
    }
 `;

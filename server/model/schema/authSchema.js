@@ -17,7 +17,7 @@ const authSchema = new mongoose.Schema({
    role: { type: String, default: "employee" },
    userProfile: { type: String, default: "default-user-pic.jpg" },
    createdAt: { type: Date, default: Date.now },
-   tokens: [{ token: { type: String, required: [true, "user token is required"] } }],
+   token: { type: String },
    phone: { type: Number },
    street: { type: String },
    cityState: { type: String },
@@ -43,12 +43,12 @@ authSchema.index({ email: 1 });
 authSchema.methods.genrateUserToken = async function () {
    try {
       // genrate the user token
-      const token = await jwt.sign(
+      const token = jwt.sign(
          { _id: this._id.toString(), name: this.name, email: this.email },
          SECRET_KEY
       );
-      // add token inside the user collection token array
-      this.tokens = this.tokens.concat({ token });
+      // store user tokne in database
+      this.token = token;
       this.save();
       return token;
    } catch (err) {
