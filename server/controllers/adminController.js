@@ -7,20 +7,32 @@ const path = require("path");
 const authModel = require("../model/schema/authSchema");
 const groupModel = require("../model/schema/groupSchema");
 const forwordMessagesModel = require("../model/schema/forwordMessagesSchema");
+const projectModel = require("../model/schema/projectsSchema");
 
 const postNewjob = catchAsync(async function (req, res, next) {
    const insertedObject = { ...req.body };
-   const updatePost = await jobPostModel(insertedObject).save();
-   if (updatePost) {
+   const jobTitle = req.body.jobTitle;
+
+   const findJobPostIsExists = await jobPostModel.findOne({ jobTitle });
+
+   if (findJobPostIsExists) {
       return res.status(httpStatusCodes.CREATED).json({
-         success: true,
-         message: "New job post uploded",
+         success: false,
+         message: "Job post already exists",
       });
    } else {
-      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
-         success: false,
-         message: "Internal server error",
-      });
+      const updatePost = await jobPostModel(insertedObject).save();
+      if (updatePost) {
+         return res.status(httpStatusCodes.CREATED).json({
+            success: true,
+            message: "New job post uploded",
+         });
+      } else {
+         return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+            success: false,
+            message: "Internal server error",
+         });
+      }
    }
 });
 
@@ -525,6 +537,90 @@ const getAllNotifications = catchAsync(async function (req, res, next) {
    }
 });
 
+const postNewProject = catchAsync(async function (req, res, next) {
+   const updateObject = { ...req.body };
+   const { name } = updateObject;
+
+   /**
+    * find project is already saved or not.
+    * if the project already exists then send back warninig respose.
+    * if the project is new then save data into the database and then return
+    * repose the client.
+    */
+
+   const findProjectIsExists = await projectModel.findOne({ name });
+
+   if (findProjectIsExists) {
+      return res.status(httpStatusCodes.OK).json({
+         success: false,
+         message: "Project is already exists",
+      });
+   } else {
+      // insert new project data
+      const insertProjectData = await projectModel(updateObject).save();
+
+      if (insertProjectData) {
+         return res.status(httpStatusCodes.OK).json({
+            success: true,
+            message: "Project saved",
+         });
+      }
+   }
+});
+
+const getAllProject = catchAsync(async function (req, res, next) {
+   const { page } = req.query;
+
+   const DOCUMENT_LIMIT = 50;
+
+   const totalDocuments = await projectModel.countDocuments();
+
+   const findProjects = await projectModel
+      .find({})
+      .sort({ createdAt: -1 })
+      .skip(page * DOCUMENT_LIMIT)
+      .limit(DOCUMENT_LIMIT);
+
+   if (findProjects) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         totalPages: Math.ceil(totalDocuments / DOCUMENT_LIMIT - 1),
+         totalDocuments,
+         projects: findProjects,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: "Internal server error",
+      });
+   }
+});
+
+const deleteJobProject = catchAsync(async function (req, res, next) {
+   const { jobId } = req.query;
+
+   if (!jobId)
+      return res.status(httpStatusCodes.OK).json({
+         success: false,
+         message: "Project id is required",
+      });
+
+   const findProjectAndDelete = await projectModel.deleteOne({ _id: jobId });
+
+   if (!!findProjectAndDelete.deletedCount) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         message: "Project deleted",
+         jobId,
+      });
+   } else {
+      return res.status(httpStatusCodes.NOT_FOUND).json({
+         success: false,
+         message: "someting worng",
+      });
+   }
+});
+
 module.exports = {
    postNewjob,
    getSingleJobPostDetails,
@@ -540,4 +636,7 @@ module.exports = {
    getGroupUserInfo,
    getUserDetails,
    getAllNotifications,
+   postNewProject,
+   getAllProject,
+   deleteJobProject,
 };

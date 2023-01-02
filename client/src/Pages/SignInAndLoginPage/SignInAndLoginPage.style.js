@@ -7,7 +7,7 @@ export const div = styled.div`
    justify-content: center;
    align-items: center;
    background-color: var(--main-cl);
-   background-image: url(https://images.unsplash.com/photo-1516724562728-afc824a36e84?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80);
+   background-image: url("/images/robert-shunev-mS1nlYbq1kA-unsplash.jpg");
    background-position: center;
    background-size: cover;
 `;

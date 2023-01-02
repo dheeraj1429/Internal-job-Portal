@@ -17,7 +17,7 @@ import {
 } from "../../App/Features/Admin/adminSlice";
 import HeadingComponent from "../../HelperComponents/HeadingComponent/HeadingComponent";
 import { useParams } from "react-router";
-import { Cookies, useCookies } from "react-cookie";
+import { useCookies } from "react-cookie";
 
 const jobTypeObAr = [{ value: "Full-Time" }, { value: "Part-Time" }];
 const jobCategoryObAr = [{ value: "Exempt" }, { value: "Non-Exempt" }];
@@ -98,6 +98,8 @@ function PostJobComponent() {
    useEffect(() => {
       if (!!insertNewJobPost && insertNewJobPost.success) {
          message.success(insertNewJobPost.message);
+      } else if (!!insertNewJobPost && !insertNewJobPost.success) {
+         message.info(insertNewJobPost.message);
       }
    }, [insertNewJobPost]);
 

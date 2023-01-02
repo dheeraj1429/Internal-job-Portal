@@ -9,6 +9,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const jobAppliedModel = require("../model/schema/jobAppliedSchema");
 const groupModel = require("../model/schema/groupSchema");
 const { default: mongoose } = require("mongoose");
+const forwordProjectsModel = require("../model/schema/forwordProjectsSchema");
 
 const getAllJobPosts = catchAsync(async function (req, res, next) {
    const allJobs = await jobPostModel.find(
@@ -419,6 +420,25 @@ const fetchGroupChats = catchAsync(async function (req, res, next) {
    }
 });
 
+const findPinnedProjects = catchAsync(async function (req, res, next) {
+   const findAllPinnedProjects = await forwordProjectsModel
+      .find({})
+      .populate("projectId")
+      .populate("userId", { name: 1, _id: 1, email: 1, userProfile: 1 });
+
+   if (findAllPinnedProjects) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         projectInfo: findAllPinnedProjects,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: "Internal server error",
+      });
+   }
+});
+
 module.exports = {
    getAllJobPosts,
    getSingleJobPostDetail,
@@ -430,4 +450,5 @@ module.exports = {
    jobSubmition,
    getUserIncludeGroups,
    fetchGroupChats,
+   findPinnedProjects,
 };

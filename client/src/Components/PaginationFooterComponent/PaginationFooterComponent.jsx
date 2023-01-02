@@ -39,15 +39,23 @@ function PaginationFooterComponent({ action, data, filed }) {
       <styled.div className="flex justify-between items-center w-100">
          <div>
             <p className="text-sm text-gray-600">
-               {!!data && data?.[filed].length} / {!!data && data?.totalDocuments} employees page {Page + 1}
+               {!!data && data?.[filed].length} / {!!data && data?.totalDocuments} employees page{" "}
+               {Page + 1}
             </p>
          </div>
          <div className="flex items-center">
-            <CustomButtonComponent btnCl={Page > 0 ? "pagination_btn shadow" : "PrevDisable_btn bg-dark shadow"} onClick={ChangeToPrev}>
+            <CustomButtonComponent
+               btnCl={Page > 0 ? "pagination_btn shadow" : "PrevDisable_btn bg-dark shadow"}
+               onClick={ChangeToPrev}
+            >
                <IoIosArrowRoundBack />
             </CustomButtonComponent>
             <CustomButtonComponent
-               btnCl={!!data && data?.totalPages > Page ? "pagination_btn shadow" : "PrevDisable_btn bg-dark shadow"}
+               btnCl={
+                  !!data && data?.totalPages > Page
+                     ? "pagination_btn shadow"
+                     : "PrevDisable_btn bg-dark shadow"
+               }
                onClick={ChangeToNext}
             >
                <IoIosArrowRoundForward />

@@ -22,6 +22,9 @@ const INITAL_STATE = {
    jobSubmitionResponse: null,
    jobSubmitionFetchLoading: false,
    jobSubmitionFetchError: null,
+   allPinnedProjects: null,
+   getAllPinnedProjectsLoading: false,
+   allPinnedProjectsFetchError: null,
 };
 
 const indexSlice = createSlice({
@@ -161,6 +164,23 @@ const indexSlice = createSlice({
             state.jobSubmitionFetchLoading = false;
             state.jobSubmitionFetchError = null;
          });
+
+      bulder
+         .addCase(getPinnedProjects.pending, (state) => {
+            state.allPinnedProjects = null;
+            state.getAllPinnedProjectsLoading = true;
+            state.allPinnedProjectsFetchError = null;
+         })
+         .addCase(getPinnedProjects.rejected, (state, action) => {
+            state.allPinnedProjects = null;
+            state.getAllPinnedProjectsLoading = false;
+            state.allPinnedProjectsFetchError = action.error.message;
+         })
+         .addCase(getPinnedProjects.fulfilled, (state, action) => {
+            state.allPinnedProjects = action.payload.data;
+            state.getAllPinnedProjectsLoading = false;
+            state.allPinnedProjectsFetchError = null;
+         });
    },
 });
 
@@ -282,6 +302,21 @@ export const jobSubmition = createAsyncThunk(
             multipartData
          );
          return submitionResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const getPinnedProjects = createAsyncThunk(
+   "index/getPinnedProjects",
+   async ({ token }, { rejectWithValue }) => {
+      try {
+         const projectsResponse = await axios.get(`/index/get-pinned-projects/${token}`, headers);
+         return projectsResponse;
       } catch (err) {
          if (err) {
             throw err;

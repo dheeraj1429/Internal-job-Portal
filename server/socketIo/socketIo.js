@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const authModel = require("../model/schema/authSchema");
 const { default: mongoose } = require("mongoose");
 const forwordMessagesModel = require("../model/schema/forwordMessagesSchema");
+const forwordProjectsModel = require("../model/schema/forwordProjectsSchema");
 
 let roomId;
 
@@ -437,6 +438,41 @@ const socketIoConnection = function (io) {
                      createdAt: storeForwordMessages?.createdAt,
                   })
                );
+            }
+         }
+      });
+
+      socket.on("_pin_projects", async (args) => {
+         // find the subadmin to emit the message event.
+         // also check the sub admin is exits or not.
+         const findAdminSocketId = users.find((el) => el.role === "subAdmin");
+
+         // check the project is already exits or not.
+         const findForwordProject = await forwordProjectsModel.findOne({ projectId: args._id });
+
+         if (findForwordProject) {
+            socket.emit("_project_notification", {
+               success: false,
+               message: "Project is already pinnned",
+            });
+         } else {
+            // save all project information in database to presist.
+            const insertData = await forwordProjectsModel({
+               projectId: args?._id,
+               userId: args?.userId,
+            }).save();
+
+            if (insertData && findAdminSocketId) {
+               // emit the event
+               socket.to(findAdminSocketId?.socketId).emit("_project_pinned_notifications", {
+                  ...args,
+                  createdAt: insertData.createdAt,
+               });
+               // send notification also with admin
+               socket.emit("_project_notification", {
+                  success: true,
+                  message: "Project forworded",
+               });
             }
          }
       });

@@ -1,21 +1,22 @@
-import React from 'react';
-import { BiDotsHorizontalRounded } from '@react-icons/all-files/bi/BiDotsHorizontalRounded';
-import { BiRupee } from '@react-icons/all-files/bi/BiRupee';
-import { BsBag } from '@react-icons/all-files/bs/BsBag';
-import { BiTime } from '@react-icons/all-files/bi/BiTime';
-import { HiOutlineUsers } from '@react-icons/all-files/hi/HiOutlineUsers';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import { useNavigate } from 'react-router';
-import { deleteSingleJobPost } from '../../App/Features/Admin/adminSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import CustomButtonComponent from '../../HelperComponents/CustomButtonComponent/CustomButtonComponent';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { BiDotsHorizontalRounded } from "@react-icons/all-files/bi/BiDotsHorizontalRounded";
+import { BiRupee } from "@react-icons/all-files/bi/BiRupee";
+import { BsBag } from "@react-icons/all-files/bs/BsBag";
+import { BiTime } from "@react-icons/all-files/bi/BiTime";
+import { HiOutlineUsers } from "@react-icons/all-files/hi/HiOutlineUsers";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router";
+import { deleteSingleJobPost } from "../../App/Features/Admin/adminSlice";
+import { useDispatch, useSelector } from "react-redux";
+import CustomButtonComponent from "../../HelperComponents/CustomButtonComponent/CustomButtonComponent";
+import { Link } from "react-router-dom";
 
 function JobCartComponent({ data }) {
    const [anchorEl, setAnchorEl] = React.useState(null);
    const open = Boolean(anchorEl);
+   const [Day, setDay] = useState(null);
 
    const navigation = useNavigate();
    const dispatch = useDispatch();
@@ -48,7 +49,10 @@ function JobCartComponent({ data }) {
       ).toFixed();
    };
 
-   let days = checkDays();
+   useEffect(() => {
+      let days = checkDays();
+      setDay(days);
+   }, []);
 
    return (
       <div className="jobPostCart shadow  rounded-lg">
@@ -58,13 +62,13 @@ function JobCartComponent({ data }) {
                {/* <p className=" text-gray-500">San Farancicos</p> */}
             </div>
             <div>
-               {!!user && user?.userObject && user?.userObject?.role === 'admin' ? (
+               {!!user && user?.userObject && user?.userObject?.role === "admin" ? (
                   <div className="flex justify-end w-full">
                      <Button
                         id="basic-button"
-                        aria-controls={open ? 'basic-menu' : undefined}
+                        aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
+                        aria-expanded={open ? "true" : undefined}
                         onClick={handleClick}
                      >
                         <BiDotsHorizontalRounded />
@@ -75,7 +79,7 @@ function JobCartComponent({ data }) {
                         open={open}
                         onClose={handleClose}
                         MenuListProps={{
-                           'aria-labelledby': 'basic-button',
+                           "aria-labelledby": "basic-button",
                         }}
                      >
                         <MenuItem onClick={() => EditHandler(data._id)}>Edit job post</MenuItem>
@@ -83,9 +87,11 @@ function JobCartComponent({ data }) {
                      </Menu>
                   </div>
                ) : null}
-               <span className=" text-gray-400">
-                  Posted {days === '0' ? 'Today' : `${days} days ago`}
-               </span>
+               {!!Day ? (
+                  <span className=" text-gray-400">
+                     Posted {Day === "0" ? "Today" : `${Day} days ago`}
+                  </span>
+               ) : null}
             </div>
          </div>
          <div className="mt-2 pt-2 pb-3 px-4">
@@ -115,9 +121,9 @@ function JobCartComponent({ data }) {
             <p className="mt-2 text-gray-600">{data.positionDescription.slice(0, 200)}</p>
 
             <Link
-               to={`/job/single/${data.jobTitle.toLowerCase().replaceAll(' ', '-')}/${data._id}`}
+               to={`/job/single/${data.jobTitle.toLowerCase().replaceAll(" ", "-")}/${data._id}`}
             >
-               <CustomButtonComponent innerText={'View'} btnCl={'category_upload w-100'} />
+               <CustomButtonComponent innerText={"View"} btnCl={"category_upload w-100"} />
             </Link>
          </div>
       </div>

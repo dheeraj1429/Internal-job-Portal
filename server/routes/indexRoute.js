@@ -6,7 +6,11 @@ const multer = require("multer");
 
 const storage = multer.diskStorage({
    destination: function (req, file, callback) {
-      if (file.mimetype === "image/png" || file.mimetype === "image/jpeg" || file.mimetype === "image/jpg") {
+      if (
+         file.mimetype === "image/png" ||
+         file.mimetype === "image/jpeg" ||
+         file.mimetype === "image/jpg"
+      ) {
          callback(null, "./upload/usersProfile");
       }
 
@@ -25,14 +29,42 @@ const upload = multer({ storage: storage }).any();
 route.get("/get-all-job-posts", indexController.getAllJobPosts);
 route.get("/get-single-post-info/:id", indexController.getSingleJobPostDetail);
 route.get("/get-user-contact-info/:token", checkIsUserValid, indexController.getUserContactInfo);
-route.get("/get-user-resume-information/:token", checkIsUserValid, indexController.fetchUserResumeInformation);
-route.get("/get-user-resume-content/:token", checkIsUserValid, indexController.fetchUserResumeContactInformation);
-route.get("/get-user-includes-groups-info/:token", checkIsUserValid, indexController.getUserIncludeGroups);
+route.get(
+   "/get-user-resume-information/:token",
+   checkIsUserValid,
+   indexController.fetchUserResumeInformation
+);
+route.get(
+   "/get-user-resume-content/:token",
+   checkIsUserValid,
+   indexController.fetchUserResumeContactInformation
+);
+route.get(
+   "/get-user-includes-groups-info/:token",
+   checkIsUserValid,
+   indexController.getUserIncludeGroups
+);
 route.get("/get-group-chats/:token", checkIsUserValid, indexController.fetchGroupChats);
+route.get("/get-pinned-projects/:token", checkIsUserValid, indexController.findPinnedProjects);
 
 // API => POST
-route.post("/save-user-contact-info/:token", checkIsUserValid, upload, indexController.saveUserContactInfo);
-route.post("/save-user-resume-information/:token", checkIsUserValid, upload, indexController.saveUserResumeInformation);
-route.post("/submit-user-information/:token", checkIsUserValid, upload, indexController.jobSubmition);
+route.post(
+   "/save-user-contact-info/:token",
+   checkIsUserValid,
+   upload,
+   indexController.saveUserContactInfo
+);
+route.post(
+   "/save-user-resume-information/:token",
+   checkIsUserValid,
+   upload,
+   indexController.saveUserResumeInformation
+);
+route.post(
+   "/submit-user-information/:token",
+   checkIsUserValid,
+   upload,
+   indexController.jobSubmition
+);
 
 module.exports = route;

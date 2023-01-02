@@ -2,13 +2,13 @@ import styled from "styled-components";
 
 export const div = styled.div`
    h1 {
-      font-size: 40px;
+      font-size: 30px;
       margin-bottom: 0.8rem;
    }
 
    @media (max-width: 1000px) {
       h1 {
-         font-size: 40px;
+         font-size: 27px;
       }
       p {
          font-size: 15px;
@@ -16,7 +16,7 @@ export const div = styled.div`
    }
    @media (max-width: 700px) {
       h1 {
-         font-size: 30px;
+         font-size: 23px;
       }
       p {
          font-size: 12px;

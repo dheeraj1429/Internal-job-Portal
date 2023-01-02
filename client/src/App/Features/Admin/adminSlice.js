@@ -37,6 +37,14 @@ const INITAL_STATE = {
    pinnedNotifications: null,
    pinnedNotificationsFetchLoading: false,
    pinnedNotificationsFetchError: null,
+   postNewProjectRespose: null,
+   postNewProjectLoading: false,
+   postNewProjectFetchError: null,
+   projects: null,
+   projectsLoading: false,
+   fetchProductsError: null,
+   deleteProjectLoading: false,
+   deleteProjectFetchError: null,
 };
 
 const adminSlice = createSlice({
@@ -55,6 +63,11 @@ const adminSlice = createSlice({
       },
       removeAccountInfo: (state) => {
          state.userAccountDeleteInfo = null;
+      },
+      removeProjectNotification: (state) => {
+         state.postNewProjectRespose = null;
+         state.postNewProjectLoading = false;
+         state.postNewProjectFetchError = null;
       },
    },
    extraReducers: (bulder) => {
@@ -287,6 +300,61 @@ const adminSlice = createSlice({
             state.pinnedNotifications = action.payload.data;
             state.pinnedNotificationsFetchLoading = false;
             state.pinnedNotificationsFetchError = null;
+         });
+
+      bulder
+         .addCase(postNewProject.pending, (state) => {
+            state.postNewProjectRespose = null;
+            state.postNewProjectLoading = true;
+            state.postNewProjectFetchError = null;
+         })
+         .addCase(postNewProject.rejected, (state, action) => {
+            state.postNewProjectRespose = null;
+            state.postNewProjectLoading = false;
+            state.postNewProjectFetchError = action.error.message;
+         })
+         .addCase(postNewProject.fulfilled, (state, action) => {
+            state.postNewProjectRespose = action.payload.data;
+            state.postNewProjectLoading = false;
+            state.postNewProjectFetchError = null;
+         });
+
+      bulder
+         .addCase(getAllProject.pending, (state, action) => {
+            state.projects = null;
+            state.projectsLoading = true;
+            state.fetchProductsError = null;
+         })
+         .addCase(getAllProject.rejected, (state, action) => {
+            state.projects = null;
+            state.projectsLoading = false;
+            state.fetchProductsError = action.error.message;
+         })
+         .addCase(getAllProject.fulfilled, (state, action) => {
+            state.projects = action.payload.data;
+            state.projectsLoading = false;
+            state.fetchProductsError = null;
+         });
+
+      bulder
+         .addCase(deleteJobProject.pending, (state) => {
+            state.deleteProjectLoading = true;
+            state.deleteProjectFetchError = null;
+         })
+         .addCase(deleteJobProject.rejected, (state, action) => {
+            state.deleteProjectLoading = false;
+            state.deleteProjectFetchError = action.error.message;
+         })
+         .addCase(deleteJobProject.fulfilled, (state, action) => {
+            console.log(action.payload);
+            state.projects = {
+               ...state.projects,
+               projects: state.projects?.projects?.filter(
+                  (el) => el?._id !== action?.payload?.data?.jobId
+               ),
+            };
+            state.deleteProjectLoading = false;
+            state.deleteProjectFetchError = null;
          });
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
@@ -530,11 +598,67 @@ export const getAllNotifications = createAsyncThunk(
    }
 );
 
+export const postNewProject = createAsyncThunk(
+   "admin/postNewProject",
+   async ({ token, data }, { rejectWithValue }) => {
+      try {
+         const postProjectRespose = await axios.post(
+            `/admin/post-new-project/${token}`,
+            data,
+            headers
+         );
+         return postProjectRespose;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const getAllProject = createAsyncThunk(
+   "admin/getAllProject",
+   async ({ token, page }, { rejectWithValue }) => {
+      try {
+         const getAllProjectRespose = await axios.get(
+            `/admin/get-all-projects/${token}?page=${page}`,
+            headers
+         );
+         return getAllProjectRespose;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const deleteJobProject = createAsyncThunk(
+   "admin/deleteJobProject",
+   async ({ token, jobId }, { rejectWithValue }) => {
+      try {
+         const deleteJobRespose = await axios.delete(
+            `/admin/delete-job-project/${token}?jobId=${jobId}`,
+            headers
+         );
+         return deleteJobRespose;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
 export const {
    removeJobPostInfo,
    removeSingleJobPostInfo,
    removeAccountInfo,
    createEmployeesGroup,
+   removeProjectNotification,
 } = adminSlice.actions;
 
 export default adminSlice;

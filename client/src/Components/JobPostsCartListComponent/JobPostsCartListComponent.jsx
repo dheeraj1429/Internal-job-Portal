@@ -1,12 +1,12 @@
-import React, { lazy, Suspense, useEffect } from 'react';
-import * as styled from './JobPostsCartListComponent.style';
-import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
-import { useDispatch, useSelector } from 'react-redux';
-import SpennerComponent from '../../HelperComponents/SpennerComponent/SpennerComponent';
-import { getAllJobPosts } from '../../App/Features/Admin/adminSlice';
+import React, { lazy, Suspense, useEffect } from "react";
+import * as styled from "./JobPostsCartListComponent.style";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import { useDispatch, useSelector } from "react-redux";
+import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
+import { getAllJobPosts } from "../../App/Features/Admin/adminSlice";
 
-const JobCartComponent = lazy(() => import('../JobCartComponent/JobCartComponent'));
+const JobCartComponent = lazy(() => import("../JobCartComponent/JobCartComponent"));
 
 function JobPostsCartListComponent() {
    const dispatch = useDispatch();
@@ -37,7 +37,7 @@ function JobPostsCartListComponent() {
                         <Suspense
                            fallback={
                               <Stack spacing={1}>
-                                 <Skeleton variant="rounded" width={'100%'} height={300} />
+                                 <Skeleton variant="rounded" width={"100%"} height={300} />
                               </Stack>
                            }
                         >

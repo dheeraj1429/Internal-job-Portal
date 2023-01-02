@@ -29,6 +29,7 @@ import { useParams } from "react-router-dom";
 import { AiOutlineBars } from "@react-icons/all-files/ai/AiOutlineBars";
 import { VscBell } from "@react-icons/all-files/vsc/VscBell";
 import { VscGroupByRefType } from "@react-icons/all-files/vsc/VscGroupByRefType";
+import { AiOutlineFundProjectionScreen } from "@react-icons/all-files/ai/AiOutlineFundProjectionScreen";
 
 function DashboardSideBarComponent() {
    const socket = useContext(SocketContext);
@@ -92,6 +93,14 @@ function DashboardSideBarComponent() {
       }
    };
 
+   const ProjectNotificationHandler = function (args) {
+      if (args?.success) {
+         message.success(args.message);
+      } else {
+         message.info(args.message);
+      }
+   };
+
    useEffect(() => {
       if (!!cookies && cookies?._ijp_at_user && cookies?._ijp_at_user?.token) {
          if (
@@ -106,12 +115,14 @@ function DashboardSideBarComponent() {
          socket.on("_group_created_broadCast", GroupCreateBroadCastLstener);
          socket.on("_user_added_in_group", AddUsersInGroupsHandler);
          socket.on("_user_group_activity_response", UserGroupActivityHandler);
+         socket.on("_project_notification", ProjectNotificationHandler);
       }
 
       return () => {
          socket.off("_group_created_broadCast", GroupCreateBroadCastLstener);
          socket.off("_user_added_in_group", AddUsersInGroupsHandler);
          socket.off("_user_group_activity_response", UserGroupActivityHandler);
+         socket.off("_project_notification", ProjectNotificationHandler);
       };
    }, []);
 
@@ -174,6 +185,12 @@ function DashboardSideBarComponent() {
                      heading={"Groups"}
                      HideAndShowMiniSidebar={SidebarToggleHandler}
                   />
+                  <SidebarInnerSmComponent
+                     icon={<AiOutlineFundProjectionScreen />}
+                     link={"/projects"}
+                     heading={"Projects"}
+                     HideAndShowMiniSidebar={SidebarToggleHandler}
+                  />
                </>
             ) : null}
             {!!user ? (
@@ -218,6 +235,16 @@ function DashboardSideBarComponent() {
                   link={"/groups-notifications"}
                   heading={"Group notification"}
                   HideAndShowMiniSidebar={SidebarToggleHandler}
+               />
+            </SidebarTabComponent>
+         ) : null}
+         {!!user && user?.userObject && user?.userObject?.role === "subAdmin" ? (
+            <SidebarTabComponent icon={<VscBell />} heading={"Notifications"} dropIcon={true}>
+               <SidebarInnerSmComponent
+                  icon={<VscGroupByRefType />}
+                  heading={"Project notifications"}
+                  HideAndShowMiniSidebar={SidebarToggleHandler}
+                  link={"/projects/notifications"}
                />
             </SidebarTabComponent>
          ) : null}

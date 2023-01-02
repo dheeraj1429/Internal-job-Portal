@@ -43,6 +43,17 @@ const ShowUserDetailsComponent = lazy(() =>
 const ChatContainerComponent = lazy(() =>
    import("./Components/ChatContainerComponent/ChatContainerComponent")
 );
+const ProjectsContainerComponent = lazy(() =>
+   import("./Components/ProjectsContainerComponent/ProjectsContainerComponent")
+);
+const CreateProjectComponent = lazy(() =>
+   import("./Components/CreateProjectComponent/CreateProjectComponent")
+);
+const ProjectNotificationsContainerComponent = lazy(() =>
+   import(
+      "./Components/ProjectNotificationsContainerComponent/ProjectNotificationsContainerComponent"
+   )
+);
 
 // pages
 const SignInAndLoginPage = lazy(() => import("./Pages/SignInAndLoginPage/SignInAndLoginPage"));
@@ -98,6 +109,12 @@ function App() {
                      <Route path=":userId" element={<ShowUserDetailsComponent />} />
                   </Route>
                   <Route path="groups-notifications" element={<GroupNotificationComponent />} />
+                  <Route path="projects" element={<ProjectsContainerComponent />} />
+                  <Route path="projects/create" element={<CreateProjectComponent />} />
+                  <Route
+                     path="projects/notifications"
+                     element={<ProjectNotificationsContainerComponent />}
+                  />
                </Route>
                <Route path="/beta/form" element={<JobApplyFormPage />}>
                   <Route path="resume/:id" element={<JobApplyResumeComponent />} />
