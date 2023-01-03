@@ -25,6 +25,9 @@ const INITAL_STATE = {
    allPinnedProjects: null,
    getAllPinnedProjectsLoading: false,
    allPinnedProjectsFetchError: null,
+   groupLists: null,
+   groupListsLoading: false,
+   groupListsFetchError: null,
 };
 
 const indexSlice = createSlice({
@@ -181,6 +184,23 @@ const indexSlice = createSlice({
             state.getAllPinnedProjectsLoading = false;
             state.allPinnedProjectsFetchError = null;
          });
+
+      bulder
+         .addCase(getGroupLists.pending, (state) => {
+            state.groupLists = null;
+            state.groupListsLoading = true;
+            state.groupListsFetchError = null;
+         })
+         .addCase(getGroupLists.rejected, (state, action) => {
+            state.groupLists = null;
+            state.groupListsLoading = false;
+            state.groupListsFetchError = action.error.message;
+         })
+         .addCase(getGroupLists.fulfilled, (state, action) => {
+            state.groupLists = action.payload.data;
+            state.groupListsLoading = false;
+            state.groupListsFetchError = null;
+         });
    },
 });
 
@@ -317,6 +337,21 @@ export const getPinnedProjects = createAsyncThunk(
       try {
          const projectsResponse = await axios.get(`/index/get-pinned-projects/${token}`, headers);
          return projectsResponse;
+      } catch (err) {
+         if (err) {
+            throw err;
+         }
+         return rejectWithValue(err.response.data);
+      }
+   }
+);
+
+export const getGroupLists = createAsyncThunk(
+   "index/getGroupLists",
+   async ({ token }, { rejectWithValue }) => {
+      try {
+         const getGroupListsResponse = await axios.get(`/index/get-group-lists/${token}`, headers);
+         return getGroupListsResponse;
       } catch (err) {
          if (err) {
             throw err;

@@ -439,6 +439,22 @@ const findPinnedProjects = catchAsync(async function (req, res, next) {
    }
 });
 
+const getGroupLists = catchAsync(async function (res, res, next) {
+   const findGroupsLists = await groupModel.find({}, { groupName: 1, _id: 1 });
+
+   if (findGroupsLists) {
+      return res.status(httpStatusCodes.OK).json({
+         success: true,
+         lists: findGroupsLists,
+      });
+   } else {
+      return res.status(httpStatusCodes.INTERNAL_SERVER).json({
+         success: false,
+         message: "Internal server error",
+      });
+   }
+});
+
 module.exports = {
    getAllJobPosts,
    getSingleJobPostDetail,
@@ -451,4 +467,5 @@ module.exports = {
    getUserIncludeGroups,
    fetchGroupChats,
    findPinnedProjects,
+   getGroupLists,
 };

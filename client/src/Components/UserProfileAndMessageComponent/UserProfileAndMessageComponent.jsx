@@ -147,7 +147,9 @@ function UserProfileAndMessageComponent({ pos, messageCl, data }) {
                         </div>
                      </div>
                   ) : null}
-                  <p className={messageCl ? "text-white" : " text-gray-800"}>{data?.message}</p>
+                  <p className={messageCl ? "text-white ms" : " text-gray-800 ms"}>
+                     {data?.message}
+                  </p>
                </styled.chatMessageDiv>
             </div>
          </div>

@@ -46,6 +46,7 @@ route.get(
 );
 route.get("/get-group-chats/:token", checkIsUserValid, indexController.fetchGroupChats);
 route.get("/get-pinned-projects/:token", checkIsUserValid, indexController.findPinnedProjects);
+route.get("/get-group-lists/:token", checkIsUserValid, indexController.getGroupLists);
 
 // API => POST
 route.post(

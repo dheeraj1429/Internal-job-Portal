@@ -10,10 +10,13 @@ import { BiDotsHorizontalRounded } from "@react-icons/all-files/bi/BiDotsHorizon
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { UserContext } from "../../Context/UserContext";
+import { USER_ACTION_TYPE } from "../../Context/ActionType";
 
 function ProjectNotificationCartComponent({ data, userInfo, createdAt }) {
    const [anchorEl, setAnchorEl] = useState(null);
    const open = Boolean(anchorEl);
+   const { dispatch } = UserContext();
 
    const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -25,6 +28,8 @@ function ProjectNotificationCartComponent({ data, userInfo, createdAt }) {
 
    const PinHandler = function () {
       setAnchorEl(null);
+      dispatch({ type: USER_ACTION_TYPE.SHOW_GROUP_POPUP, show: true });
+      dispatch({ type: USER_ACTION_TYPE.STORE_SELECTED_PROJECT, payload: data });
    };
 
    return (

@@ -39,6 +39,7 @@ const store = configureStore({
                "admin/getAllProject/fulfilled",
                "admin/deleteJobProject/fulfilled",
                "index/getPinnedProjects/fulfilled",
+               "index/getGroupLists/fulfilled",
             ],
          },
       }),

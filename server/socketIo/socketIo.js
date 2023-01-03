@@ -477,6 +477,37 @@ const socketIoConnection = function (io) {
          }
       });
 
+      socket.on("_pin_group_project", async (args) => {
+         /**
+          * grab all the project information.
+          * send the message inside the selected group.
+          * also store the selected pinned project information into the database.
+          */
+         const { groupId, userId } = args;
+         // genrate the unique id for every single pinned message.
+         const _sender_message_id = mongoose.Types.ObjectId();
+
+         const str = `Project name: ${args?.projectName} \nProject description: ${args?.description} \nProject start date: ${args?.ProjectDateStart} \nProject end date: ${args?.ProjectDateEnd} \nClient name: ${args?.clientName}`;
+
+         // store data inside the database.
+         await groupModel.updateOne(
+            { _id: groupId },
+            { $push: { groupMessages: { userId: userId, message: str, _id: _sender_message_id } } }
+         );
+
+         // send back the massage to the all group users.
+         io.in(groupId).emit("_receive_message", {
+            groupId,
+            userInfo: {
+               name: args?.name,
+               profilePic: args?.profilePic,
+               _id: args?.userId,
+            },
+            message: str,
+            _sender_message_id,
+         });
+      });
+
       socket.on("disconnect", (reason) => {
          console.log("User is disconnect ", socket.id);
          console.log(reason);

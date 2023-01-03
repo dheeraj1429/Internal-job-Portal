@@ -8,6 +8,8 @@ import { Navigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { getPinnedProjects } from "../../App/Features/index/indexSlice";
 import SpennerComponent from "../../HelperComponents/SpennerComponent/SpennerComponent";
+import SelectGroupPopupComponent from "../SelectGroupPopupComponent/SelectGroupPopupComponent";
+import Context from "../../Context/UserContext";
 
 function ProjectNotificationsContainerComponent() {
    const [PinnedProjects, setPinnedProjects] = useState([]);
@@ -37,55 +39,58 @@ function ProjectNotificationsContainerComponent() {
 
    return (
       <styled.div>
-         <HeadingComponent
-            heading={"Pinned Projects"}
-            subHeading={`Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptate blanditiis voluptatem praesentium asperiores nesciunt porro possimus molestiae velit optio voluptatum.`}
-         />
-         {!!getAllPinnedProjectsLoading ? (
-            <div className="mt-4 flex items-center justify-center">
-               <SpennerComponent />
-            </div>
-         ) : null}
-         {PinnedProjects.length ? (
-            <div className="mt-4">
-               <div className="container">
-                  <div className="row">
-                     {PinnedProjects.map((el) => (
-                        <ProjectNotificationCartComponent key={el?._id} data={el} />
-                     ))}
+         <Context>
+            <SelectGroupPopupComponent />
+            <HeadingComponent
+               heading={"Pinned Projects"}
+               subHeading={`Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptate blanditiis voluptatem praesentium asperiores nesciunt porro possimus molestiae velit optio voluptatum.`}
+            />
+            {!!getAllPinnedProjectsLoading ? (
+               <div className="mt-4 flex items-center justify-center">
+                  <SpennerComponent />
+               </div>
+            ) : null}
+            {PinnedProjects.length ? (
+               <div className="mt-4">
+                  <div className="container">
+                     <div className="row">
+                        {PinnedProjects.map((el) => (
+                           <ProjectNotificationCartComponent key={el?._id} data={el} />
+                        ))}
+                     </div>
                   </div>
                </div>
-            </div>
-         ) : null}
-         {!!allPinnedProjects &&
-         allPinnedProjects?.success &&
-         allPinnedProjects?.projectInfo?.length ? (
-            <div className="mt-4">
-               <div className="container">
-                  <div className="row">
-                     {allPinnedProjects.projectInfo.map((el) => (
-                        <ProjectNotificationCartComponent
-                           key={el?._id}
-                           data={el?.projectId}
-                           userInfo={el?.userId}
-                           createdAt={el?.createdAt}
-                        />
-                     ))}
+            ) : null}
+            {!!allPinnedProjects &&
+            allPinnedProjects?.success &&
+            allPinnedProjects?.projectInfo?.length ? (
+               <div className="mt-4">
+                  <div className="container">
+                     <div className="row">
+                        {allPinnedProjects.projectInfo.map((el) => (
+                           <ProjectNotificationCartComponent
+                              key={el?._id}
+                              data={el?.projectId}
+                              userInfo={el?.userId}
+                              createdAt={el?.createdAt}
+                           />
+                        ))}
+                     </div>
                   </div>
                </div>
-            </div>
-         ) : null}
-         {!!allPinnedProjects &&
-         allPinnedProjects?.success &&
-         !allPinnedProjects?.projectInfo?.length &&
-         !PinnedProjects?.length ? (
-            <p className="mt-4">No Project pinned</p>
-         ) : null}
-         {!!allPinnedProjectsFetchError ? (
-            <div className="mt-4">
-               <p className="error_text">{allPinnedProjectsFetchError}</p>
-            </div>
-         ) : null}
+            ) : null}
+            {!!allPinnedProjects &&
+            allPinnedProjects?.success &&
+            !allPinnedProjects?.projectInfo?.length &&
+            !PinnedProjects?.length ? (
+               <p className="mt-4">No Project pinned</p>
+            ) : null}
+            {!!allPinnedProjectsFetchError ? (
+               <div className="mt-4">
+                  <p className="error_text">{allPinnedProjectsFetchError}</p>
+               </div>
+            ) : null}
+         </Context>
       </styled.div>
    );
 }
