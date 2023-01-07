@@ -57,6 +57,8 @@ function ChatBoxComponent() {
 
    useEffect(() => {
       const listener = function (args) {
+         console.log(args);
+
          if (args.groupId === params.id) {
             setUserReciveMessage((prevState) => [...prevState, args]);
             Screen.current?.scrollIntoView({ behavior: "smooth" });

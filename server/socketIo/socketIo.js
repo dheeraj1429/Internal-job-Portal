@@ -460,6 +460,7 @@ const socketIoConnection = function (io) {
             const insertData = await forwordProjectsModel({
                projectId: args?._id,
                userId: args?.userId,
+               clientBy: args?.clientBy?.userId,
             }).save();
 
             if (insertData && findAdminSocketId) {
@@ -478,6 +479,8 @@ const socketIoConnection = function (io) {
       });
 
       socket.on("_pin_group_project", async (args) => {
+         const { attachedImageDoc } = args;
+
          /**
           * grab all the project information.
           * send the message inside the selected group.
@@ -487,17 +490,27 @@ const socketIoConnection = function (io) {
          // genrate the unique id for every single pinned message.
          const _sender_message_id = mongoose.Types.ObjectId();
 
-         const str = `Project name: ${args?.projectName} \nProject description: ${args?.description} \nProject start date: ${args?.ProjectDateStart} \nProject end date: ${args?.ProjectDateEnd} \nClient name: ${args?.clientName}`;
+         const str = `Project name: ${args?.projectName} \nProject description: ${args?.description} \nProject start date: ${args?.ProjectDateStart} \nProject end date: ${args?.ProjectDateEnd} \nClient name: ${args?.clientName} \nClient by: ${args?.clientBy}`;
 
          // store data inside the database.
          await groupModel.updateOne(
             { _id: groupId },
-            { $push: { groupMessages: { userId: userId, message: str, _id: _sender_message_id } } }
+            {
+               $push: {
+                  groupMessages: {
+                     userId: userId,
+                     message: str,
+                     _id: _sender_message_id,
+                     attachedFile: !!attachedImageDoc ? attachedImageDoc : null,
+                  },
+               },
+            }
          );
 
          // send back the massage to the all group users.
          io.in(groupId).emit("_receive_message", {
             groupId,
+            attachedImageDoc: !!attachedImageDoc ? attachedImageDoc : null,
             userInfo: {
                name: args?.name,
                profilePic: args?.profilePic,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as styled from "./CreateProjectComponent.style";
 import HeadingComponent from "../../HelperComponents/HeadingComponent/HeadingComponent";
 import Box from "@mui/material/Box";
@@ -9,10 +9,16 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import CustomButtonComponent from "../../HelperComponents/CustomButtonComponent/CustomButtonComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { postNewProject, removeProjectNotification } from "../../App/Features/Admin/adminSlice";
+import {
+   postNewProject,
+   removeProjectNotification,
+   getAllLoginUsers,
+} from "../../App/Features/Admin/adminSlice";
 import { message } from "antd";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router";
+import { VscChromeClose } from "@react-icons/all-files/vsc/VscChromeClose";
+import { FcImageFile } from "@react-icons/all-files/fc/FcImageFile";
 
 const ServicesAr = [
    { value: "Web Development" },
@@ -28,6 +34,7 @@ function CreateProjectComponent() {
    const [ProjectInfo, setProjectInfo] = useState({
       name: "",
       service: "",
+      clientBy: "",
       clientName: "",
       clientEmail: "",
       clientNumber: "",
@@ -35,19 +42,45 @@ function CreateProjectComponent() {
       description: "",
       ProjectDateStart: new Date(),
       ProjectDateEnd: new Date(new Date().getTime() + 24 * 3 * 60 * 60 * 1000),
+      attachImageFile: null,
    });
+   const [ImagePrev, setImagePrev] = useState(null);
+   const fileRef = useRef(null);
 
    const dispatch = useDispatch();
    const navigation = useNavigate();
 
-   const { postNewProjectRespose, postNewProjectLoading, postNewProjectFetchError } = useSelector(
-      (state) => state.admin
-   );
+   const {
+      postNewProjectRespose,
+      postNewProjectLoading,
+      postNewProjectFetchError,
+      allUsers,
+      allUsersFetchLoading,
+      allUsersFetchError,
+   } = useSelector((state) => state.admin);
+
+   const ValidateImage = function (value) {
+      const allowedFiles = [".jpg", ".png", ".jpeg"];
+      const regex = new RegExp("([a-zA-Z0-9s_\\.-:])+(" + allowedFiles.join("|") + ")$");
+      if (!regex.test(value)) return false;
+      else return true;
+   };
 
    const ChangeHandler = function (event, type, state) {
       if (type) {
          if (type === "DatePicker") {
             setProjectInfo({ ...ProjectInfo, [state]: event.$d });
+         } else if (type === "fileUpload") {
+            const file = event.target.files[0];
+            const image = ValidateImage(fileRef.current.value);
+
+            if (image) {
+               setProjectInfo({ ...ProjectInfo, attachImageFile: file });
+               const src = URL.createObjectURL(file);
+               setImagePrev(src);
+            } else {
+               message.error("Please upload files having extensions: jpg, png, jpeg only.");
+            }
          }
       } else {
          const { name, value } = event.target;
@@ -56,6 +89,12 @@ function CreateProjectComponent() {
             [name]: value,
          });
       }
+   };
+
+   const CloseImageHandler = function () {
+      setProjectInfo({ ...ProjectInfo, attachImageFile: "" });
+      setImagePrev(null);
+      fileRef.current.value = "";
    };
 
    const SendHandler = function (event) {
@@ -79,12 +118,15 @@ function CreateProjectComponent() {
    useEffect(() => {
       if (postNewProjectRespose) {
          if (!postNewProjectRespose?.success) return message.error(postNewProjectRespose.message);
-
          message.success(postNewProjectRespose.message);
       }
    }, [postNewProjectRespose]);
 
    useEffect(() => {
+      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+         dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token, page: 0 }));
+      }
+
       return () => {
          dispatch(removeProjectNotification());
       };
@@ -129,6 +171,26 @@ function CreateProjectComponent() {
                            </MenuItem>
                         ))}
                      </TextField>
+                     {!allUsersFetchError &&
+                     !!allUsers &&
+                     allUsers?.success &&
+                     allUsers?.users.length ? (
+                        <TextField
+                           className="w-100 ms-0 ms-lg-2 mt-3 mt-lg-0"
+                           select
+                           required
+                           label="Client by"
+                           onChange={(event) => ChangeHandler(event)}
+                           value={ProjectInfo.clientBy}
+                           name="clientBy"
+                        >
+                           {allUsers?.users.map((el) => (
+                              <MenuItem key={el._id} value={el._id}>
+                                 {el.name}
+                              </MenuItem>
+                           ))}
+                        </TextField>
+                     ) : null}
                   </div>
                   <TextField
                      id="outlined-multiline-static"
@@ -184,6 +246,26 @@ function CreateProjectComponent() {
                         helperText="Client address ( optional )"
                      />
                   </div>
+                  <div className="image_file_upload_div shadow">
+                     <div className="fie_icons">
+                        <FcImageFile />
+                     </div>
+                     <input
+                        name="imageFile"
+                        type="file"
+                        ref={fileRef}
+                        onChange={(event) => ChangeHandler(event, "fileUpload")}
+                        accept
+                     />
+                  </div>
+                  {!!ImagePrev ? (
+                     <div className="attachFilePrev">
+                        <div className="close_button shadow" onClick={CloseImageHandler}>
+                           <VscChromeClose />
+                        </div>
+                        <img src={ImagePrev} alt="" />
+                     </div>
+                  ) : null}
                   <p className="text-gray-600 text-sm">
                      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                      Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,

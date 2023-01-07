@@ -1,29 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const indexController = require("../controllers/indexController");
-const { checkIsUserValid } = require("../helpers/helper");
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-   destination: function (req, file, callback) {
-      if (
-         file.mimetype === "image/png" ||
-         file.mimetype === "image/jpeg" ||
-         file.mimetype === "image/jpg"
-      ) {
-         callback(null, "./upload/usersProfile");
-      }
-
-      if (file.mimetype === "application/pdf") {
-         callback(null, `./upload/userResume`);
-      }
-   },
-   filename: function (req, file, callback) {
-      callback(null, file.originalname);
-   },
-});
-
-const upload = multer({ storage: storage }).any();
+const { checkIsUserValid, upload } = require("../helpers/helper");
 
 // API => GET
 route.get("/get-all-job-posts", indexController.getAllJobPosts);

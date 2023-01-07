@@ -8,6 +8,8 @@ const authModel = require("../model/schema/authSchema");
 const groupModel = require("../model/schema/groupSchema");
 const forwordMessagesModel = require("../model/schema/forwordMessagesSchema");
 const projectModel = require("../model/schema/projectsSchema");
+const { v4: uuidv4 } = require("uuid");
+const sharp = require("sharp");
 
 const postNewjob = catchAsync(async function (req, res, next) {
    const insertedObject = { ...req.body };
@@ -281,7 +283,7 @@ const getAllLoginUsers = catchAsync(async function (req, res, next) {
       DOCUMENT_LIMIT,
       res,
       "users",
-      { $and: [{ role: { $ne: "admin" } }, { role: { $ne: "subAdmin" } }] },
+      { $and: [{ role: { $ne: "admin" } }] },
       { name: 1, email: 1, role: 1, userProfile: 1, createdAt: 1 }
    );
 });
@@ -540,15 +542,17 @@ const getAllNotifications = catchAsync(async function (req, res, next) {
 const postNewProject = catchAsync(async function (req, res, next) {
    const updateObject = { ...req.body };
    const { name } = updateObject;
+   const { clientBy } = req.body;
 
-   /**
-    * find project is already saved or not.
-    * if the project already exists then send back warninig respose.
-    * if the project is new then save data into the database and then return
-    * repose the client.
-    */
+   if (!!clientBy) {
+      updateObject.clientBy = {
+         userId: clientBy,
+      };
+   }
 
    const findProjectIsExists = await projectModel.findOne({ name });
+
+   const file = req?.files[0];
 
    if (findProjectIsExists) {
       return res.status(httpStatusCodes.OK).json({
@@ -556,14 +560,47 @@ const postNewProject = catchAsync(async function (req, res, next) {
          message: "Project is already exists",
       });
    } else {
-      // insert new project data
-      const insertProjectData = await projectModel(updateObject).save();
+      if (file) {
+         const originalname = file?.originalname;
+         const fileUniqueName = req.fileUniqueName;
+         const imagePath = file.path;
 
-      if (insertProjectData) {
-         return res.status(httpStatusCodes.OK).json({
-            success: true,
-            message: "Project saved",
-         });
+         await sharp(imagePath)
+            .resize({
+               width: 300,
+               height: 300,
+            })
+            .toFile(
+               path.join(
+                  __dirname,
+                  "..",
+                  "upload",
+                  "attacthFiles",
+                  "compressImages",
+                  fileUniqueName
+               )
+            );
+
+         const insertProjectData = await projectModel({
+            ...updateObject,
+            attachedImageDoc: fileUniqueName,
+         }).save();
+
+         if (insertProjectData) {
+            return res.status(httpStatusCodes.OK).json({
+               success: true,
+               message: "Project saved",
+            });
+         }
+      } else {
+         // insert new project data
+         const insertProjectData = await projectModel(updateObject).save();
+         if (insertProjectData) {
+            return res.status(httpStatusCodes.OK).json({
+               success: true,
+               message: "Project saved",
+            });
+         }
       }
    }
 });
@@ -577,6 +614,7 @@ const getAllProject = catchAsync(async function (req, res, next) {
 
    const findProjects = await projectModel
       .find({})
+      .populate("clientBy.userId", { _id: 1, name: 1 })
       .sort({ createdAt: -1 })
       .skip(page * DOCUMENT_LIMIT)
       .limit(DOCUMENT_LIMIT);

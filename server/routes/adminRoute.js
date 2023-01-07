@@ -1,7 +1,7 @@
 const express = require("express");
 const route = express.Router();
 const adminController = require("../controllers/adminController");
-const { checkIsUserValid } = require("../helpers/helper");
+const { checkIsUserValid, upload } = require("../helpers/helper");
 
 // API => GET
 route.get(
@@ -29,7 +29,7 @@ route.get("/get-all-projects/:token", checkIsUserValid, adminController.getAllPr
 
 // API => POST
 route.post("/inert-new-job-post/:token", checkIsUserValid, adminController.postNewjob);
-route.post("/post-new-project/:token", checkIsUserValid, adminController.postNewProject);
+route.post("/post-new-project/:token", checkIsUserValid, upload, adminController.postNewProject);
 
 // API => PATCH
 route.patch("/update-job-post/:token", checkIsUserValid, adminController.updateJobPost);

@@ -150,6 +150,17 @@ function UserProfileAndMessageComponent({ pos, messageCl, data }) {
                   <p className={messageCl ? "text-white ms" : " text-gray-800 ms"}>
                      {data?.message}
                   </p>
+                  {!!data?.attachedImageDoc || !!data?.attachedFile ? (
+                     <div className="prev_image_div mt-4 mb-3">
+                        <img
+                           src={`/attacthFiles/compressImages/${
+                              data?.attachedImageDoc || data?.attachedFile
+                           }`}
+                           alt=""
+                           className="rounded"
+                        />
+                     </div>
+                  ) : null}
                </styled.chatMessageDiv>
             </div>
          </div>

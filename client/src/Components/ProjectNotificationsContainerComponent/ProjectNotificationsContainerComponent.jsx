@@ -73,6 +73,7 @@ function ProjectNotificationsContainerComponent() {
                               data={el?.projectId}
                               userInfo={el?.userId}
                               createdAt={el?.createdAt}
+                              clientBy={el?.clientBy}
                            />
                         ))}
                      </div>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import dayjs from "dayjs";
 import { HiOutlineDotsHorizontal } from "@react-icons/all-files/hi/HiOutlineDotsHorizontal";
 import Menu from "@mui/material/Menu";
@@ -9,6 +9,8 @@ import { useDispatch } from "react-redux";
 import { deleteJobProject } from "../../App/Features/Admin/adminSlice";
 import { useCookies } from "react-cookie";
 import { SocketContext } from "../../Context/socket";
+import { FcImageFile } from "@react-icons/all-files/fc/FcImageFile";
+import AttachedPrevComponent from "../AttachedPrevComponent/AttachedPrevComponent";
 
 function ProjectCardComponent({ el }) {
    const socket = useContext(SocketContext);
@@ -16,6 +18,8 @@ function ProjectCardComponent({ el }) {
    const [anchorEl, setAnchorEl] = useState(null);
    const open = Boolean(anchorEl);
    const dispatch = useDispatch();
+   const [ShowPrevCm, setShowPrevCm] = useState(false);
+   const ImageRef = useRef(null);
 
    const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -52,8 +56,13 @@ function ProjectCardComponent({ el }) {
       });
    };
 
+   const showPrevAttachedHandler = function (imageSrc) {
+      setShowPrevCm(!ShowPrevCm);
+      ImageRef.value = imageSrc;
+   };
+
    return (
-      <styled.div className="col-12 col-md-6 col-lg-4 col-xll-3 mb-4 mb-md-0" key={el._id}>
+      <styled.div className="col-12 col-md-6 col-lg-6 col-xll-3 mb-4 mb-md-0" key={el._id}>
          <div className="project_card shadow w-100 rounded-md">
             <div className="options_div">
                <Button
@@ -74,7 +83,7 @@ function ProjectCardComponent({ el }) {
                      "aria-labelledby": "basic-button",
                   }}
                >
-                  <MenuItem onClick={() => EditHandler(el._id)}>Edit</MenuItem>
+                  {/* <MenuItem onClick={() => EditHandler(el._id)}>Edit</MenuItem> */}
                   <MenuItem onClick={() => DeleteHandler(el._id)}>Delete</MenuItem>
                   <MenuItem onClick={PinProjectHandler}>Pin project to subAdmin</MenuItem>
                </Menu>
@@ -104,6 +113,12 @@ function ProjectCardComponent({ el }) {
                </div>
                <p className="text-gray-500 text-sm">{el?.clientNumber}</p>
             </div>
+            <div className="flex mt-2">
+               <div className="space_div">
+                  <h5>Client by </h5>
+               </div>
+               <p className="text-gray-500 text-sm">{el?.clientBy?.userId?.name}</p>
+            </div>
             <p className="mt-3">Description</p>
             <p className="text-gray-500 text-sm mt-1">{el?.description.slice(0, 160)}...</p>
             <p className="mt-3 text-sm">Project start date</p>
@@ -114,6 +129,17 @@ function ProjectCardComponent({ el }) {
             <p className="text-gray-500 text-sm mt-1">
                {dayjs(el?.ProjectDateEnd).format("DD/MMMM/YYYY H:mm:s A")}
             </p>
+            {!!el?.attachedImageDoc ? (
+               <div className="file_attached_div">
+                  <div
+                     className="file_div mt-3 flex items-center p-1.5 bg-indigo-600 text-white"
+                     onClick={() => showPrevAttachedHandler(el?.attachedImageDoc)}
+                  >
+                     <FcImageFile />
+                  </div>
+                  <AttachedPrevComponent show={ShowPrevCm} imagePrev={ImageRef} />
+               </div>
+            ) : null}
          </div>
       </styled.div>
    );

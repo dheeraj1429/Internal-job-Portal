@@ -57,10 +57,9 @@ function AllUserComponent() {
    }, [userAccountDeleteInfo]);
 
    useEffect(() => {
-      console.log("fetch request from all user component");
-      if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
-         dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token, page: 0 }));
-      }
+      // if (!!cookie && cookie?._ijp_at_user && cookie?._ijp_at_user?.token) {
+      //    dispatch(getAllLoginUsers({ token: cookie?._ijp_at_user?.token, page: 0 }));
+      // }
       return () => {
          dispatch(removeAccountInfo());
       };

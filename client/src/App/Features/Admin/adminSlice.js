@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { headers } from "../../../axiosConfig";
+import { headers, multipartData } from "../../../axiosConfig";
 import FileDownload from "js-file-download";
 
 const INITAL_STATE = {
@@ -605,7 +605,7 @@ export const postNewProject = createAsyncThunk(
          const postProjectRespose = await axios.post(
             `/admin/post-new-project/${token}`,
             data,
-            headers
+            multipartData
          );
          return postProjectRespose;
       } catch (err) {

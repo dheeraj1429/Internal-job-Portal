@@ -22,8 +22,6 @@ function SelectGroupPopupComponent() {
       (state) => state.index
    );
 
-   console.log(state);
-
    const ClosePopUpHandler = function () {
       dispatch({ type: USER_ACTION_TYPE.SHOW_GROUP_POPUP, show: false });
    };
@@ -41,6 +39,8 @@ function SelectGroupPopupComponent() {
             name: cookie?._ijp_at_user?.name,
             email: cookie?._ijp_at_user?.email,
             userId: cookie?._ijp_at_user?._id,
+            attachedImageDoc: state?.selectedProject?.attachedImageDoc,
+            clientBy: state?.selectedProject?.clientBy?.name,
          });
       }
    };

@@ -373,6 +373,7 @@ const fetchGroupChats = catchAsync(async function (req, res, next) {
             "groupMessages.userInfo._id": 1,
             "groupMessages.userInfo.name": 1,
             "groupMessages.pinned": 1,
+            "groupMessages.attachedFile": 1,
             "groupMessages.userInfo.profilePic": "$groupMessages.userInfo.userProfile",
             totalPages: {
                $abs: { $ceil: { $divide: ["$totalMessagesDocuments", DOCUMENT_LIMIT] } },
@@ -392,6 +393,7 @@ const fetchGroupChats = catchAsync(async function (req, res, next) {
             "groupMessages._id": 1,
             "groupMessages.createdAt": 1,
             "groupMessages.pinned": 1,
+            "groupMessages.attachedFile": 1,
             "groupMessages.userInfo": { $arrayElemAt: ["$groupMessages.userInfo", 0] },
          },
       },
@@ -424,6 +426,7 @@ const findPinnedProjects = catchAsync(async function (req, res, next) {
    const findAllPinnedProjects = await forwordProjectsModel
       .find({})
       .populate("projectId")
+      .populate("clientBy", { _id: 1, name: 1 })
       .populate("userId", { name: 1, _id: 1, email: 1, userProfile: 1 });
 
    if (findAllPinnedProjects) {

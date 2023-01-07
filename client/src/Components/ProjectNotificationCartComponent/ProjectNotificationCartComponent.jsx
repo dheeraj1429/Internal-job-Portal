@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import * as styled from "./ProjectNotificationCartComponent.style";
 import dayjs from "dayjs";
 import { FcAdvance } from "@react-icons/all-files/fc/FcAdvance";
@@ -12,11 +12,16 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { UserContext } from "../../Context/UserContext";
 import { USER_ACTION_TYPE } from "../../Context/ActionType";
+import AttachedPrevComponent from "../AttachedPrevComponent/AttachedPrevComponent";
+import { FcImageFile } from "@react-icons/all-files/fc/FcImageFile";
+import { FcBusinessman } from "@react-icons/all-files/fc/FcBusinessman";
 
-function ProjectNotificationCartComponent({ data, userInfo, createdAt }) {
+function ProjectNotificationCartComponent({ data, userInfo, createdAt, clientBy }) {
    const [anchorEl, setAnchorEl] = useState(null);
    const open = Boolean(anchorEl);
    const { dispatch } = UserContext();
+   const ImageRef = useRef(null);
+   const [ShowPrevCm, setShowPrevCm] = useState(false);
 
    const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -29,7 +34,15 @@ function ProjectNotificationCartComponent({ data, userInfo, createdAt }) {
    const PinHandler = function () {
       setAnchorEl(null);
       dispatch({ type: USER_ACTION_TYPE.SHOW_GROUP_POPUP, show: true });
-      dispatch({ type: USER_ACTION_TYPE.STORE_SELECTED_PROJECT, payload: data });
+      dispatch({
+         type: USER_ACTION_TYPE.STORE_SELECTED_PROJECT,
+         payload: { ...data, clientBy: clientBy ? clientBy : data?.clientBy?.userId },
+      });
+   };
+
+   const showPrevAttachedHandler = function (imageSrc) {
+      setShowPrevCm(!ShowPrevCm);
+      ImageRef.value = imageSrc;
    };
 
    return (
@@ -88,6 +101,15 @@ function ProjectNotificationCartComponent({ data, userInfo, createdAt }) {
                </div>
                <div className="mt-2 sm:block md:flex mb-2 mb-md-0">
                   <div className="space_div">
+                     <FcBusinessman className="me-2" />
+                     <p className="text-sm">Client by</p>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                     {data?.clientBy?.userId?.name || clientBy?.name}
+                  </p>
+               </div>
+               <div className="mt-2 sm:block md:flex mb-2 mb-md-0">
+                  <div className="space_div">
                      <FcOvertime className="me-2" />
                      <p className="text-sm">Project start date</p>
                   </div>
@@ -123,6 +145,17 @@ function ProjectNotificationCartComponent({ data, userInfo, createdAt }) {
                      <h5 className="mt-3 ">Project description</h5>
                      <p className="mt-1 text-sm text-gray-500">{data?.description}</p>
                   </>
+               ) : null}
+               {!!data?.attachedImageDoc ? (
+                  <div className="file_attached_div">
+                     <div
+                        className="file_div mt-3 flex items-center p-1.5 bg-indigo-600 text-white"
+                        onClick={() => showPrevAttachedHandler(data?.attachedImageDoc)}
+                     >
+                        <FcImageFile />
+                     </div>
+                     <AttachedPrevComponent show={ShowPrevCm} imagePrev={ImageRef} />
+                  </div>
                ) : null}
             </div>
          </div>

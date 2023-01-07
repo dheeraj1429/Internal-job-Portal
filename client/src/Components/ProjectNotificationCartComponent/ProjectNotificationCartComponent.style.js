@@ -1,6 +1,18 @@
 import styled from "styled-components";
 
 export const div = styled.div`
+   .file_attached_div {
+      position: relative;
+      width: max-content;
+   }
+
+   .file_div {
+      width: max-content;
+      padding: 1rem;
+      border-radius: 50%;
+      cursor: pointer;
+   }
+
    .pinned_projects_div {
       position: relative;
 

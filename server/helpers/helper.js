@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 const SECRET_KEY = process.env.SECRET_KEY;
+const { v4: uuidv4 } = require("uuid");
 
 const catchAsync = (fn) => {
    /**
@@ -96,9 +98,38 @@ const checkIsUserValid = function (req, res, next) {
    }
 };
 
+const storage = multer.diskStorage({
+   destination: function (req, file, callback) {
+      if (
+         file.mimetype === "image/png" ||
+         file.mimetype === "image/jpeg" ||
+         file.mimetype === "image/jpg"
+      ) {
+         if (file.fieldname === "attachImageFile") {
+            callback(null, "./upload/attacthFiles/images");
+         } else {
+            callback(null, "./upload/usersProfile");
+         }
+      }
+
+      if (file.mimetype === "application/pdf") {
+         callback(null, `./upload/userResume`);
+      }
+   },
+   filename: function (req, file, callback) {
+      const uniqueId = uuidv4();
+      const fileUniqueName = `${uniqueId}${file.originalname}`;
+      req.fileUniqueName = fileUniqueName;
+      callback(null, fileUniqueName);
+   },
+});
+
+const upload = multer({ storage: storage }).any();
+
 module.exports = {
    catchAsync,
    httpStatusCodes,
    checkIsUserValid,
    fetchPaginationData,
+   upload,
 };

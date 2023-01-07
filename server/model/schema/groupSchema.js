@@ -14,6 +14,7 @@ const groupSchema = new mongoose.Schema({
          userRemoved: { type: Boolean, default: false },
          userAdded: { type: Boolean, default: false },
          pinned: { type: Boolean, default: false },
+         attachedFile: { type: String },
          createdAt: { type: Date, default: Date.now },
       },
    ],
